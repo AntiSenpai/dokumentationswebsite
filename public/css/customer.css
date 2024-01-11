@@ -1,0 +1,44 @@
+.container {
+    margin: 20px;
+}
+
+.search-add-section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.search-input {
+    width: 70%;
+    padding: 10px;
+}
+
+.add-customer-button {
+    padding: 10px;
+}
+
+.customer-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.customer-entry {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.detail-button {
+    padding: 5px 10px;
+}
+
+@media (max-width: 768px) {
+    .search-input {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .search-add-section {
+        flex-direction: column;
+    }
+}

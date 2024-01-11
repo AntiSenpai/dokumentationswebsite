@@ -6,5 +6,38 @@
 <html lang="de">
 <link rel="stylesheet" href="{{ asset('css/customer.css') }}">
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8= sha256-T+aPohYXbm0fRYDpJLr+zJ9RmYTswGsahAoIsNiMld4=" crossorigin="anonymous"></script>
+  <div class="container">
+    <div class="search-add-section">
+      <input type="text" class="search-input" placeholder="Kunde suchen..." id="custoemrSearch">
+      <button class="btn btn-primary add-customer-button">Kunde Hinzufügen</button>
+    </div>
+
+    <!-- Kundenliste -->
+    <div class="customer-list">
+      {% for customer in customers %}
+      <div class="customer-entry">
+        <div class="customer-name">{{ kunde.name }}</div>
+        <div class="customer-details">
+          <button class="btn btn-secondary detail-button" onclick="showDetails('{{ kunde.id }}')">Details</button>
+        </div>
+      </div>
+      {% endfor %}    
+    </div>
+  </div>
+
+<script>
+   document.getElementById('customerSearch').addEventListener('input', function(e) {
+            var searchValue = e.target.value.toLowerCase();
+            document.querySelectorAll('.customer-entry').forEach(function(customer) {
+                var name = customer.querySelector('.customer-name').textContent.toLowerCase();
+                customer.style.display = name.includes(searchValue) ? 'block' : 'none';
+            });
+        });
+
+        function showDetails(customerId) {
+            // Logik für die Anzeige von Details und Unterstandorten des Kunden
+            console.log('Kundendetails für: ' + customerId);
+        }
+</script>
 </html>
 {% endblock %}
