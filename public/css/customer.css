@@ -1,63 +1,80 @@
-.container {
-    margin: 20px;
+/* customer.css */
+body {
+    font-family: Arial, sans-serif;
 }
 
-.search-add-section {
+.flex {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
 }
 
-.search-input {
-    width: 70%;
+.flex-justify-between {
+    justify-content: space-between;
+}
+
+.flex-justify-end {
+    justify-content: flex-end;
+}
+
+.flex-align-center {
+    align-items: center;
+}
+
+.top-bar {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e7e7e7;
+}
+
+.search-field {
+    border: 1px solid #ccc;
     padding: 10px;
+    width: 200px;
+    border-radius: 3px;
+}
+
+.search-button {
+    padding: 10px 20px;
+    background-color: #ddd;
+    border: 1px solid #999;
+    cursor: pointer;
 }
 
 .add-customer-button {
-    padding: 10px;
+    padding: 10px 20px;
+    background-color: #ddd;
+    border: 1px solid #999;
+    cursor: pointer;
 }
 
-.customer-table {
-    width: 100%;
-    border-collapse: collapse;
+.customer-list {
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
 }
 
-.customer-table th, .customer-table td {
-    text-align: left;
-    padding: 8px;
-    border-bottom: 1px solid #ddd;
+.customer-item {
+    padding: 15px;
+    border-bottom: 1px solid #e7e7e7;
+    cursor: pointer;
 }
 
-.customer-table th {
-    background-color: #f2f2f2;
+.customer-item:last-child {
+    border-bottom: none;
 }
 
-.customer-table tr:hover {
-    background-color: #eaeaea;
+.customer-item:hover {
+    background-color: #f0f0f0;
 }
 
-.detail-button {
-    padding: 5px 10px;
-}
-
+/* Responsive design */
 @media (max-width: 768px) {
-    .search-input {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-
-    .search-add-section {
+    .top-bar {
         flex-direction: column;
+        align-items: flex-start;
     }
 
-    .customer-table th, .customer-table td {
-        display: block;
+    .search-field {
+        margin-bottom: 10px;
         width: 100%;
     }
-
-    .customer-table th {
-        background-color: transparent;
-        border-bottom: none;
-    }
-
 }
