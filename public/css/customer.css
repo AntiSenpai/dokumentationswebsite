@@ -17,15 +17,23 @@
     padding: 10px;
 }
 
-.customer-list {
-    display: flex;
-    flex-direction: column;
+.customer-table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.customer-entry {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-bottom: 10px;
+.customer-table th, .customer-table td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+.customer-table th {
+    background-color: #f2f2f2;
+}
+
+.customer-table tr:hover {
+    background-color: #eaeaea;
 }
 
 .detail-button {
@@ -41,4 +49,15 @@
     .search-add-section {
         flex-direction: column;
     }
+
+    .customer-table th, .customer-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .customer-table th {
+        background-color: transparent;
+        border-bottom: none;
+    }
+
 }

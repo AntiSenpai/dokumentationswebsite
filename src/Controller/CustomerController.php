@@ -25,7 +25,7 @@ class CustomerController extends AbstractController
 
         $searchTerm = $request->query->get('search', '');
 
-        $customers = $entityManager->getRepository(Customer::class)->findAll();
+        $customers = $entityManager->getRepository(Customer::class)->findBySearchTerm($searchTerm);
 
         return $this->render('customer/index.html.twig', [
             'customers' => $customers,

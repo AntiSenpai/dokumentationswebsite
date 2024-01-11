@@ -22,7 +22,11 @@ class CustomerRepository extends ServiceEntityRepository
     }
 
     public function findBySearchTerm($searchTerm) {
-        
+        return $this->createQueryBuilder('c')
+            ->where('c.name LIKE :searchTerm')
+            ->setParameter('searchTerm', '%' . $searchTerm . '%')
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**

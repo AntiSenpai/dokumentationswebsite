@@ -8,7 +8,10 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8= sha256-T+aPohYXbm0fRYDpJLr+zJ9RmYTswGsahAoIsNiMld4=" crossorigin="anonymous"></script>
   <div class="container">
     <div class="search-add-section">
-      <input type="text" class="search-input" placeholder="Kunde suchen..." id="custoemrSearch">
+      <form action="{{ path('customer_index') }}" method="get">
+        <input type="text" name="search" placeholder="Kunde suchen...">
+        <button type="submit">Suchen</button>
+      </form>
       <button class="btn btn-primary add-customer-button">Kunde Hinzufügen</button>
     </div>
 
