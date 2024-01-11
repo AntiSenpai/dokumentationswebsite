@@ -1,0 +1,20 @@
+{# templates/customer/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Kundenliste</h1>
+    <a href="{{ path('customer_create') }}">Neuen Kunden erstellen</a>
+
+    <a href="{{ path('customer_index') }}">Zurück zur Kundenliste</a> 
+
+    <ul>
+        {% for customer in customers %}
+            <li>
+                {{ customer.name }}
+                <a href="{{ path('customer_edit', {'id': customer.id}) }}">Bearbeiten</a>
+                <!-- Ein Formular oder Link für das Löschen -->
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

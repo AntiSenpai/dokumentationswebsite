@@ -1,0 +1,11 @@
+{# templates/general_info_form.html.twig #}
+
+{{ form_start(GeneralType) }}
+    {{ form_row(GeneralType.customer) }}
+    {{ form_row(GeneralType.location) }}
+    {{ form_row(GeneralType.contactPerson) }}
+    {{ form_row(GeneralType.phone) }}
+    {{ form_row(GeneralType.mobile) }}
+    {{ form_row(GeneralType.email) }}
+    <button type="submit" class="btn btn-primary">Save</button>
+{{ form_end(GeneralType) }}

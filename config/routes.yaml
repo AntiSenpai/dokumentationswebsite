@@ -1,0 +1,29 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+
+home:
+    path: '/'
+    controller: 'App\Controller\HomeController::index'
+
+app_login:
+    path: /login
+    controller: App\Controller\SecurityController::login
+
+app_logout: 
+    path: /logout
+    controller: App\Controller\SecurityController::logout
+
+dokumentation:
+    path: /kundendoku
+    controller: 'App\Controller\CustomerController::index'
+
+zeiterfassung:
+    path: /zeiterfassung
+    controller: 'App\Controller\TimeTrackingController::index'
+
+ajax_edit_generalinfo:
+    path: /ajax/generalinfo/{id}
+    controller: 'App\Controller\GeneralInfoController::ajaxEdit'

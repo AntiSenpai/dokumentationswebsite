@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block title %}NNC Doku{% endblock %}
+
+{% block body %}
+<div id="content-wrapper-home" class="container-fluid p-0">
+    <main class="main-features d-flex justify-content-center align-items-center">
+        <!-- Documentation Section -->
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Dokumentationsbereich</h5>
+                <p class="card-text">
+                <i class="fas fa-file-alt fa-2x"></i>
+                </p>
+                <a href="{{ path('dokumentation') }}" class="btn btn-primary">Öffnen</a>
+            </div>
+        </div>
+
+        <!-- Time Tracking Section -->
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Zeiterfassung</h5>
+                <p class="card-text">
+                    <i class="fas fa-clock fa-2x"></i>
+                </p>
+                <a href="{{ path('zeiterfassung') }}" class="btn btn-primary">Öffnen</a>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

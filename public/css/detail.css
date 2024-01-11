@@ -1,0 +1,44 @@
+/* Set the background of the entire page */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #243668; /* Dark blue background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+
+}
+
+#wrapper {
+    min-height: 100%;
+}
+
+#sidebar-wrapper {
+    width: auto; /* Adjust width as needed */
+    height: 100%;
+    overflow-y: auto;
+    margin-top: 10%;
+}
+
+#page-content-wrapper {
+    flex-grow: 1;
+    background-color: #fff; /* or any color you prefer */
+}
+
+.sidebar-logo {
+    padding: 10px;
+    background-color: #243668; /* same as body background for continuity */
+}
+
+/* Ensure the main wrapper is full height */
+#content-wrapper {
+    min-height: 100vh;
+}
+
+/* Style for active state */
+.list-group-item.active {
+    background-color: #f8f9fa;
+    color: #333;
+    /* Additional styles for active state */
+}

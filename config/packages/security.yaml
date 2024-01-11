@@ -1,0 +1,40 @@
+security:
+    
+    password_hashers:
+        App\Entity\User:
+            algorithm: auto
+    
+    # Definiert, wie Benutzer geladen werden. 'App\Entity\User' = Benutzerentität.
+    providers:
+        users_in_database:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    # Konfiguration der Firewalls
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            lazy: true
+            provider: users_in_database
+            form_login:
+                username_parameter: email
+                password_parameter: password
+                login_path: app_login
+                check_path: app_login
+            logout:
+                path: app_logout
+                target: app_login
+
+
+    access_control:
+        - { path: ^/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/logout$, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: ROLE_USER }
+        - { path: ^/kundendoku, roles: ROLE_USER }
+        - { path: ^/zeiterfassung, roles: ROLE_USER }
+
+
+

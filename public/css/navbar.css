@@ -1,0 +1,67 @@
+.navbar-nav-top {
+    background-color: lightgray;
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+}
+
+.navbar-nav-left img {
+    width: 150px;
+    height: auto;
+    object-fit: cover;
+}
+
+.navbar-nav-main {
+    background-color: #243668; /* NNC Blau */
+    text-align: center;
+}
+
+.navbar-nav-main .nav-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+}
+
+.navbar-nav-main .nav-nav li {
+    display: inline;
+}
+
+.navbar-nav-main .nav-nav-link {
+    display: inline-block;
+    padding: 0.75rem 1rem;
+    color: white;
+    text-decoration: none;
+}
+
+.navbar-nav-main .nav-nav-link.active {
+    background-color: #1a2a4f;
+}
+
+.user-info-box {
+    background-color: white; /* Hintergrundfarbe */
+    padding: 10px; /* Innenabstand */
+    border-radius: 5px; /* Abgerundete Ecken */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Schatten für einen 3D-Effekt */
+}
+
+@media (max-width: 768px) {
+    /* Einfaches mobiles Navigationsmenü */
+    .navbar-nav-main .nav-nav {
+        display: block;
+        text-align: left;
+    }
+
+    .navbar-nav-main .nav-nav li {
+        display: block;
+    }
+
+    .navbar-nav-top {
+        display: none;
+    }
+
+    .navbar-nav-header img {
+        width: 50px; /* Kleinere Größe für kleinere Bildschirme */
+    }
+
+}
