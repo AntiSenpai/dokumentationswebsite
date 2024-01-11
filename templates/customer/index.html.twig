@@ -16,9 +16,9 @@
     <div class="customer-list">
       {% for customer in customers %}
       <div class="customer-entry">
-        <div class="customer-name">{{ kunde.name }}</div>
+        <div class="customer-name">{{ customer.name }}</div>
         <div class="customer-details">
-          <button class="btn btn-secondary detail-button" onclick="showDetails('{{ kunde.id }}')">Details</button>
+          <button class="btn btn-secondary detail-button" onclick="showDetails('{{ customer.id }}')">Details</button>
         </div>
       </div>
       {% endfor %}    
