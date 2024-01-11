@@ -1,80 +1,84 @@
 /* customer.css */
-body {
-    font-family: Arial, sans-serif;
-}
 
-.flex {
-    display: flex;
-}
-
-.flex-justify-between {
-    justify-content: space-between;
-}
-
-.flex-justify-end {
-    justify-content: flex-end;
-}
-
-.flex-align-center {
-    align-items: center;
-}
-
-.top-bar {
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #e7e7e7;
-}
-
-.search-field {
-    border: 1px solid #ccc;
+.search-add-box {
+    background-color: #f0f0f0; /* leichtes Hellgrau */
+    border-radius: 0px 0px 10px 10px; /* abgerundete Ecken oben */
     padding: 10px;
-    width: 200px;
-    border-radius: 3px;
-}
-
-.search-button {
-    padding: 10px 20px;
-    background-color: #ddd;
-    border: 1px solid #999;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 95%;
+    margin: 0 auto; /* Zentriert die Box und gibt ihr eine Breite von 95% */
+  }
+  
+  .search-box input[type="text"] {
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+  }
+  
+  .search-btn {
+    background: none;
+    border: none;
     cursor: pointer;
-}
-
-.add-customer-button {
-    padding: 10px 20px;
-    background-color: #ddd;
-    border: 1px solid #999;
+  }
+  
+  .add-customer-btn {
+    background-color: #e6e6e6; /* etwas dunkleres Grau für Kontrast */
+    border: 1px solid #000; /* schwarzer Rand */
+    padding: 5px 10px;
+    border-radius: 5px;
     cursor: pointer;
-}
-
-.customer-list {
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
-}
-
-.customer-item {
-    padding: 15px;
-    border-bottom: 1px solid #e7e7e7;
-    cursor: pointer;
-}
-
-.customer-item:last-child {
-    border-bottom: none;
-}
-
-.customer-item:hover {
-    background-color: #f0f0f0;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .top-bar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .search-field {
-        margin-bottom: 10px;
-        width: 100%;
-    }
-}
+  }
+  
+  h2 {
+    margin-left: 2.5%;
+    margin-top: 20px; /* Gibt Abstand zwischen der grauen Box und dem Kundenverzeichnis-Text */
+  }
+  
+  .customer-list-header {
+    background-color: #d0d0d0; /* ein noch dunkleres Grau */
+    border-radius: 10px 10px 0 0; /* abgerundete Ecken oben */
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    font-weight: bold;
+  }
+  
+  .customer-list {
+    width: 95%;
+    margin: 10px auto 0; /* Fügt oben einen Abstand hinzu */
+    border-radius: 10px 10px 10px 10px; /* abgerundete Ecken unten */
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Fügt Schatten hinzu für den Effekt des Ineinanderfließens */
+  }
+  
+  .customer-entry {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+    transition: background-color 0.3s; /* Animation für den Hover-Effekt */
+  }
+  
+  .customer-entry:hover {
+    background-color: #e6e6e6; /* Farbe beim Hover */
+    cursor:pointer;
+  }
+  
+  .customer-odd {
+    background-color: #f0f0f0; /* leichtes Hellgrau für jeden zweiten Eintrag */
+  }
+  
+  /* Stellt sicher, dass alle Spalten der Liste untereinander ausgerichtet sind */
+  .customer-entry > div {
+    text-align: center;
+    flex: 1;
+    padding: 0 5px; /* Fügt horizontalen Abstand hinzu */
+  }
+  
+  /* Reduziert die Größe der Einträge, um Platz zu sparen */
+  .customer-entry {
+    padding: 5px 0;
+  }
+  

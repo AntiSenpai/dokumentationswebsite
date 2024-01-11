@@ -6,27 +6,34 @@
 <html lang="de">
 <link rel="stylesheet" href="{{ asset('css/customer.css') }}">
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8= sha256-T+aPohYXbm0fRYDpJLr+zJ9RmYTswGsahAoIsNiMld4=" crossorigin="anonymous"></script>
-  <div class="container">
-    <div class="search-add-section">
-      <form action="{{ path('customer_index') }}" method="get">
-        <input type="text" name="search" placeholder="Kunde suchen...">
-        <button type="submit">Suchen</button>
-      </form>
-      <button class="btn btn-primary add-customer-button">Kunde Hinzufügen</button>
-    </div>
-
-    <!-- Kundenliste -->
-    <div class="customer-list">
-      {% for customer in customers %}
-      <div class="customer-entry">
-        <div class="customer-name">{{ customer.name }}</div>
-        <div class="customer-details">
-          <button class="btn btn-secondary detail-button" onclick="showDetails('{{ customer.id }}')">Details</button>
-        </div>
-      </div>
-      {% endfor %}    
-    </div>
+  <div class="search-add-box">
+  <div class="search-box">
+  <form action="{{ path('customer_index') }}" method="get">
+    <input type="text" name="search" placeholder="Kunden suchen...">
+    <button class="search-btn" type="submit">🔍</button>
+  </form>
   </div>
+  <button class="add-customer-btn">Kunde Hinzufügen</button>
+</div>
+
+<h2>Kundenverzeichnis</h2>
+
+<div class="customer-list">
+<div class="customer-list-header">
+  <span>ID</span>
+  <span>Name</span>
+  <span>Standort</span>
+  <span>Erstellt am</span>
+</div>
+  {% for customer in customers %}
+  <div class="customer-entry {% if loop.index is odd %}customer-odd{% endif %}">
+    <div>{{ customer.id }}</div>
+    <div>{{ customer.name }}</div>
+    <div>{{ customer.location }}</div>
+    <div>{{ customer.createdAt|date('d.m.Y') }}</div>
+  </div>
+  {% endfor %}
+</div>
 
 <script>
    document.getElementById('customerSearch').addEventListener('input', function(e) {
@@ -41,6 +48,16 @@
             // Logik für die Anzeige von Details und Unterstandorten des Kunden
             console.log('Kundendetails für: ' + customerId);
         }
+</script>
+<script>
+  document.getElementById('add-customer-btn').addEventListener('click', function() {
+    openAddCustomerModal();
+  });
+
+  function openAddCustomerModal() {
+    // Code zum Anzeigen eines Modal-Dialogs
+    alert('Hier könnte ein Formular zum Hinzufügen von Kunden stehen.');
+  }
 </script>
 </html>
 {% endblock %}
