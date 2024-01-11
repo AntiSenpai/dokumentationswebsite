@@ -42,19 +42,15 @@ class CustomerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            
-            dump($customer);
-
             $entityManager->persist($customer);
             $entityManager->flush();
 
-            $this->addFlash('success','');
+            $this->addFlash('success','Neuer Kunde erfolgreich hinzugefügt.');
 
             return $this->redirectToRoute('customer_index');
-        } else {
-            dump($form->isSubmitted(), $form->isValid());
-        }
-        return $this->render('customer/create.html.twig', [
+        } 
+
+        return $this->render('customer/index.html.twig', [
         'form'=> $form->createView(),
         ]);
     }

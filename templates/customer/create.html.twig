@@ -12,13 +12,13 @@
             </div>
             <div class="modal-body">
                 {{ form_start(form) }}
-                {{ form_widget(form) }}
+                {{ form_widget(form.name) }}
+                {{ form_widget(form.location) }}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
-                <button type="submit" class="btn btn-primary">Speichern</button>
+                {{ form_widget(form.save) }}
             </div>
-                {{ form_end(form) }}
+            {{ form_end(form) }}
         </div>
     </div>
 </div>
