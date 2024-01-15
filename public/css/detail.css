@@ -1,44 +1,78 @@
-/* Set the background of the entire page */
-body {
-    margin: 0;
-    padding: 0;
-    background-color: #243668; /* Dark blue background */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-
-}
-
-#wrapper {
-    min-height: 100%;
-}
-
-#sidebar-wrapper {
-    width: auto; /* Adjust width as needed */
+/* Base styles */
+body, html {
     height: 100%;
-    overflow-y: auto;
-    margin-top: 10%;
-}
-
-#page-content-wrapper {
-    flex-grow: 1;
-    background-color: #fff; /* or any color you prefer */
-}
-
-.sidebar-logo {
+    margin: 0;
+  }
+  
+  #sidebar {
+    background: #333;
+    color: white;
+    width: 250px;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Ensure sidebar is above other content but below the top nav */
+    transition: all 0.3s;
+  }
+  
+  #sidebar.active {
+    left: 0;
+  }
+  
+  #sidebar .sidebar-header {
+    padding: 20px;
+    background: #555;
+  }
+  
+  #sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #47748b;
+  }
+  
+  #sidebar ul p {
+    color: #fff;
     padding: 10px;
-    background-color: #243668; /* same as body background for continuity */
-}
+  }
+  
+  #sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+    color: white;
+    transition: 0.3s;
+    text-decoration: none;
+  }
+  
+  #sidebar ul li a:hover {
+    color: #7386D5;
+    background: #fff;
+  }
+  
+  #content {
+    transition: margin-left 0.3s;
+    padding: 20px;
+    margin-left: 250px; /* Adjusted margin to prevent overlap with sidebar */
+  }
+  
+  /* Mobile style */
+  @media (
+    max-width: 768px) {
+    #sidebar {
+    left: -250px; /* Sidebar starts off-screen on smaller screens */
+    }
+    #sidebar.active {
+    left: 0; /* Sidebar comes into view when active */
+    }
+    #content {
+    padding: 20px;
+    margin-left: 0; /* Content takes full width when sidebar is not active */
+    }
+    #content.active {
+    margin-left: 250px; /* Content moves to make space for the sidebar when it's active */
+    }
+    .navbar-top {
+        z-index: 1010; /* Higher z-index than sidebar */
+      }
 
-/* Ensure the main wrapper is full height */
-#content-wrapper {
-    min-height: 100vh;
-}
-
-/* Style for active state */
-.list-group-item.active {
-    background-color: #f8f9fa;
-    color: #333;
-    /* Additional styles for active state */
-}
+    }
+  

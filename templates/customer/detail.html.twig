@@ -1,74 +1,141 @@
 {# templates/customer/detail.html.twig #}
 {% extends 'base.html.twig' %}
-{% block stylesheets %}
-<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<link rel="stylesheet" href="{{ asset('css/detail.css') }}">
-{% endblock %}
 
 {% block body %}
-<body style="background-color: #243668;">
-    <div class="d-flex" id="wrapper">
-        <div class="bg-light border-right" id="sidebar-wrapper">
-            <div class="list-group list-group-flush">
-              <div class="bg-light border-right" id="sidebar-wrapper">
-            <div class="list-group list-group-flush">
-                <a href="#allgemein" data-id="1" class="list-group-item list-group-item-action bg-light">Allgemein</a>
-                <a href="#netz" data-id="2" class="list-group-item list-group-item-action bg-light">Netz</a>
-                <a href="#server" data-id="3" class="list-group-item list-group-item-action bg-light">Server</a>
-                <a href="#clients" data-id="4" class="list-group-item list-group-item-action bg-light">Clients</a>
-                <a href="#user" data-id="5" class="list-group-item list-group-item-action bg-light">User / Pwd's</a>
-                <a href="#router" data-id="6" class="list-group-item list-group-item-action bg-light">Router / Firewall</a>
-                <a href="#provider" data-id="7" class="list-group-item list-group-item-action bg-light">Provider</a>
-                <a href="#fernwartung" class="list-group-item list-group-item-action bg-light">Fernwartung</a>
-                <a href="#backup" class="list-group-item list-group-item-action bg-light">Backup</a>
-                <a href="#USV" class="list-group-item list-group-item-action bg-light">USV</a>
-                <a href="#antivirus" class="list-group-item list-group-item-action bg-light">Antivirus</a>
-                <a href="#software" class="list-group-item list-group-item-action bg-light">Software</a>
-                <a href="#sonstiges" class="list-group-item list-group-item-action bg-light">Sonstige Informationen</a>
+<link rel="stylesheet" href="{{ asset('css/detail.css') }}">
+<body>
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3 class="customer-name">{{ customer.name }}</h3>
             </div>
-        </div>
-            </div>
-        </div>
-        <div id="page-content-wrapper">
-        <nav class="navbar">
-            <a class="navbar-brand" href="{{ path('home') }}">
-                <img src="{{ asset('images/nnclogo.png') }}" alt="NNC Logo">
-                {{ customer.name }}
-            </a>
-        </nav>
-            <div class="container-fluid">
-                <h1 class="mt-4">Schnelldokumentation:</h1>
-                <div data-id="1" id="allgemein" class="content-section">
-                </div>
-                <div id="netz" class="content-section">
-                </div>
-                <div id="server" class="content-section">
-                </div>
-                <div id="clients" class="content-section">
-                <h1>test</h1>
-                </div>
-                <div id="user" class="content-section">
-                </div>
-                <div id="router" class="content-section">
-                </div>
-                <div id="provider" class="content-section">
-                </div>
-                <div id="fernwartung" class="content-section">
-                </div>
-                <div id="backup" class="content-section">
-                </div>
-                <div id="USV" class="content-section">
-                </div>
-                <div id="antivirus" class="content-section">
-                </div>
-                <div id="software" class="content-section">
-                </div>
-                <div id="sonstiges" class="content-section">
-                </div>
-            </div>
+
+            <ul class="list-unstyled components">
+                <li class="active">
+<a href="#allgemeinContent" class="sidenav-link"><i class="fas fa-info-circle icon"></i> Allgemein</a>
+</li>
+<li>
+<a href="#netzContent" class="sidenav-link"><i class="fas fa-network-wired icon"></i> Netz</a>
+</li>
+<li>
+<a href="#serverContent" class="sidenav-link"><i class="fas fa-server icon"></i> Server</a>
+</li>
+<li>
+<a href="#clientsContent" class="sidenav-link"><i class="fas fa-desktop icon"></i> Clients</a>
+</li>
+<li>
+<a href="#userPwdContent" class="sidenav-link"><i class="fas fa-user-lock icon"></i> User /Pwd's</a>
+</li>
+<li>
+<a href="#routerFirewallContent" class="sidenav-link"><i class="fas fa-shield-alt icon"></i> Router/Firewall</a>
+</li>
+<li>
+<a href="#providerContent" class="sidenav-link"><i class="fas fa-plug icon"></i> Provider</a>
+</li>
+<li>
+<a href="#remoteMaintenanceContent" class="sidenav-link"><i class="fas fa-tools icon"></i> Fernwartung</a>
+</li>
+<li>
+<a href="#backupContent" class="sidenav-link"><i class="fas fa-copy icon"></i> Backup</a>
+</li>
+<li>
+<a href="#upsContent" class="sidenav-link"><i class="fas fa-battery-three-quarters icon"></i> USV</a>
+</li>
+<li>
+<a href="#antivirusContent" class="sidenav-link"><i class="fas fa-virus icon"></i> Antivirus/Software</a>
+</li>
+<li>
+<a href="#applicationSoftwareContent" class="sidenav-link"><i class="fas fa-th-list icon"></i> Anwendersoftware</a>
+</li>
+<li>
+<a href="#otherInfo
+
+Content" class="sidenav-link"><i class="fas fa-asterisk icon"></i> Sonstige Informationen</a>
+</li>
+</ul>
+</nav>
+    <!-- Inline-Bearbeitungsfeld und Navigationsknöpfe -->
+    <div id="editContent" class="edit-section">
+        <div class="edit-controls">
+            <button id="editButton" class="btn btn-primary">Inhalt bearbeiten</button>
+            <a href="/doku/kundendoku" class="btn btn-secondary">Zurück zur Übersicht</a>
         </div>
     </div>
+    <!-- Page Content -->
+    <div id="content">
+        <!-- Placeholder for Allgemein content; this will be shown by default -->
+        <div id="allgemeinContent" class="content-section active">
+            <!-- Content for Allgemein -->
+        </div>
+
+        <!-- Placeholder for each content section which will be loaded on click -->
+        <div id="netzContent" class="content-section">
+            <!-- Content for Netz -->
+        </div>
+</div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const sidebar = document.getElementById('sidebar');
+  const content = document.getElementById('content');
+  const toggleSidebarBtn = document.getElementById('toggleSidebar');
+  const contentSections = document.querySelectorAll('.content-section');
+
+  // Function to toggle sidebar visibility
+  function toggleSidebar() {
+    sidebar.classList.toggle('active');
+    // On smaller screens, adjust the content's margin based on the sidebar state
+    if (window.innerWidth < 768) {
+      content.classList.toggle('active');
+    }
+  }
+
+  // Event listener for the toggle button
+  toggleSidebarBtn.addEventListener('click', toggleSidebar);
+
+  // Initialize sidebar as active on larger screens
+  if (window.innerWidth >= 768) {
+    sidebar.classList.add('active');
+    content.classList.add('active');
+  }
+
+  // Function to hide all content sections
+  function hideAllSections() {
+    contentSections.forEach(function(section) {
+      section.style.display = 'none';
+    });
+  }
+
+  // Function to deactivate all sidebar links
+  function deactivateAllSidebarLinks() {
+    document.querySelectorAll('#sidebar .components li').forEach(function(li) {
+      li.classList.remove('active');
+    });
+  }
+
+  // Event delegation to handle click on sidebar
+  document.querySelector('#sidebar ul').addEventListener('click', function(e) {
+    const target = e.target.closest('a.sidenav-link');
+    if (target) {
+      const contentToShow = document.querySelector(target.getAttribute('href'));
+      hideAllSections();
+      deactivateAllSidebarLinks();
+      target.parentElement.classList.add('active');
+      contentToShow.style.display = 'block';
+      // Close the sidebar if on mobile view
+      if (window.innerWidth < 768) {
+        toggleSidebar();
+      }
+    }
+  });
+
+  // Initially hide all sections except the active one
+  hideAllSections();
+  document.querySelector('.content-section.active').style.display = 'block';
+});
+</script>
 </body>
 {% endblock %}
 

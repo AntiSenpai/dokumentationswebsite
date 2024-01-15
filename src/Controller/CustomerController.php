@@ -70,6 +70,7 @@ class CustomerController extends AbstractController
         return $this->render('customer/detail.html.twig', [
             'customer' => $customer,
             'generalinfo' => $generalInfo,
+            'currentPage' => 'customerDetail'
         ]);
     }
     

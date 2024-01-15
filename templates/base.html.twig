@@ -7,11 +7,13 @@
     <title>{% block title %}NNC{% endblock %}</title>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8= sha256-T+aPohYXbm0fRYDpJLr+zJ9RmYTswGsahAoIsNiMld4=" crossorigin="anonymous"></script>
      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
 </head>
 <body>
+{% if currentPage is defined and currentPage == 'customerDetail' %}
     <nav class="navbar-nav-top">
         <div class="navbar-nav-left">
             <img src="{{ asset('images/detaillogo.png') }}" alt="NNC Logo">
@@ -28,7 +30,7 @@
         </div>
         </div>
     </nav>
-
+{% else %}
     <nav class="navbar-nav-main">
         <ul class="nav-nav">
             <li><a href="{{ path('home') }}" class="nav-nav-link">Übersicht</a></li>
@@ -36,7 +38,7 @@
             <li><a href="{{ path('zeiterfassung') }}" class="nav-nav-link">Zeitraffer</a></li>
         </ul>
     </nav>
-
+{% endif %}
     {% block body %}
     {% endblock %}
 

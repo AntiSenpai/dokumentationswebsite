@@ -24,6 +24,7 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "@ckeditor/ckeditor5-build-classic": "^40.2.0"
+        "@ckeditor/ckeditor5-build-classic": "^40.2.0",
+        "tinymce": "^6.8.2"
     }
 }
