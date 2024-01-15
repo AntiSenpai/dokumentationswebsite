@@ -21,10 +21,10 @@ class CustomerType extends AbstractType
         $builder
         ->add('name', TextType::class)
         ->add('location', TextType::class)
-        ->add('createdAt', DateTimeType::class, [
+        ->add('created_at', DateTimeType::class, [
             // Custom options for the createdAt field
         ])
-        ->add('save', SubmitType::class, ['label' => 'Kunden Hinzufügen'])
+        ->add('save', SubmitType::class, ['label' => 'Speichern'])
         ;
     }
 

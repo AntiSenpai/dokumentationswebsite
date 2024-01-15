@@ -27,3 +27,7 @@ zeiterfassung:
 ajax_edit_generalinfo:
     path: /ajax/generalinfo/{id}
     controller: 'App\Controller\GeneralInfoController::ajaxEdit'
+
+customer_create:
+    path: /create
+    controller: 'App\Controller\CustomerController::create'

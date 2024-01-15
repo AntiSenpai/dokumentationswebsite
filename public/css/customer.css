@@ -52,6 +52,13 @@
     border: 1px solid #ccc;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Fügt Schatten hinzu für den Effekt des Ineinanderfließens */
   }
+
+  .customer-list a {
+    color: #243668;
+    text-decoration: none;
+    cursor: pointer;
+
+  }
   
   .customer-entry {
     display: flex;

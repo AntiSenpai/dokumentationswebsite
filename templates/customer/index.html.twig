@@ -26,12 +26,14 @@
   <span>Erstellt am</span>
 </div>
   {% for customer in customers %}
-  <div class="customer-entry {% if loop.index is odd %}customer-odd{% endif %}">
+  <a href="{{ path('customer_detail', {'id': customer.id}) }}">
+  <div id="customerList" class="customer-entry {% if loop.index is odd %}customer-odd{% endif %}">
     <div>{{ customer.id }}</div>
     <div>{{ customer.name }}</div>
     <div>{{ customer.location }}</div>
     <div>{{ customer.createdAt|date('d.m.Y') }}</div>
   </div>
+  </a>
   {% endfor %}
 </div>
 
@@ -50,9 +52,42 @@
         }
 </script>
 <script>
-  document.getElementById('addCustomerButton').addEventListener('click', function() {
+document.getElementById('addCustomerButton').addEventListener('click', function() {
     $('#createCustomerModal').modal('show');
-  });
+});
+
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('customerForm'); 
+    form.addEventListener('submit', function (e) {
+        e.preventDefault(); 
+        var formData = new FormData(form);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/doku/create', true); 
+
+       xhr.onload = function () {
+    if (xhr.status === 200) {
+        $('#createCustomerModal').modal('hide');
+        window.location.reload(); // This line reloads the page
+    } else {
+        console.error('An error occurred:', xhr.responseText);
+    }
+};
+
+
+function updateCustomerList() {
+    fetch('/doku/kundendoku')
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('customerList').innerHTML = html;
+        })
+        .catch(error => console.error('Error updating customer list:', error));
+}
+
+        xhr.send(formData); 
+    });
+});
 </script>
 </html>
 {% endblock %}

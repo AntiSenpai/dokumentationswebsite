@@ -50,7 +50,7 @@ class CustomerController extends AbstractController
             return $this->redirectToRoute('customer_index');
         } 
 
-        return $this->render('customer/index.html.twig', [
+        return $this->render('customer/create.html.twig', [
         'form'=> $form->createView(),
         ]);
     }
