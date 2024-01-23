@@ -3,6 +3,13 @@
 
 {% block body %}
 <link rel="stylesheet" href="{{ asset('css/detail.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script> <!-- Editor.js -->
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script> <!-- Header Tool -->
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/simple-image@latest"></script> <!-- Image Tool -->
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script> <!-- List Tool -->
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/table@latest"></script> <!-- Table Tool -->
+
 <body>
     <div id="wrapper">
         <!-- Sidebar -->
@@ -12,7 +19,7 @@
             </div>
 
             <ul class="list-unstyled components">
-                <li class="active">
+<li class="active">
 <a href="#allgemeinContent" class="sidenav-link"><i class="fas fa-info-circle icon"></i> Allgemein</a>
 </li>
 <li>
@@ -49,125 +56,822 @@
 <a href="#applicationSoftwareContent" class="sidenav-link"><i class="fas fa-th-list icon"></i> Anwendersoftware</a>
 </li>
 <li>
-<a href="#otherInfo
-
-Content" class="sidenav-link"><i class="fas fa-asterisk icon"></i> Sonstige Informationen</a>
-</li>
-</ul>
-</nav>
-    <!-- Inline-Bearbeitungsfeld und Navigationsknöpfe -->
+<a href="#otherInfoContent" class="sidenav-link"><i class="fas fa-asterisk icon"></i> Sonstige Informationen</a>
+</li>    
     <div id="editContent" class="edit-section">
         <div class="edit-controls">
             <button id="editButton" class="btn btn-primary">Inhalt bearbeiten</button>
-            <a href="/doku/kundendoku" class="btn btn-secondary">Zurück zur Übersicht</a>
+            <br>
+            <a href="/doku/kundendoku" id="backButton" class="btn btn-secondary">Zurück</a>
         </div>
     </div>
+</ul>
+</nav>
     <!-- Page Content -->
-    <div id="content">
-        <!-- Placeholder for Allgemein content; this will be shown by default -->
-        <div id="allgemeinContent" class="content-section active">
-            <!-- Content for Allgemein -->
-        </div>
+<div id="content">
+    <!-- Placeholder for Allgemein content; this will be shown by default -->
+    <div id="allgemeinContent" class="content-section active">
+        <div class="section allgemein">
+            <h2>Allgemein</h2>
+            
+            <!-- Card für Kundeninformation -->
+            <div class="card">
+                <div class="card-header">
+                    Kunde: {{ customer.name }}
+                </div>
+                <div class="card-body">
+                    <p class="form-control-static">Kunde (Kd.Nr.): {{customer.id}}</p>
+                    <p class="form-control-static">Standorte:</p>
+                    <p class="form-control-static">{{ customer.location }}</p>
+                </div>
+            </div>
 
-        <!-- Placeholder for each content section which will be loaded on click -->
-        <div id="netzContent" class="content-section">
-            <!-- Content for Netz -->
+            <!-- Card für Ansprechpartner -->
+            <div class="card editable-card">
+                <div class="card-header">
+                    Ansprechpartner
+                </div>
+                <div class="card-body quill-editor">
+                    <div class="form-group">
+                       
+                    </div>
+                </div>
+            </div>
         </div>
-</div>
-</div>
+        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+    </div>
 
+    <!-- Placeholder for Netz content; hidden by default -->
+    <div id="netzContent" class="content-section" style="display: none;">
+        <div class="section netz">
+            <h2>Netz</h2>
+
+            <!-- Card for Netzwerk Topologie -->
+            <div class="card editable-card">
+                <div class="card-header">Netzwerk Topologie</div>
+                <div class="card-body quill-editor">
+                    <p class="form-control-static">[Beschreibung der Netzwerk Topologie]</p>
+                </div>
+            </div>
+
+            <!-- Card for IP-Adressen -->
+            <div class="card editable-card">
+                <div class="card-header">
+                    IP-Adressen
+                </div>
+                <div class="card-body quill-editor">
+                    <div class="form-group">
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+    </div>
+
+    <div id="serverContent" class="content-section" style="display: none;">
+        <div class="section server">
+            <h2>Server</h2>
+
+            <!-- Card for Server Topologie -->
+            <div class="card">
+                <div class="card-header">Server Topologie</div>
+                <div class="card-body quill-editor">
+                    <p class="form-control-static">[Beschreibung der Server Topologie]</p>
+                </div>
+            </div>
+
+            <!-- Card for IP-Adressen -->
+            <div class="card editable-card">
+                <div class="card-header">IP-Adressen</div>
+                <div class="card-body quill-editor">
+                    <div class="form-group">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+    </div>
+
+    <div id="clientsContent" class="content-section" style="display: none;">
+        <div class="section clients">
+            <h2>Clients (Allgemein)</h2>
+
+            <!-- Card for Netzwerk Topologie -->
+            <div class="card editable-card">
+                <div class="card-header">Informationen</div>
+                <div class="card-body quill-editor">
+                    <p class="form-control-static">[Allgemeiner Inhalt zu Clients]</p>
+                </div>
+            </div>
+
+            <!-- Card for IP-Adressen -->
+            <div class="card editable-card">
+                <div class="card-header">Clients</div>
+                <div class="card-body quill-editor">
+                    <div class="form-group">
+                        <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Hersteller</th>
+                                <th scope="col">IP-Range/DHCP</th>
+                                <th scope="col">Anzahl/Alter</th>
+                                <th scope="col">Sonstiges</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+    </div>
+
+    <div id="userPwdContent" class="content-section" style="display: none;">
+        <div class="section userpwd">
+            <h2>User / Pwd´s</h2>
+
+            <!-- Card for Netzwerk Topologie -->
+            <div class="card editable-card">
+                <div class="card-header">Allgemein</div>
+                <div class="card-body quill-editor">
+                    <p class="form-control-static">[Allgemeine Informationen zu User / Pwds]</p>
+                </div>
+            </div>
+
+            <!-- Card for IP-Adressen -->
+            <div class="card editable-card">
+                <div class="card-header"></div>
+                <div class="card-body quill-editor">
+                    <div class="form-group">
+                        <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Domänenbenutzer</th>
+                                <th scope="col">Passwort</th>
+                                <th scope="col">Benutzer wenn bekannt</th>
+                                <th scope="col">Sonstiges</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+    </div>
+
+    <div id="routerFirewallContent" class="content-section" style="display: none;">
+        <div class="section routerfirewall">
+            <h2>Router Firewall</h2>
+
+            <!-- Card for Netzwerk Topologie -->
+            <div class="card editable-card">
+                <div class="card-header">Topologie</div>
+                <div class="card-body quill-editor">
+                    <p class="form-control-static">[Allgemeine Informationen zu Router/Firewall]</p>
+                </div>
+            </div>
+
+            <!-- Card for IP-Adressen -->
+            <div class="card editable-card">
+                <div class="card-header">Router oder Firewall</div>
+                <div class="card-body quill-editor">
+                    <div class="form-group">
+                        <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Typ</th>
+                                <th scope="col">IP</th>
+                                <th scope="col">Admin-User/Passwort</th>
+                                <th scope="col">Zugriff</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+    </div>
+
+    <div id="providerContent" class="content-section" style="display: none;">
+        <div class="section provider">
+            <h2>Provider</h2>
+
+            <!-- Card for Topologie -->
+            <div class="card editable-card">
+                <div class="card-header"> Topologie</div>
+                <div class="card-body quill-editor">
+                    <p class="form-control-static">[Allgemeine Informationen zum Provider]</p>
+                </div>
+            </div>
+
+            <!-- Card for IP-Adressen -->
+            <div class="card editable-card">
+                <div class="card-header">Provider</div>
+                <div class="card-body quill-editor">
+                    <div class="form-group">
+                        <table class="table">
+                            <tr>
+                                <th scope="col">Provider-DSL</th>
+                                <th scope="col">Benutzername</th>
+                                <th scope="col">Passwort</th>
+                                <th scope="col">Tarif/Sonstiges</th>
+                            </tr>
+                            <tr>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                            </tr>
+                            <tr>
+                                <th scope="col">Provider-Mail</th>
+                                <th scope="col">Benutzername</th>
+                                <th scope="col">Passwort</th>
+                                <th scope="col">pop3/smtp-Server</th>
+                            </tr>
+                            <tr>
+                                <td>t</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th scope="col">Provider-WWW</th>
+                                <th scope="col">Benutzername</th>
+                                <th scope="col">Passwort</th>
+                                <th scope="col">Admin-URL</th>
+                            </tr>
+                            <tr>
+                                <td>t</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+    </div>
+
+    <div id="remoteMaintenanceContent" class="content-section" style="display: none;">
+        <div class="section remotemaintenance">
+            <h2>Fernwartung</h2>
+
+            <!-- Card for Netzwerk Topologie -->
+            <div class="card editable-card">
+                <div class="card-header">Topologie</div>
+                <div class="card-body quill-editor">
+                    <p class="form-control-static">[Allgemeines zur Fernwartung]</p>
+                </div>
+            </div>
+
+            <!-- Card for IP-Adressen -->
+            <div class="card editable-card">
+                <div class="card-header">Fernwartung:</div>
+                <div class="card-body quill-editor">
+                    <div class="form-group">
+                        <table class="table">
+                            <tr>
+                                <th scope="col">VPN-Gateway (IP)</th>
+                                <th scope="col">VPN-Typ</th>
+                                <th scope="col">User / Passwort</th>
+                                <th scope="col">PSK</th>
+                            </tr>
+                            <tr>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                            </tr>
+                            <tr>
+                                <th scope="col">Typ (RDP/VNC)</th>
+                                <th scope="col">IP / DNS-Name</th>
+                                <th scope="col">Admin-User / Passwort</th>
+                                <th scope="col">Zugriff (VPN/Direkt)</th>
+                            </tr>
+                            <tr>
+                                <td>t</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+    </div>
+
+
+    <div id="backupContent" class="content-section" style="display: none;">
+        <div class="section netz">
+            <h2>Backup</h2>
+
+            <!-- Card for Netzwerk Topologie -->
+            <div class="card editable-card">
+                <div class="card-header">Topologie</div>
+                <div class="card-body quill-editor">
+                    <p class="form-control-static">[Beschreibung]</p>
+                </div>
+            </div>
+
+            <!-- Card for IP-Adressen -->
+            <div class="card editable-card">
+                <div class="card-header">Backup:</div>
+                <div class="card-body quill-editor">
+                    <div class="form-group">
+                        <table class="table">
+                            <tr>
+                                <th scope="col">Software</th>
+                                <th scope="col">Server</th>
+                                <th scope="col">Hardware</th>
+                                <th scope="col">Anmerkungen</th>
+                            </tr>
+                            <tr>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+    </div>
+
+    <div id="upsContent" class="content-section" style="display: none;">
+        <div class="section ups">
+            <h2>USV</h2>
+
+            <!-- Card for Netzwerk Topologie -->
+            <div class="card editable-card">
+                <div class="card-header">Topologie</div>
+                <div class="card-body quill-editor">
+                    <p class="form-control-static">[Beschreibung]</p>
+                </div>
+            </div>
+
+            <!-- Card for IP-Adressen -->
+            <div class="card editable-card">
+                <div class="card-header">USV:</div>
+                <div class="card-body quill-editor">
+                    <div class="form-group">
+                        <table class="table">
+                            <tr>
+                                <th scope="col">Netzwerk (IP)</th>
+                                <th scope="col">Domäne</th>
+                                <th scope="col">Gateway</th>
+                                <th scope="col">DNS</th>
+                            </tr>
+                            <tr>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+    </div>
+
+    <div id="antivirusContent" class="content-section" style="display: none;">
+        <div class="section netz">
+            <h2>Antivirus / Software</h2>
+
+            <!-- Card for Netzwerk Topologie -->
+            <div class="card editable-card">
+                <div class="card-header">Topologie</div>
+                <div class="card-body quill-editor">
+                    <p class="form-control-static">[Beschreibung]</p>
+                </div>
+            </div>
+
+            <!-- Card for IP-Adressen -->
+            <div class="card editable-card">
+                <div class="card-header">Antivirus-Software</div>
+                <div class="card-body quill-editor">
+                    <div class="form-group">
+                        <table class="table">
+                            <tr>
+                                <th scope="col">Software</th>
+                                <th scope="col">Server/Clients</th>
+                                <th scope="col">Admin-User/Passwort</th>
+                                <th scope="col">Version / Sonstiges</th>
+                            </tr>
+                            <tr>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+    </div>
+
+    <div id="applicationSoftwareContent" class="content-section" style="display: none;">
+        <div class="section netz">
+            <h2>Anwendersoftware</h2>
+
+            <!-- Card for Netzwerk Topologie -->
+            <div class="card editable-card">
+                <div class="card-header">Topologie</div>
+                <div class="card-body quill-editor">
+                    <p class="form-control-static">[Beschreibung]</p>
+                </div>
+            </div>
+
+            <!-- Card for IP-Adressen -->
+            <div class="card editable-card">
+                <div class="card-header">Anwendersoftware</div>
+                <div class="card-body quill-editor">
+                    <div class="form-group">
+                        <table class="table">
+                            <tr>
+                                <th scope="col">Software</th>
+                                <th scope="col">Server/Clients</th>
+                                <th scope="col">Admin-User/Passwort</th>
+                                <th scope="col">Version / Sonstiges</th>
+                            </tr>
+                            <tr>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                                <td>test</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+    </div>
+
+    <div id="otherInfoContent" class="content-section" style="display: none;">
+        <div class="section netz">
+            <h2>Sonstige Informationen</h2>
+
+            <!-- Card for IP-Adressen -->
+            <div class="card editable-card">
+                <div class="card-header">Sonstige Anwendungen/Informationen</div>
+                <div class="card-body quill-editor">
+                    <p class="form-control-static">[IP-Adressen Informationen]</p>
+                </div>
+            </div>
+        </div>
+        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+    </div>
+
+
+
+
+
+    <!-- Weitere content-sections hier hinzufügen ... -->
+    <!-- Button zum Hinzufügen neuer Cards -->
+</div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  const sidebar = document.getElementById('sidebar');
-  const content = document.getElementById('content');
-  const toggleSidebarBtn = document.getElementById('toggleSidebar');
-  const contentSections = document.querySelectorAll('.content-section');
+    const sidebarLinks = document.querySelectorAll('#sidebar .sidenav-link');
+    const contentSections = document.querySelectorAll('.content-section');
+    const backButton = document.getElementById('backButton');
+    let editMode = localStorage.getItem('editMode') === 'true';
 
-  // Function to toggle sidebar visibility
-  function toggleSidebar() {
-    sidebar.classList.toggle('active');
-    // On smaller screens, adjust the content's margin based on the sidebar state
-    if (window.innerWidth < 768) {
-      content.classList.toggle('active');
+    function adjustTableHeight() {
+        document.querySelectorAll('.card-body .ce-table__content').forEach(table => {
+            let cardBodyHeight = table.closest('.card-body').clientHeight;
+            table.style.height = cardBodyHeight + 'px';
+
+            let tableHeight = table.scrollHeight;
+            if(tableHeight > cardBodyHeight) {
+                table.closest('.card').style.height = (table.closest('.card').clientHeight + (tableHeight - cardBodyHeight)) + 'px';
+            }
+        });
     }
-  }
 
-  // Event listener for the toggle button
-  toggleSidebarBtn.addEventListener('click', toggleSidebar);
 
-  // Initialize sidebar as active on larger screens
-  if (window.innerWidth >= 768) {
-    sidebar.classList.add('active');
-    content.classList.add('active');
-  }
-
-  // Function to hide all content sections
-  function hideAllSections() {
-    contentSections.forEach(function(section) {
-      section.style.display = 'none';
-    });
-  }
-
-  // Function to deactivate all sidebar links
-  function deactivateAllSidebarLinks() {
-    document.querySelectorAll('#sidebar .components li').forEach(function(li) {
-      li.classList.remove('active');
-    });
-  }
-
-  // Event delegation to handle click on sidebar
-  document.querySelector('#sidebar ul').addEventListener('click', function(e) {
-    const target = e.target.closest('a.sidenav-link');
-    if (target) {
-      const contentToShow = document.querySelector(target.getAttribute('href'));
-      hideAllSections();
-      deactivateAllSidebarLinks();
-      target.parentElement.classList.add('active');
-      contentToShow.style.display = 'block';
-      // Close the sidebar if on mobile view
-      if (window.innerWidth < 768) {
-        toggleSidebar();
-      }
-    }
-  });
-
-  // Initially hide all sections except the active one
-  hideAllSections();
-  document.querySelector('.content-section.active').style.display = 'block';
-});
-</script>
-</body>
-{% endblock %}
-
-{% block javascripts %}
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var sidebarLinks = document.querySelectorAll('.list-group-item');
-
-    sidebarLinks.forEach(function(link) {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-
-            var contentSections = document.querySelectorAll('.content-section');
-            contentSections.forEach(function(section) { section.style.display = 'none'; });
-
-            var targetSectionId = this.getAttribute('href').substring(1);
-            var targetSection = document.getElementById(targetSectionId);
-
-            var id = this.getAttribute('data-id');
-
-            if (targetSection) {
-                fetch(`/ajax/generalinfo/${id}`) // Verwenden der extrahierten ID
-                    .then(response => response.text())
-                    .then(html => {
-                        targetSection.innerHTML = html;
-                        targetSection.style.display = 'block';
-                        this.classList.add('active');
-                    })
-                    .catch(error => console.error('Error:', error));
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList') {
+                adjustTableHeight();
             }
         });
     });
+
+    document.querySelectorAll('.card-body .ce-table__content').forEach(table => {
+        observer.observe(table, { childList: true, subtree: true });
+    });
+    
+    function adjustTableSize() {
+        document.querySelectorAll('.card-body .ce-table').forEach(table => {
+            table.style.width = '100%'; // Setzt die Breite auf 100%
+        });
+    }
+    
+    function hideAllSections() {
+        contentSections.forEach(section => section.style.display = 'none');
+    }
+
+    function showSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            section.style.display = 'block';
+        }
+    }
+
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            hideAllSections();
+            const sectionId = this.getAttribute('href').substring(1);
+            showSection(sectionId);
+            sidebarLinks.forEach(lnk => lnk.parentElement.classList.remove('active'));
+            this.parentElement.classList.add('active');
+        });
+    });
+
+    backButton.addEventListener('click', function() {
+        editMode = false;
+        localStorage.setItem('editMode', editMode);
+        updateEditModeUI();
+        toggleEditableCards(editMode);
+    });
+
+    var editButton = document.getElementById('editButton');
+    editButton.addEventListener('click', function() {
+        editMode = !editMode;
+        localStorage.setItem('editMode', editMode);
+        updateEditModeUI();
+        toggleEditableCards(editMode);
+
+        if (editMode) {
+            // Initialize EditorJS for editable cards
+            document.querySelectorAll('.editable-card').forEach((card, index) => {
+                const cardBody = card.querySelector('.card-body');
+
+                // For the first card, allow only text editing
+                if (index === 0) {
+                    new EditorJS({
+                        holder: cardBody,
+                        tools: {
+                            header: Header,
+                            paragraph: Paragraph
+                        }
+                    });
+                }
+                // For the second card, initialize with table and apply restrictions
+                else if (index === 1) {
+                    const editor = new EditorJS({
+                        holder: cardBody,
+                        tools: {
+                            table: {
+                                class: Table,
+                                inlineToolbar: true,
+                                config: {
+                                    readOnly: true // Make table headers read-only
+                                }
+                            }
+                        },
+                        data: {
+                            // Initial table data
+                        },
+                        // Custom onReady function for table restrictions
+                        onReady: function() {
+                            // Prevent adding new blocks
+                            this.blocks.getBlockByIndex = () => {};
+                        }
+                    });
+
+                    // Apply custom styling to the table
+                    card.querySelector('.codex-editor__redactor').style.cssText = 'custom styling here';
+                }
+                // Prevent scrollable cards
+                cardBody.style.overflow = 'hidden';
+
+                card.editorInstance = editor;
+            });
+        } else {
+            // Disable editing when exiting edit mode
+            document.querySelectorAll('.editable-card').forEach(card => {
+                if (card.editorInstance) {
+                    card.editorInstance.destroy();
+                    card.editorInstance = null;
+                }
+            });
+        }
+
+        // Update UI and adjust card heights
+        updateEditModeUI();
+        adjustTableSize();
+        adjustTableHeight();
+    });
+
+    function updateEditModeUI() {
+        editButton.textContent = editMode ? 'Bearbeitungsmodus aktiv' : 'Bearbeitungsmodus inaktiv';
+        editButton.style.color = editMode ? 'lightgreen' : 'lightcoral';
+        document.querySelectorAll('.addCardBtn').forEach(btn => {
+            btn.style.display = editMode ? 'block' : 'none';
+        });
+    }
+
+    function toggleEditableCards(editMode) {
+        const editableCards = document.querySelectorAll('.editable-card .card-body, .editable-card table th, .editable-card table td');
+        editableCards.forEach(card => {
+            card.contentEditable = editMode;
+        });
+
+        const deleteButtons = document.querySelectorAll('.editable-card .delete-btn');
+        deleteButtons.forEach(btn => {
+            btn.style.display = editMode ? 'block' : 'none';
+            btn.addEventListener('click', function(event) {
+                event.stopPropagation();
+                if (!confirm('Confirm deletion')) return;
+                btn.closest('.card').remove();
+            });
+        });
+    }
+
+    function addDeleteButtonToCardHeader(card) {
+        if (!card.querySelector('.delete-btn')) {
+            let deleteBtn = document.createElement('button');
+            deleteBtn.classList.add('delete-btn');
+            deleteBtn.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+            deleteBtn.style.display = 'none';
+            card.querySelector('.card-header').appendChild(deleteBtn);
+        }
+    }
+
+   function initializeEditorJSForTables(card, initialData) {
+        new EditorJS({
+            holder: card.querySelector('.card-body'),
+            readOnly: !editMode,
+            tools: { table: Table },
+            data: initialData,
+            onReady: function() {
+                try {
+                    // Debugging
+                    console.log('EditorJS initialized', this);
+
+                    // Check if the editor instance is ready and blocks are available
+                    if (this && this.blocks && typeof this.blocks.getBlockByIndex === 'function') {
+                        let lastBlockIndex = this.blocks.getBlocksCount() - 1;
+                        let lastBlock = this.blocks.getBlockByIndex(lastBlockIndex);
+                        
+                        if (lastBlock) {
+                            lastBlock.readOnly = true;
+                        }
+                    } else {
+                        console.error('Blocks object is not initialized correctly.');
+                    }
+                } catch (error) {
+                    console.error('Error in onReady:', error);
+                }
+            }
+        });
+    }
+
+    // Initialize Editor.js for existing cards with tables
+    document.querySelectorAll('.allgemein .editable-card').forEach(card => {
+        const initialData = {
+            blocks: [{
+                type: "table",
+                data: {
+                    content: [
+                        ["Ansprechpartner", "Telefon", "Mobil", "E-Mail"],
+                        ["Technisch:", "", "", ""],
+                        ["Vor Ort:", "", "", ""]
+                    ]
+                }
+            }]
+        };
+        initializeEditorJSForTables(card, initialData);
+        addDeleteButtonToCardHeader(card);
+        adjustTableSize();
+        adjustTableHeight();
+    });
+
+    document.querySelectorAll('.netz .editable-card').forEach(card => {
+        const initialData = {
+            blocks: [{
+                type: "table",
+                data: {
+                    content: [
+                        ["Netzwerk (IP)", "Domäne", "Gateway", "DNS"],
+                        ["", "", "", ""]
+                    ]
+                }
+            }]
+        };
+        initializeEditorJSForTables(card, initialData);
+        addDeleteButtonToCardHeader(card);
+        adjustTableSize();
+        adjustTableHeight();
+    });
+
+    document.querySelectorAll('.server .editable-card').forEach(card => {
+        const initialData = {
+            blocks: [{
+                type: "table",
+                data: {
+                    content: [
+                        ["Servername", "IP", "Domäne/Benutzer", "Passwort", "Hauptfunktion"],
+                        ["", "", "", "", ""]
+                    ]
+                }
+            }]
+        };
+        initializeEditorJSForTables(card, initialData);
+        addDeleteButtonToCardHeader(card);
+        adjustTableSize();
+        adjustTableHeight();
+    });
+
+    document.querySelectorAll('.editable-card').forEach(card => {
+        addDeleteButtonToCardHeader(card);
+    });
+
+    document.querySelectorAll('.addCardBtn').forEach(addCardBtn => {
+        addCardBtn.addEventListener('click', function() {
+            if (!editMode) return;
+
+            let cardTitle = prompt("Geben Sie den Titel der neuen Karte ein", "Neue Karte");
+            let newCard = document.createElement('div');
+            newCard.className = 'card editable-card';
+            newCard.innerHTML = `<div class="card-header">${cardTitle}<button class="delete-btn" style="display: none;"><i class="fa-solid fa-circle-xmark"></i></button></div>` +
+                                `<div class="card-body"></div>`;
+
+            this.closest('.content-section').querySelector('.section').appendChild(newCard);
+            addDeleteButtonToCardHeader(newCard);
+
+            const editor = new EditorJS({
+                holder: newCard.querySelector('.card-body'),
+                tools: {
+                    header: Header,
+                    list: List,
+                    image: SimpleImage,
+                    table: Table
+                }
+            });
+            newCard.editorInstance = editor;
+        });
+    });
+
+    hideAllSections();
+    updateEditModeUI();
+    adjustTableSize();
+    adjustTableHeight();
+    toggleEditableCards(editMode);
+    showSection('allgemeinContent');
+    document.querySelector('#sidebar .sidenav-link[href="#allgemeinContent"]').parentElement.classList.add('active');
 });
 </script>
+</body>
 {% endblock %}

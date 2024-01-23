@@ -1,78 +1,257 @@
 /* Base styles */
 body, html {
-    height: 100%;
-    margin: 0;
-  }
-  
-  #sidebar {
-    background: #333;
-    color: white;
-    width: 250px;
-    height: 100vh;
-    top: 0;
-    left: 0;
-    z-index: 1000; /* Ensure sidebar is above other content but below the top nav */
-    transition: all 0.3s;
-  }
-  
-  #sidebar.active {
-    left: 0;
-  }
-  
-  #sidebar .sidebar-header {
-    padding: 20px;
-    background: #555;
-  }
-  
-  #sidebar ul.components {
-    padding: 20px 0;
-    border-bottom: 1px solid #47748b;
-  }
-  
-  #sidebar ul p {
-    color: #fff;
-    padding: 10px;
-  }
-  
-  #sidebar ul li a {
-    padding: 10px;
-    font-size: 1.1em;
-    display: block;
-    color: white;
-    transition: 0.3s;
-    text-decoration: none;
-  }
-  
-  #sidebar ul li a:hover {
-    color: #7386D5;
-    background: #fff;
-  }
-  
-  #content {
-    transition: margin-left 0.3s;
-    padding: 20px;
-    margin-left: 250px; /* Adjusted margin to prevent overlap with sidebar */
-  }
-  
-  /* Mobile style */
-  @media (
-    max-width: 768px) {
-    #sidebar {
-    left: -250px; /* Sidebar starts off-screen on smaller screens */
-    }
-    #sidebar.active {
-    left: 0; /* Sidebar comes into view when active */
-    }
-    #content {
-    padding: 20px;
-    margin-left: 0; /* Content takes full width when sidebar is not active */
-    }
-    #content.active {
-    margin-left: 250px; /* Content moves to make space for the sidebar when it's active */
-    }
-    .navbar-top {
-        z-index: 1010; /* Higher z-index than sidebar */
-      }
+  height: 100%;
+  margin: 0;
+}
 
-    }
-  
+.ce-block__content, 
+.ce-toolbar__content {
+max-width: 100%;  /* example value, adjust for your own use case */
+width: 100%; /* Stellt eine Mindestbreite für jede Zelle ein, kann angepasst werden */
+height: auto;
+}
+
+.codex-editor__redactor { 
+  padding-bottom: 0 !important;
+}
+
+.section {
+  background-color: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: auto;
+  align-content: center;
+}
+
+.section h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.section h3 {
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px; /* Abstand zwischen den Karten */
+  overflow: hidden; /* Verhindert das Überlaufen von Inhalten */
+  display:block; /* Ermöglicht flexible Größenanpassung */
+  flex-direction: column; /* Vertikale Anordnung der Inhalte */
+  align-items: stretch; /* Streckt die Kinder-Elemente */
+  max-width: 80%; /* Maximale Breite */
+}
+
+
+.card-header {
+  background-color: #f8f9fa;
+  padding: 10px 15px;
+  border-bottom: 1px solid #e7e7e7;
+  font-weight: bold;
+}
+
+.card-body {
+  padding: 15px;
+  flex-grow: 1;
+  min-height: 150px;
+
+}
+
+.card-body .ce-table__content {
+  height: 100%;
+}
+
+/* Adjustments for smaller screens */
+@media (max-width: 768px) {
+  .section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    width: 90%; /* Larger width for smaller screens */
+    max-width: none; /* Remove max width restriction */
+  }
+}
+
+.form-control-static {
+padding-top: 7px;
+padding-bottom: 7px;
+}
+
+.form-group {
+margin-bottom: 15px;
+}
+
+.form-control {
+width: 100%;
+padding: 8px 12px;
+border: 1px solid #ccc;
+border-radius: 4px;
+box-sizing: border-box;
+}
+
+.btn-primary {
+background-color: #007bff;
+color: white;
+padding: 10px 15px;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+background-color: #0056b3;
+}
+
+#wrapper {
+display: flex;
+background-color: #f5f5f5;
+height: 100vh;
+}
+
+#sidebar {
+background: #333;
+color: white;
+height: 100vh;
+position: fixed;
+left: 0;
+z-index: 50; /* Ensure sidebar is above other content but below the top nav */
+transition: all 0.3s;
+display: flex;
+flex-direction: column;
+}
+
+#sidebar .sidebar-header {
+padding: 10px;
+background: #555;
+}
+
+#sidebar .active a {
+overflow-y: auto;
+color: #7386D5;
+background: #fff;
+}
+
+#sidebar ul li a {
+font-size: 1.1vw;
+}
+
+#sidebar ul.components {
+border-bottom: 1px solid #fff;
+}
+
+#sidebar ul p {
+color: #fff;
+padding: 10px;
+}
+
+#sidebar ul li a {
+padding: 10px;
+font-size: 1.1em;
+display: block;
+color: white;
+transition: 0.3s;
+text-decoration: none;
+}
+
+#sidebar ul li a:hover {
+color: #7386D5;
+background: #fff;
+}
+
+#content {
+transition: margin-left 0.3s;
+padding: 20px;
+margin-left: 250px; /* Adjusted margin to prevent overlap with sidebar */
+flex-grow: 1;
+background-color: #f5f5f5;
+}
+
+#editContent {
+display: flex;
+overflow-y: auto;
+height: 100vh;
+}
+
+#editButton {
+display: block;
+align-items: center;
+justify-content: center;
+line-height: 1;
+text-decoration: none;
+color: #fff;
+font-size: 18px;
+border-radius: 0px;
+width: 200px;
+height: 40px;
+font-weight: bold;
+border: 2px solid #333333;
+transition: 0.3s;
+box-shadow: 5px 5px 0px 0px rgba(51, 51, 51, 1);
+background-color: #333;
+}
+
+#editButton:hover {
+color: #7386D5;
+}
+
+#backButton {
+display: block;
+align-items: center;
+justify-content: center;
+line-height: 1;
+text-decoration: none;
+color: #fff;
+font-size: 18px;
+width: 200px;
+height: 40px;
+font-weight: bold;
+border: 2px solid #333333;
+transition: 0.3s;
+background-color: #333;
+}
+
+#backButton:hover {
+color: #7386D5;
+}
+
+/* Mobile style */
+@media (max-width: 768px) {
+#sidebar {
+  left: -250px; /* Sidebar starts off-screen on smaller screens */
+}
+
+#sidebar ul {
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+#sidebar ul li a {
+  font-size: 2vw;
+}
+
+#sidebar.active {
+  left: 0; /* Sidebar comes into view when active */
+}
+#content {
+  padding: 20px;
+  margin-left: 0; /* Content takes full width when sidebar is not active */
+}
+#content.active {
+  margin-left: 250px; /* Content moves to make space for the sidebar when it's active */
+}
+.navbar-top {
+  z-index: 1010; /* Higher z-index than sidebar */
+}
+
+.form-control {
+  width: 100%;
+}
+}

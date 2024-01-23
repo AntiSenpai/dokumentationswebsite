@@ -31,20 +31,32 @@
         </div>
     </nav>
 {% else %}
+    <nav class="navbar-nav-top">
+        <div class="navbar-nav-left">
+            <img src="{{ asset('images/detaillogo.png') }}" alt="NNC Logo">
+        </div>
+        <div class="navbar-nav-right">
+        <div class="user-menu">
+            <div class="user-info-box">
+                <span>Wilkommen, {{ app.user.username }}</span> |
+                 {% if is_granted('ROLE_ADMIN') %}
+                | <a href="{{ path('admin_area') }}">Admin-Bereich |</a>
+            {% endif %} 
+                <a href="{{ path('app_logout') }}">Abmelden</a>
+            </div>
+        </div>
+        </div>
+    </nav>
     <nav class="navbar-nav-main">
         <ul class="nav-nav">
             <li><a href="{{ path('home') }}" class="nav-nav-link">Übersicht</a></li>
             <li><a href="{{ path('dokumentation') }}" class="nav-nav-link">Kundendoku</a></li>
-            <li><a href="{{ path('zeiterfassung') }}" class="nav-nav-link">Zeitraffer</a></li>
+            <li><a href="{{ path('zeiterfassung') }}" class="nav-nav-link">Zeiterfassung</a></li>
         </ul>
     </nav>
 {% endif %}
     {% block body %}
     {% endblock %}
-
-<footer class="text-center text-muted py-3">
-    <p>&copy; 2023 NNC IT</p>
-</footer>
 
 </body>
 </html>
