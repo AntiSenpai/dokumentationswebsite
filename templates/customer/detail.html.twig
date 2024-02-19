@@ -77,26 +77,34 @@
             <!-- Card für Kundeninformation -->
             <div class="card">
                 <div class="card-header">
-                    Kunde: {{ customer.name }}
+                    Kundeninformationen
                 </div>
                 <div class="card-body">
-                    <p class="form-control-static">Kunde (Kd.Nr.): {{customer.id}}</p>
-                    <p class="form-control-static">Standorte:</p>
-                    <p class="form-control-static">{{ customer.location }}</p>
+                    <p><strong>ID:</strong> {{ customer.id }}</p>
+                    <p><strong>Name:</strong> {{ customer.name }}</p>
+                    <strong>Unterstandorte:</strong>
+                    <ul>
+                        <li>
+                           
+                        </li>
+                    </ul>
                 </div>
             </div>
 
             <!-- Card für Ansprechpartner -->
+            
             <div class="card editable-card-table">
                 <div class="card-header">
                     Ansprechpartner
                 </div>
                 <div class="card-body">
-                   
+
                 </div>
             </div>
+
         </div>
         <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+        <button class="btn btn-success saveContentBtn fa-solid fa-file-circle-check"></button>
     </div>
 
 
@@ -502,10 +510,10 @@ document.addEventListener('DOMContentLoaded', function() {
             readOnly: !editMode,
             onReady: function() {
 
-                const addButton = cardBody.querySelector('.ce-toolbar__actions');
+                const addButton = cardBody.querySelector('.ce-toolbar--opened');
                 if(addButton) {
-                addButton.style.display = "none";
-                addButton.parentElement.style.display = "none";
+                addButton.style.display = "none !important";
+                addButton.parentElement.style.display = "none !important";
                 addButton.style.opacity = "0";
                 addButton.style.position = "absolute";
                 }
@@ -515,6 +523,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             },
         });
+    }
+
+    function handleSubLocationClick(locationId) {
+        console.log('Sublocation clicked', locationId);
     }
 
     function getInitialDataForCard(card) {
@@ -735,6 +747,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 
+    function saveContent(editorInstance, sectionId) {
+    editorInstance.save().then((outputData) => {
+        fetch('/save-documentation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                documentId: sectionId, // Stellen Sie sicher, dass dies die eindeutige ID der Dokumentation oder des Abschnitts ist
+                content: outputData,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            alert('Inhalte erfolgreich gespeichert!');
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('Fehler beim Speichern der Inhalte.');
+        });
+    }).catch((error) => {
+        console.error('Saving failed:', error);
+    });
+    }
+
     
     sidebarLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -780,6 +818,18 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("Erfolgreich! 2");
         }
         initializeDeleteButton(card);
+    });
+
+    document.querySelectorAll('.saveContentBtn').forEach(button => {
+        button.addEventListener('click', function() {
+            const sectionId = this.closest('.content-section').id;
+            const editorInstance = window['editorInstance_${sectionId}'];
+            if(editorInstance) {
+                saveContent(editorInstance, sectionId);
+            } else {
+                console.error('Editor-Instanz nicht gefunden für', sectionId);
+            }
+        });
     });
 
 

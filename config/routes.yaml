@@ -31,3 +31,7 @@ ajax_edit_generalinfo:
 customer_create:
     path: /create
     controller: 'App\Controller\CustomerController::create'
+
+customer_list:
+    path: /list
+    controller: 'App\Controller\CustomerController::list'

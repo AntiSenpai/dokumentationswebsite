@@ -1,6 +1,7 @@
 /* Base styles */
 body, html {
   margin: 0;
+  background-color: #f5f5f5;
 }
 
 .ce-block__content, 

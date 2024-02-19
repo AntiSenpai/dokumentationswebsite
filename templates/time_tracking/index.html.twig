@@ -1,1 +1,74 @@
 {% extends 'base.html.twig' %}
+{% block title %}Zeiterfassung{% endblock %}
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zeiterfassung</title>
+  <link rel="stylesheet" href="css/zeiterfassung.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6vP0ho6Nl3z8Mk0tkwP7cINKgwF9g/FZzFcapawBbr3saeidVWymBLoBPft8zDy" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <div class="zeiterfassung-container">
+    <!-- Header-Bereich -->
+    <div class="zeiterfassung-header">
+      <div class="header-content">
+        <div class="timer-and-einsatz">
+          <div class="timer-display">
+            <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
+          </div>
+        </div>
+        <div class="pause-timer-display" id="pause-timer-display" style="display: none;">
+          <span id="pause-hours">00</span>:<span id="pause-minutes">00</span>:<span id="pause-seconds">00</span>
+        </div>
+        <button id="einsatz-button" class="btn-control einsatz-btn" onclick="openCustomerSelectionModal()">Einsatz starten</button>
+        <div class="timer-controls">
+        <button id="stop-button" style="display: none;" class="btn-control" onclick="stopTimer()">Stop</button>
+        <button id="start-button" class="btn-control" onclick="startTimer()">Starten</button>
+        <button id="pause-button" class="btn-control" onclick="pauseTimer()">Pause</button>
+        </div>
+      </div>
+    </div>
+    <!-- Einsatzzeiterfassung -->
+    <div id="einsatzTimerContainer" style="display: none;">
+    <button onclick="toggleEinsatzTimer()">Einsatz Details</button>
+    <div id="einsatzTimerDetails" style="display: none;">
+        <p>Einsatz für: <span id="einsatzKundeName"></span></p>
+        <p>Einsatzzeit: <span id="einsatzZeit">00:00:00</span></p>
+        <button onclick="startEinsatzTimer()">Start</button>
+        <button onclick="stopEinsatzTimer()">Stop</button>
+        <!-- Weitere Steuerungselemente nach Bedarf -->
+    </div>
+    </div>
+
+    <!-- Tabelle für die Zeiterfassung -->
+    <section class="zeiterfassung-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Mitarbeiter</th>
+            <th>Tag</th>
+            <th>Datum</th>
+            <th>Startzeit</th>
+            <th>Endzeit</th>
+            <th>Pause</th>
+            <th>Arbeitszeit</th>
+            <th>Soll-Ist-Differenz</th>
+          </tr>
+        </thead>
+      </table>
+    </section>
+    <div id="customerSelectionModal" style="display: none;">
+  <!-- Hier wird die Tabelle mit den Kunden gerendert -->
+</div>
+  </div>
+</div>
+<script src="{{ asset('js/zeiterfassung.js') }}"></script>
+</body>
+</html>
+{% endblock %}

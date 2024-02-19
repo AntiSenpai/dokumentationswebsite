@@ -6,17 +6,19 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title" id="createCustomerModalLabel">Neuen Kunden hinzufügen</h3>
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">
+                    
                 </button>
             </div>
             <div class="modal-body">
                 {{ form_start(form, {'attr': {'id': 'customerForm'}}) }}
                 <h5>Firma</h5>
                 {{ form_widget(form.name) }}
-                <h5>Standort</h5>
-                {{ form_widget(form.location) }}
-                <h5>Datum</h5>
-                {{ form_widget(form.created_at) }}
+                <h5>Suchnummer</h5>
+                {{ form_widget(form.suchnummer) }}
+                <h5>Erstellt am</h5>
+                {{ form_widget(form.createdAt) }}
             </div>
             <div class="modal-footer">
                 {{ form_widget(form.save) }}
@@ -25,3 +27,4 @@
         </div>
     </div>
 </div>
+

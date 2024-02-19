@@ -21,13 +21,22 @@ class CustomerRepository extends ServiceEntityRepository
         parent::__construct($registry, Customer::class);
     }
 
-    public function findBySearchTerm($searchTerm) {
-        return $this->createQueryBuilder('c')
+    public function findBySearchTerm($searchTerm = null, $limit = 4)
+{
+    $queryBuilder = $this->createQueryBuilder('c');
+
+    if (!empty($searchTerm)) {
+        $queryBuilder
             ->where('c.name LIKE :searchTerm')
-            ->setParameter('searchTerm', '%' . $searchTerm . '%')
-            ->getQuery()
-            ->getResult();
+            ->orWhere('c.suchnummer LIKE :searchTerm')
+            ->setParameter('searchTerm', '%' . $searchTerm . '%');
     }
+    
+    return $queryBuilder
+        ->setMaxResults($limit) // Beschränken Sie die Ergebnisse auf $limit
+        ->getQuery()
+        ->getResult();
+}
 
 //    /**
 //     * @return Customer[] Returns an array of Customer objects

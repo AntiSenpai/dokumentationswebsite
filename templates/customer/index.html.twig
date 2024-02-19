@@ -9,32 +9,39 @@
   <div class="search-box">
   <form action="{{ path('customer_index') }}" method="get">
     <input type="text" name="search" placeholder="Kunden suchen...">
-    <button class="search-btn" type="submit">🔍</button>
+    <button class="search-btn" type="submit"><i class="fas fa-search"></i></button>
   </form>
   </div>
-  <button type="button" class="btn btn-primary" id="addCustomerButton" data-toggle="modal" data-target="#createCustomerModal">Neuer Eintrag</button>
+  <button type="button" class="btn btn-primary" id="addCustomerButton" data-toggle="modal" data-target="#createCustomerModal">Neu </button>
 {{ include('customer/create.html.twig', {'form': createForm}) }}
 </div>
 
 <h2>Kundenverzeichnis</h2>
 
 <div class="customer-list">
-<div class="customer-list-header">
-  <span>ID</span>
-  <span>Name</span>
-  <span>Standort</span>
-  <span>Erstellt am</span>
-</div>
-  {% for customer in customers %}
-  <a href="{{ path('customer_detail', {'id': customer.id}) }}">
-  <div id="customerList" class="customer-entry {% if loop.index is odd %}customer-odd{% endif %}">
-    <div>{{ customer.id }}</div>
-    <div>{{ customer.name }}</div>
-    <div>{{ customer.location }}</div>
-    <div>{{ customer.createdAt|date('d.m.Y') }}</div>
-  </div>
-  </a>
-  {% endfor %}
+    <div class="customer-list-header">
+        <span title="ID">ID:</span>
+        <select id="displayOption">
+            <option value="name">Name</option>
+            <option value="suchnummer">Suchnummer</option>
+        </select>
+        <span class="clickable" title="Erstellt am">Erstellt am:</span>
+        <span title="Geändert">Geändert am:</span>
+        <span class="clickable" title="Geändert von">Geändert von:</span>
+    </div>
+    {% for customer in customers %}
+    <a href="{{ path('customer_detail', {'id': customer.id}) }}">
+        <div id="customerList" class="customer-entry {% if loop.index is odd %}customer-odd{% endif %}">
+            <div>{{ customer.id }}</div>
+            <div class="name-or-searchnum" data-name="{{ customer.name }}" data-searchnum="{{ customer.suchnummer }}">
+                {{ customer.name }} <!-- Standardmäßig Name anzeigen -->
+            </div>
+            <div>{{ customer.createdAt|date('d.m.Y') }}</div>
+            <div>{{ customer.updatedAt|date('d.m.Y H:i') }}</div>
+            <div>{{ customer.updatedBy.username }}</div>
+        </div>
+    </a>
+    {% endfor %}
 </div>
 
 <script>
@@ -46,16 +53,33 @@
             });
         });
 
-        function showDetails(customerId) {
-            // Logik für die Anzeige von Details und Unterstandorten des Kunden
-            console.log('Kundendetails für: ' + customerId);
-        }
 </script>
 <script>
 document.getElementById('addCustomerButton').addEventListener('click', function() {
     $('#createCustomerModal').modal('show');
 });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const displayOptionSelect = document.getElementById('displayOption');
+    const nameOrSearchnumElements = document.querySelectorAll('.name-or-searchnum');
 
+    // Function to update the display based on the selected option
+    function updateDisplay() {
+        const selectedOption = displayOptionSelect.value;
+        nameOrSearchnumElements.forEach(element => {
+            element.textContent = element.dataset[selectedOption];
+        });
+    }
+
+    // Attach an event listener to the select dropdown
+    displayOptionSelect.addEventListener('change', function() {
+        updateDisplay();
+    }); 
+
+    // Initial display update
+    updateDisplay();
+    });
 </script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {

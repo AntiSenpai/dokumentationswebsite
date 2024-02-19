@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -29,6 +31,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     private ?string $email = null;
+
+    #[ORM\Column]
+    private ?bool $isActive = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $timer = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Mitarbeiter::class)]
+    private Collection $mitarbeiters;
+
+    public function __construct()
+    {
+        $this->mitarbeiters = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -108,6 +124,60 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function isIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): static
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getTimer(): ?string
+    {
+        return $this->timer;
+    }
+
+    public function setTimer(string $timer): static
+    {
+        $this->timer = $timer;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Mitarbeiter>
+     */
+    public function getMitarbeiters(): Collection
+    {
+        return $this->mitarbeiters;
+    }
+
+    public function addMitarbeiter(Mitarbeiter $mitarbeiter): static
+    {
+        if (!$this->mitarbeiters->contains($mitarbeiter)) {
+            $this->mitarbeiters->add($mitarbeiter);
+            $mitarbeiter->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMitarbeiter(Mitarbeiter $mitarbeiter): static
+    {
+        if ($this->mitarbeiters->removeElement($mitarbeiter)) {
+            // set the owning side to null (unless already changed)
+            if ($mitarbeiter->getUser() === $this) {
+                $mitarbeiter->setUser(null);
+            }
+        }
 
         return $this;
     }
