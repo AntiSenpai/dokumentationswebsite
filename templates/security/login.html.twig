@@ -1,17 +1,35 @@
 {% block body %}
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+<link rel="icon" type="image/jpg" href="{{ asset('images/favicon.png') }}" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <div class="login-background">
     <div class="login-container">
         <form method="post" class="login-form">
             {% if error %}
-                <div class="alert alert-danger">{{ error.messageKey | trans(error.messageData, 'security') }}</div>
+               <script>
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        },
+                        icon: 'error',
+                        title: 'Falsche Anmeldedaten!'
+                    });
+
+                    Toast.fire();
+               </script>
             {% endif %}
 
             <img src="{{ asset('images/detaillogo.png') }}" alt="NNC LOGO" class="login-logo">
             <h1 class="h3 mb-3">Anmeldung erforderlich</h1>
 
-            <input type="email" name="email" placeholder="E-Mail-Adresse" class="form-control" required autofocus>
+            <input type="email" autocomplete="email" name="email" placeholder="E-Mail-Adresse" class="form-control" required autofocus>
             <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Passwort" autocomplete="current-password" required>
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
@@ -22,4 +40,23 @@
         Copyright © NNC IT
     </div>
 </div>
+<script>
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    fetch(this.action, {
+        method: 'POST',
+        body: formData
+    }).then(response => {
+        if(response.ok && response.redirected && response.url.includes('trigger_2fa')) {
+            window.open(response.url, '2FA Verification', 'width=400,height=600');
+        } else {
+            window.location.reload();
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+    });
+});
+</script>
 {% endblock %}

@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <link rel="stylesheet" href="{{ asset('css/customer.css') }}">
+<script src="{{ asset('js/doku.js') }}"></script>
   <div class="search-add-box">
   <div class="search-box">
   <form action="{{ path('customer_index') }}" method="get">
@@ -12,8 +13,13 @@
     <button class="search-btn" type="submit"><i class="fas fa-search"></i></button>
   </form>
   </div>
-  <button type="button" class="btn btn-primary" id="addCustomerButton" data-toggle="modal" data-target="#createCustomerModal">Neu </button>
-{{ include('customer/create.html.twig', {'form': createForm}) }}
+  <button type="button" class="btn btn-primary" id="addDocumentation">
+<i class="fas fa-folder-plus"></i>
+  </button>
+  <button type="button" class="btn btn-primary" id="addCustomerButton" onclick="customerModal()">
+  <i class="fas fa-user-plus"></i>
+  Neu
+</button>
 </div>
 
 <h2>Kundenverzeichnis</h2>
@@ -43,75 +49,19 @@
     </a>
     {% endfor %}
 </div>
-
-<script>
-   document.getElementById('customerSearch').addEventListener('input', function(e) {
-            var searchValue = e.target.value.toLowerCase();
-            document.querySelectorAll('.customer-entry').forEach(function(customer) {
-                var name = customer.querySelector('.customer-name').textContent.toLowerCase();
-                customer.style.display = name.includes(searchValue) ? 'block' : 'none';
-            });
-        });
-
-</script>
-<script>
-document.getElementById('addCustomerButton').addEventListener('click', function() {
-    $('#createCustomerModal').modal('show');
-});
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-    const displayOptionSelect = document.getElementById('displayOption');
-    const nameOrSearchnumElements = document.querySelectorAll('.name-or-searchnum');
-
-    // Function to update the display based on the selected option
-    function updateDisplay() {
-        const selectedOption = displayOptionSelect.value;
-        nameOrSearchnumElements.forEach(element => {
-            element.textContent = element.dataset[selectedOption];
-        });
-    }
-
-    // Attach an event listener to the select dropdown
-    displayOptionSelect.addEventListener('change', function() {
-        updateDisplay();
-    }); 
-
-    // Initial display update
-    updateDisplay();
-    });
-</script>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    var form = document.getElementById('customerForm'); 
-    form.addEventListener('submit', function (e) {
-        e.preventDefault(); 
-        var formData = new FormData(form);
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/doku/create', true); 
-
-       xhr.onload = function () {
-    if (xhr.status === 200) {
-        $('#createCustomerModal').modal('hide');
-        window.location.reload(); // This line reloads the page
-    } else {
-        console.error('An error occurred:', xhr.responseText);
-    }
-};
-
-
-function updateCustomerList() {
-    fetch('/doku/kundendoku')
-        .then(response => response.text())
-        .then(html => {
-            document.getElementById('customerList').innerHTML = html;
-        })
-        .catch(error => console.error('Error updating customer list:', error));
+<style>
+.swal2-modal {
+width: 600px;
+padding: 2rem;
 }
-
-        xhr.send(formData); 
-    });
-});
-</script>
+#create-customer-form {
+display: flex;
+flex-wrap: wrap;
+justify-content: space-between;
+}
+.form-group {
+width: 48%;
+}
+</style>
 </html>
 {% endblock %}

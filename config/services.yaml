@@ -6,10 +6,18 @@
 parameters:
 
 services:
-    # default configuration for services in *this* file
+    # Default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
+        autowire: true      # Automatically injects dependencies in your services
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        public: true       # This makes services private by default
+
+    App\Command\CreateUserCommand:
+        arguments:
+            $entityManager: '@doctrine.orm.entity_manager'
+            $passwordEncoder: '@security.password_encoder'
+            $totpProvider: '@scheb_two_factor.security.two_factor.provider.totp'
+    # Makes classes in src/ available to be used as services
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

@@ -1,0 +1,12 @@
+# See the configuration reference at https://symfony.com/bundles/SchebTwoFactorBundle/6.x/configuration.html
+scheb_two_factor:
+    security_tokens:
+        - Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken
+    totp:
+        enabled: true
+        server_name: 'NNC GmbH'
+        issuer: 'NNC GmbH'
+        leeway: 0
+        parameters:
+            image: 'http://192.168.222.24/doku/images/detaillogo.png'
+        template: 'scheb_two_factor/totp_form.html.twig'

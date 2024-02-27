@@ -1,4 +1,6 @@
 /* customer.css */
+@import '~sweetalert2/dist/sweetalert2.min.css';
+
 
 .search-add-box {
     background-color: #f0f0f0; /* leichtes Hellgrau */

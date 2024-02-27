@@ -34,6 +34,10 @@ class Customer
     #[ORM\OneToMany(mappedBy: 'customerId', targetEntity: Location::class)]
     private Collection $customerId;
 
+    private $standort;
+
+    private $standorte = [];
+
     public function __construct()
     {
         $this->customerId = new ArrayCollection();

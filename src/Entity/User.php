@@ -8,15 +8,21 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Scheb\TwoFactorBundle\Model\Totp\TotpConfiguration;
+use Scheb\TwoFactorBundle\Model\Totp\TotpConfigurationInterface;
+use Scheb\TwoFactorBundle\Model\Totp\TwoFactorInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(type: 'string', nullable: true)]
+   private $totpSecret;
+   
     #[ORM\Column(length: 180, unique: true)]
     private ?string $username = null;
 
@@ -62,6 +68,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function isTotpAuthenticationEnabled(): bool
+    {
+        return null !== $this->totpSecret;
+    }
+
+    public function getTotpAuthenticationUsername(): string {
+        return $this->email;
+    }
+
+    public function getTotpAuthenticationSecret(?string $totpSecret): self {
+        return $this->$totpSecret;
+    }
+
+    public function setTotpAuthenticationSecret(?string $totpSecret): self {
+        $this->totpSecret = $totpSecret;
+        return $this;
+    }
+
+    public function getTotpAuthenticationConfiguration(): TotpConfigurationInterface {
+        return new TotpConfiguration();
+    }
+
+    
 
     /**
      * A visual identifier that represents this user.
