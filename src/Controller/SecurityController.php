@@ -31,9 +31,10 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/trigger_2fa', name: 'trigger_2fa')]
-    public function trigger2fa(): Response
+    public function trigger2fa(TwoFactorInterface $twoFactorService): Response
     {
-        return $this->render('security/trigger2fa.html.twig');
+        $user = $this->getUser();
+        $qrCode = new QrCode($twoFactorService->getQrCodeData($user));
     }
 
     #[Route(path: '/2fa/verify', name: 'verify_2fa', methods: ['POST'])]

@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Scheb\TwoFactorBundle\Model\Totp\TotpConfiguration;
@@ -13,6 +14,7 @@ use Scheb\TwoFactorBundle\Model\Totp\TotpConfigurationInterface;
 use Scheb\TwoFactorBundle\Model\Totp\TwoFactorInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {
     #[ORM\Id]
@@ -46,6 +48,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Mitarbeiter::class)]
     private Collection $mitarbeiters;
+
+    #[ORM\Column(type: 'boolean')]
+    private $isVerified = false;
 
     public function __construct()
     {
@@ -208,6 +213,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
                 $mitarbeiter->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }

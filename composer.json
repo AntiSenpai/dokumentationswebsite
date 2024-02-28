@@ -12,6 +12,7 @@
         "doctrine/doctrine-bundle": "^2.11",
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^2.17",
+        "endroid/qr-code": "*",
         "scheb/2fa-bundle": "^7.2",
         "scheb/2fa-totp": "*",
         "symfony/asset": "7.0.*",
@@ -20,6 +21,7 @@
         "symfony/flex": "*",
         "symfony/form": "7.0.*",
         "symfony/framework-bundle": "7.0.*",
+        "symfony/mailer": "7.0.*",
         "symfony/monolog-bundle": "^3.10",
         "symfony/runtime": "7.0.*",
         "symfony/security-bundle": "7.0.*",
@@ -28,7 +30,8 @@
         "symfony/ux-react": "^2.13",
         "symfony/validator": "7.0.*",
         "symfony/webpack-encore-bundle": "^2.1",
-        "symfony/yaml": "7.0.*"
+        "symfony/yaml": "7.0.*",
+        "symfonycasts/verify-email-bundle": "*"
     },
     "require-dev": {
         "symfony/debug-bundle": "7.0.*",
