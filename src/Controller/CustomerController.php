@@ -49,13 +49,12 @@ class CustomerController extends AbstractController
     #[Route('/create', name:'customer_create')]
     public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $customer = new Customer();
-        $form = $this->createForm(CustomerType::class, $customer);
-        $form->handleRequest($request);
+        $data = json_decode($request->getContent(), true);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($customer);
-            $entityManager->flush();
+        $customer = new Customer();
+        $customer->setName($data['name']);
+
+        $hauptstandort = new Location();
 
             $this->addFlash('success','Neuer Kunde erfolgreich hinzugefügt.');
 
