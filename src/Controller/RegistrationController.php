@@ -19,10 +19,9 @@ class RegistrationController extends AbstractController
     private TotpAuthenticatorInterface $totpAuthenticator;
     private UserPasswordHasherInterface $passwordHasher;
 
-    public function __construct(EntityManagerInterface $entityManager, TotpAuthenticatorInterface $totpAuthenticator, UserPasswordHasherInterface $passwordHasher)
+    public function __construct(EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher)
     {
         $this->entityManager = $entityManager;
-        $this->totpAuthenticator = $totpAuthenticator;
         $this->passwordHasher = $passwordHasher;
     }
 
@@ -34,11 +33,6 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Generate a new TOTP secret
-            $totpSecret = $this->totpAuthenticator->generateSecret();
-
-            // Set the TOTP secret using the setter in the User entity
-            $user->setTotpAuthenticationSecret($totpSecret);
 
             // Set the isActive property
             $user->setIsActive(true); // or set it to false if you prefer

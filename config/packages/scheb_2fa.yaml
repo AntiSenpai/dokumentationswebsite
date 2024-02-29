@@ -2,11 +2,8 @@
 scheb_two_factor:
     security_tokens:
         - Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken
-    totp:
+    email:
         enabled: true
-        server_name: 'NNC GmbH'
-        issuer: 'NNC GmbH'
-        leeway: 0
-        parameters:
-            image: 'http://192.168.222.24/doku/images/detaillogo.png'
-        template: 'scheb_two_factor/totp_form.html.twig'
+        sender_email: confirm-bot@nnc-it.com
+        sender_name: 'NNC Doku-Bot'
+        digits: 6

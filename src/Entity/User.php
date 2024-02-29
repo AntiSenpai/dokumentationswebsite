@@ -9,24 +9,21 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Scheb\TwoFactorBundle\Model\Totp\TotpConfiguration;
-use Scheb\TwoFactorBundle\Model\Totp\TotpConfigurationInterface;
-use Scheb\TwoFactorBundle\Model\Totp\TwoFactorInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\Column(type: 'string', nullable: true)]
-   private $totpSecret;
    
     #[ORM\Column(length: 180, unique: true)]
     private ?string $username = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $confirmationToken;
 
     #[ORM\Column]
     private array $roles = [];
@@ -52,6 +49,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
+    public function getConfirmationToken(): ?string
+    {
+        return $this->confirmationToken;
+    }
+
+    public function setConfirmationToken(?string $confirmationToken): static
+    {
+        $this->confirmationToken = $confirmationToken;
+
+        return $this;
+    }
+
     public function __construct()
     {
         $this->mitarbeiters = new ArrayCollection();
@@ -74,47 +83,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, TwoFact
         return $this;
     }
 
-    public function isTotpAuthenticationEnabled(): bool
-    {
-        return null !== $this->totpSecret;
-    }
-
-    public function getTotpAuthenticationUsername(): string {
-        return $this->email;
-    }
-
-    public function getTotpAuthenticationSecret(?string $totpSecret): self {
-        return $this->$totpSecret;
-    }
-
-    public function setTotpAuthenticationSecret(?string $totpSecret): self {
-        $this->totpSecret = $totpSecret;
-        return $this;
-    }
-
-    public function getTotpAuthenticationConfiguration(): TotpConfigurationInterface {
-        return new TotpConfiguration();
-    }
-
-    
-
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+        // Jeder USER kriegt dadurch automatisch die Rolle "ROLE_USER"
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);

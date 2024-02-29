@@ -35,3 +35,7 @@ customer_create:
 customer_list:
     path: /list
     controller: 'App\Controller\CustomerController::list'
+
+is_confirmed:
+    path: /is_confirmed
+    controller: 'App\Controller\SecurityController::isConfirmed'

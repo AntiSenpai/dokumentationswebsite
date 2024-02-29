@@ -14,6 +14,7 @@
         "doctrine/orm": "^2.17",
         "endroid/qr-code": "*",
         "scheb/2fa-bundle": "^7.2",
+        "scheb/2fa-email": "^7.2",
         "scheb/2fa-totp": "*",
         "symfony/asset": "7.0.*",
         "symfony/console": "7.0.*",

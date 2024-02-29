@@ -1,6 +1,88 @@
 {# templates/security/trigger_2fa.html.twig #}
 
 {% block body %}
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+<link rel="icon" type="image/jpg" href="{{ asset('images/favicon.png') }}" />
+<div class="login-background">
+    <div class="login-container">
+        <div class="loading">
+        <p>Warte auf Bestätigung!</p>
+        <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+        </div>
+    </div>
+</div>
+<style>
+.login-container {
+  align-items: center;
+}
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid #243668;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #243668 transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>
+<div id="emailHolder" data-email="{{ userEmail }}" style="display: none;"></div>
+<script>
+function checkConfirmation(email) {
+    fetch('/doku/is_confirmed/' + email) // Passen Sie diesen Pfad entsprechend an
+    .then(response => response.json())
+    .then(data => {
+        if (data.confirmed) {
+            // Benutzer wurde bestätigt, weiterleiten zur Home-Seite
+            window.location.href = '/doku/kundendoku'; // Passen Sie diesen Pfad entsprechend an
+        } else {
+            // Benutzer wurde noch nicht bestätigt, erneut prüfen
+            setTimeout(() => checkConfirmation(email), 2000);
+        }
+    })
+    .catch(error => {
+        console.error('Fehler bei der Überprüfung der Bestätigung:', error);
+    });
+}
 
-{% endblock %}
+// Rufe checkConfirmation mit der E-Mail-Adresse des Benutzers auf
+document.addEventListener('DOMContentLoaded', () => {
+    const emailHolder = document.getElementById('emailHolder');
+    const email = emailHolder ? emailHolder.getAttribute('data-email') : null;
+    if (email) {
+        checkConfirmation(email);
+    } else {
+        console.error('E-Mail-Adresse nicht gefunden.');
+    }
+});
+</script>
+<style>
+.loader{-webkit-animation:loader.7s cubic-bezier(.215,.61,.355,1.000) infinite alternate-reverse both;animation:loader .7s cubic-bezier(.215,.61,.355,1.000) infinite alternate-reverse both}
+</style>
+{% endblock %}s
