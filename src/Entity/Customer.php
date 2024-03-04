@@ -15,6 +15,9 @@ class Customer
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\OneToMany(mappedBy: 'customer', targetEntity: Location::class)]
+    private $locations;
+
     #[ORM\Column(length: 255)]
     private string $name;
 
@@ -34,16 +37,63 @@ class Customer
     #[ORM\OneToMany(mappedBy: 'customerId', targetEntity: Location::class)]
     private Collection $customerId;
 
-    private $standort;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $technischerAnsprechpartner = null;
 
-    private $standorte = [];
+    #[ORM\Column(length: 255)]
+    private ?string $vorOrtAnsprechpartner = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $email = null;
+
+    private ?float $stundensatz = null;
 
     public function __construct()
     {
-        $this->customerId = new ArrayCollection();
+       $this->locations = new ArrayCollection();
     }
 
-    // ... bestehende Getter und Setter ...
+    public function getStundensatz(): ?float {
+        return $this->stundensatz;
+    }
+
+    public function setStundensatz(float $stundensatz): self {
+        $this->stundensatz = $stundensatz;
+        return $this;
+    }
+
+    public function getTechnischerAnsprechpartner(): ?User {
+        return $this->technischerAnsprechpartner;
+    }
+
+    public function setTechnischerAnsprechpartner(?User $technischerAnsprechpartner): self {
+        $this->technischerAnsprechpartner = $technischerAnsprechpartner;
+        return $this;
+    }
+
+    public function getVorOrtAnsprechpartner(): ?string {
+        return $this->vorOrtAnsprechpartner;
+    }
+
+    public function setVorOrtAnsprechpartner(string $vorOrtAnsprechpartner): self {
+        $this->vorOrtAnsprechpartner = $vorOrtAnsprechpartner;
+        return $this;
+    }
+
+    public function getEmail(): ?string {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self {
+        $this->email = $email;
+        return $this;
+    }
+
+    public function getLocations(): Collection
+    {
+        return $this->locations;
+    }
 
     public function getId(): ?int {
         return $this->id;
@@ -87,6 +137,11 @@ class Customer
 
     public function getCreatedAt(): ?\DateTimeInterface {
         return $this->CreatedAt;
+    }
+
+    public function setCreatedAt(?\DateTimeInterface $CreatedAt): self {
+        $this->CreatedAt = $CreatedAt;
+        return $this;
     }
 
     /**

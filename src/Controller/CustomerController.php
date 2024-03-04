@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Repository\LocationRepository;
 use App\Repository\CustomerDocumentationRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Customer;
 use App\Entity\GeneralInfo;
@@ -13,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\CustomerDocumentation;
 use App\Entity\Location; // Add this line to import the Location entity
@@ -46,25 +48,64 @@ class CustomerController extends AbstractController
         ]);
     }
 
-    #[Route('/create', name:'customer_create')]
-    public function create(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $data = json_decode($request->getContent(), true);
+    #[Route('/create', name: 'customer_create')]
+public function create(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response {
+    $data = json_decode($request->getContent(), true);
 
-        $customer = new Customer();
-        $customer->setName($data['name']);
-
-        $hauptstandort = new Location();
-
-            $this->addFlash('success','Neuer Kunde erfolgreich hinzugefügt.');
-
-            return $this->redirectToRoute('customer_index');
-        } 
-
-        return $this->render('customer/create.html.twig', [
-        'form'=> $form->createView(),
-        ]);
+    if (!isset($data['name'], $data['adresse'], $data['technischerAnsprechpartner'], $data['vorOrtAnsprechpartner'], $data['email'], $data['stundensatz'])) {
+        return $this->json(['success' => false, 'message' => 'Fehlende Daten.'], Response::HTTP_BAD_REQUEST);
     }
+
+    $customer = new Customer();
+    $customer->setName($data['name']);
+    $customer->setEmail($data['email']);
+    $customer->setStundensatz($data['stundensatz']);
+    $customer->setCreatedAt(new \DateTime());
+    $customer->setUpdatedAt(new \DateTime());
+    $customer->setUpdatedBy($this->getUser());
+
+    // Generierung der Suchnummer
+    $customer->setSuchnummer('K' . rand(10000000, 99999999));
+
+    // Zuweisung des technischen Ansprechpartners
+    $techAnsprechpartner = $userRepository->find($data['technischerAnsprechpartner']);
+    if (!$techAnsprechpartner) {
+        return $this->json(['success' => false, 'message' => 'Technischer Ansprechpartner nicht gefunden.'], Response::HTTP_BAD_REQUEST);
+    }
+    $customer->setTechnischerAnsprechpartner($techAnsprechpartner);
+
+    // Zuweisung des vor Ort Ansprechpartners
+    $customer->setVorOrtAnsprechpartner($data['vorOrtAnsprechpartner']);
+
+    $entityManager->persist($customer);
+
+    // Hauptstandort
+    $hauptstandort = new Location();
+    $hauptstandort->setName($data['name']);
+    $hauptstandort->setAdresse($data['adresse']);
+    $hauptstandort->setIstHauptstandort(true);
+    $hauptstandort->setCustomer($customer);
+    $entityManager->persist($hauptstandort);
+
+    // Unterstandorte
+    foreach ($data['unterstandorte'] as $unterstandortData) {
+        $unterstandort = new Location();
+        $unterstandort->setName($data['name']);
+        $unterstandort->setAdresse($unterstandortData['adresse']);
+        $unterstandort->setIstHauptstandort(false);
+        $unterstandort->setCustomer($customer);
+        $entityManager->persist($unterstandort);
+    }
+
+    try {
+        $entityManager->flush();
+        return $this->json(['success' => true, 'message' => 'Kunde mit Standorten erfolgreich erstellt.']);
+    } catch (\Exception $e) {
+        return $this->json(['success' => false, 'message' => 'Ein Fehler ist aufgetreten: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+}
+
+    
 
     #[Route('/customer/{id}', name: 'customer_detail')]
     public function detail(int $id, EntityManagerInterface $entityManager, LocationRepository $locationRepo, CustomerDocumentationRepository $docRepo): Response {
@@ -74,7 +115,9 @@ class CustomerController extends AbstractController
     }
 
     // Hier nutzen wir die Beziehung, um alle Standorte zu diesem Kunden zu finden
-    $locations = $customer->getCustomerId(); // Dies sollte in getLocations() umbenannt werden
+    // Zugriff auf die Standorte eines Kunden
+    $locations = $customer->getLocations();
+
 
     // Bereiten Sie eine Struktur vor, um die Dokumentationen organisiert nach Location-ID zu speichern
     $documentationByLocation = [];
@@ -124,7 +167,7 @@ public function list(Request $request, ManagerRegistry $doctrine): Response
 #[Route('/customer/{locationId}/add-documentation', name: 'add_customer_documentation', methods: ['POST'])]
 public function addDocumentation(Request $request, EntityManagerInterface $entityManager, $locationId): JsonResponse
 {
-    $content = $request->request->get('content'); // Angenommen, dies ist ein JSON-String oder ein strukturiertes Array.
+    $content = $request->request->get('content');
     $sectionType = $request->request->get('sectionType');
     $location = $entityManager->getRepository(Location::class)->find($locationId);
 
@@ -137,7 +180,7 @@ public function addDocumentation(Request $request, EntityManagerInterface $entit
     $documentation->setSectionType($sectionType);
     $documentation->setLocation($location);
     $documentation->setCreatedAt(new \DateTime());
-    $documentation->setUpdatedBy($this->getUser()); // Annahme, dass der aktuelle Benutzer eingeloggt ist.
+    $documentation->setUpdatedBy($this->getUser()); 
 
     $entityManager->persist($documentation);
     $entityManager->flush();
@@ -177,28 +220,21 @@ public function saveDocumentation(Request $request, EntityManagerInterface $enti
     return $this->json(['message' => 'Dokumentation erfolgreich gespeichert', 'id' => $documentation->getId()]);
 }
 
-
-
-
-
-    #[Route('/submit-customer', name: 'submit_customer')]
-    public function submitCustomer(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/api/customers', name: 'api_customers_list')]
+    public function apiCustomersList(EntityManagerInterface $entityManager): Response
     {
-        $customer = new Customer();
-        $form = $this->createForm(CustomerType::class, $customer);
-        $form->handleRequest($request);
-    
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($customer);
-            $entityManager->flush();
-    
-            $this->addFlash('success', 'Kunde erfolgreich gespeichert!');
-            return $this->redirectToRoute('customer_index');
-        }
-    
-        return $this->render('customer/create.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }    
+        $customers = $entityManager->getRepository(Customer::class)->findAll();
+
+        $data = array_map(function ($customer) {
+            return [
+                'id' => $customer->getId(),
+                'name' => $customer->getName(),
+                'suchnummer' => $customer->getSuchnummer(),
+                'createdAt' => $customer->getCreatedAt()->format('Y-m-d H:i:s'),
+                'updatedBy' => $customer->getUpdatedBy(),
+            ];
+        }, $customers);
+        return $this->json(['customers' => $data]);
+    }
 
 }

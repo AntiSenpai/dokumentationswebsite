@@ -20,6 +20,7 @@ class UserController extends AbstractController
         foreach ($userRepository->findAll() as $user) {
             $data[] = [
                 'username' => $user->getUsername(),
+                'id' => $user->getId(),
             ];
         }
 

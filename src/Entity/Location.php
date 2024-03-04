@@ -20,12 +20,9 @@ class Location
 
     #[ORM\Column(length: 255)]
     private string $name;
-
+    
     #[ORM\Column(length: 255)]
-    private string $adresse;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $beschreibung = null;
+    private $adresse;
 
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $istHauptstandort = false;
@@ -34,20 +31,19 @@ class Location
     #[ORM\JoinColumn(nullable: true)]
     private ?Location $unterstandort = null;
 
-    #[ORM\ManyToOne(inversedBy: 'customerId')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Customer $customerId = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $address = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
-
     // ... Getter und Setter für jede Eigenschaft ...
 
     public function getId(): ?int {
         return $this->id;
+    }
+
+    public function getAdresse(): ?string {
+        return $this->adresse;
+    }
+
+    public function setAdresse(string $adresse): self {
+        $this->adresse = $adresse;
+        return $this;
     }
 
     public function getCustomer(): ?Customer {
@@ -68,24 +64,6 @@ class Location
         return $this;
     }
 
-    public function getAdresse(): ?string {
-        return $this->adresse;
-    }
-
-    public function setAdresse(string $adresse): self {
-        $this->adresse = $adresse;
-        return $this;
-    }
-
-    public function getBeschreibung(): ?string {
-        return $this->beschreibung;
-    }
-
-    public function setBeschreibung(?string $beschreibung): self {
-        $this->beschreibung = $beschreibung;
-        return $this;
-    }
-
     public function isIstHauptstandort(): ?bool {
         return $this->istHauptstandort;
     }
@@ -103,42 +81,4 @@ class Location
         $this->unterstandort = $unterstandort;
         return $this;
     }
-
-    public function getCustomerId(): ?Customer
-    {
-        return $this->customerId;
-    }
-
-    public function setCustomerId(?Customer $customerId): static
-    {
-        $this->customerId = $customerId;
-
-        return $this;
-    }
-
-    public function getAddress(): ?string
-    {
-        return $this->address;
-    }
-
-    public function setAddress(string $address): static
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
 }
-

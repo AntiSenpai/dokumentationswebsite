@@ -90,4 +90,23 @@
   .customer-entry {
     padding: 5px 0;
   }
+
+  .header-container {
+    display: flex;
+    align-items: center;
+}
+
+.header-container h2 {
+    margin-right: 10px; /* Abstand zwischen H2 und Button */
+}
+
+.refreshButton {
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+}
+
   

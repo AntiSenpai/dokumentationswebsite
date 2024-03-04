@@ -5,6 +5,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <link rel="stylesheet" href="{{ asset('css/customer.css') }}">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script src="{{ asset('js/doku.js') }}"></script>
   <div class="search-add-box">
   <div class="search-box">
@@ -16,14 +18,20 @@
   <button type="button" class="btn btn-primary" id="addDocumentation">
 <i class="fas fa-folder-plus"></i>
   </button>
-  <button type="button" class="btn btn-primary" id="addCustomerButton" onclick="createCustomerModal()">
+  <button type="button" class="btn btn-primary" id="addCustomerButton">
   <i class="fas fa-user-plus"></i>
   Neu
 </button>
 </div>
 
-<h2>Kundenverzeichnis</h2>
-
+<div class="header-container">
+    <h2>Kundenverzeichnis</h2>
+    <div>
+        <button id="refreshCustomerList" class="btn refreshbutton">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </div>
+</div>
 <div class="customer-list">
     <div class="customer-list-header">
         <span title="ID">ID:</span>

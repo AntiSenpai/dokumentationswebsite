@@ -7,32 +7,42 @@
 <div class="login-background">
     <div class="login-container">
         <div class="loading">
-        <p>Warte auf Bestätigung!</p>
-        <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+          <h3>Bestätige die Anmeldung!</h3>
+          <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
         </div>
     </div>
 </div>
 <style>
 .login-container {
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 25vh; /* Adjust to fit the entire viewport height */
+    text-align: center; /* Center the text */
 }
+
+.loading {
+    display: inline-block;
+}
+
 .lds-ring {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
+    display: inline-block; /* Make the loader inline to keep it with the text */
+    width: 120px; /* Increase the size */
+    height: 120px;
+    margin-top: 20px; /* Add some space between the text and the loader */
 }
+
 .lds-ring div {
-  box-sizing: border-box;
-  display: block;
-  position: absolute;
-  width: 64px;
-  height: 64px;
-  margin: 8px;
-  border: 8px solid #243668;
-  border-radius: 50%;
-  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  border-color: #243668 transparent transparent transparent;
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 96px;
+    height: 96px;
+    margin: 6px;
+    border: 12px solid #243668;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #243668 transparent transparent transparent;
 }
 .lds-ring div:nth-child(1) {
   animation-delay: -0.45s;

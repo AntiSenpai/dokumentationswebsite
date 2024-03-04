@@ -21,7 +21,7 @@ class CustomerRepository extends ServiceEntityRepository
         parent::__construct($registry, Customer::class);
     }
 
-    public function findBySearchTerm($searchTerm = null, $limit = 4)
+    public function findBySearchTerm($searchTerm = null, $limit = 10)
 {
     $queryBuilder = $this->createQueryBuilder('c');
 
