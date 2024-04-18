@@ -187,7 +187,7 @@ function updateCustomerList() {
                     customerEntry.className = `customer-entry ${index % 2 === 0 ? '' : 'customer-odd'}`;
     
                     customerEntry.innerHTML = `
-                        <div>${customer.id}</div>
+                        <div>${customer.suchnummer}</div>
                         <div class="name-or-searchnum" data-name="${customer.name}" data-searchnum="${customer.suchnummer}">
                             ${customer.name}
                         </div>

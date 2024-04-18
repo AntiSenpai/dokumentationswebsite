@@ -37,7 +37,7 @@
     {% for customer in customers %}
         <a href="{{ path('customer_detail', {'id': customer.id}) }}" class="customer-entry-link">
             <div class="customer-entry {% if loop.index is odd %}customer-odd{% endif %}">
-                <div>{{ customer.id }}</div>
+                <div>{{ customer.suchnummer }}</div>
                 <div class="name-or-searchnum" data-name="{{ customer.name }}" data-searchnum="{{ customer.suchnummer }}">
                     {{ customer.name }}
                 </div>

@@ -31,7 +31,6 @@ class Location
     #[ORM\JoinColumn(nullable: true)]
     private ?Location $unterstandort = null;
 
-    // ... Getter und Setter für jede Eigenschaft ...
 
     public function getId(): ?int {
         return $this->id;

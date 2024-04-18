@@ -73,7 +73,7 @@ public function create(Request $request, EntityManagerInterface $entityManager, 
     $customer->setUpdatedBy($this->getUser());
 
     // Generierung der Suchnummer
-    $customer->setSuchnummer('K' . rand(10000000, 99999999));
+    $customer->setSuchnummer('K' . rand(10000, 999999));
 
     // Zuweisung des technischen Ansprechpartners
     $techAnsprechpartner = $userRepository->find($data['technischerAnsprechpartner']);
@@ -102,6 +102,7 @@ public function create(Request $request, EntityManagerInterface $entityManager, 
         $unterstandort->setAdresse($unterstandortData['adresse']);
         $unterstandort->setIstHauptstandort(false);
         $unterstandort->setCustomer($customer);
+        $unterstandort->setUnterstandort($hauptstandort);
         $entityManager->persist($unterstandort);
     }
 
@@ -121,10 +122,18 @@ public function detail(int $id, EntityManagerInterface $entityManager, LocationR
     $sectionTypes = ['allgemein', 'netz', 'server', 'clients', 'userpwd', 'routerfirewall', 'provider', 'remotemaintenance', 'backup', 'ups', 'antivirus', 'applicationsoftware', 'otherinfo'];
     $documentationData = [];
 
+    $unterstandorte = $locationRepo->findBy([
+        'customer' => $customer,
+        'istHauptstandort' => false
+    ]);
+
     foreach ($sectionTypes as $sectionType) {
         foreach(['default', 'table'] as $cardType) {
-            // Korrigieren Sie die Abfrageparameter hier
-            $doc = $docRepo->findOneBy(['customer' => $customer, 'sectionType' => $sectionType, 'cardType' => $cardType]);
+            $doc = $docRepo->findOneBy([
+                'customer' => $customer, 
+                'sectionType' => $sectionType, 
+                'cardType' => $cardType
+        ]);
             
             if(!$doc) {
                 // Wenn keine Dokumentation gefunden wurde, erstelle eine neue
@@ -153,6 +162,7 @@ public function detail(int $id, EntityManagerInterface $entityManager, LocationR
 
     return $this->render('customer/detail.html.twig', [
         'customer' => $customer,
+        'unterstandorte' => $unterstandorte,
         'documentationData' => $documentationData,
         'currentPage' => 'customerDetail'
     ]);

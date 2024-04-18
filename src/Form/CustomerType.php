@@ -20,15 +20,12 @@ class CustomerType extends AbstractType
             ->add('name', TextType::class)
             ->add('suchnummer', TextType::class)
             ->add('createdAt', DateTimeType::class, [
-                // Custom options for the createdAt field
             ])
             ->add('updatedAt', DateTimeType::class, [
-                // Custom options for the updatedAt field
                 'required' => false,
             ])
             ->add('updatedBy', EntityType::class, [
                 'class' => User::class,
-                // Custom options for the updatedBy field
                 'choice_label' => 'username',
             ])
             ->add('save', SubmitType::class, ['label' => 'Speichern'])
