@@ -8,6 +8,34 @@ home:
     path: '/'
     controller: 'App\Controller\HomeController::index'
 
+app_user:
+    path: /benutzer
+    controller: 'App\Controller\UserController::index'
+
+user_totp:
+    path: /benutzer/totp-generator
+    controller: 'App\Controller\UserController::generateTotpSecret'
+
+user_totp_setup:
+    path: /benutzer/totp-setup
+    controller: 'App\Controller\UserController::totpSetup'
+
+user_totp_verify:
+    path: /benutzer/totp-verify
+    controller: 'App\Controller\UserController::verifyTotpCode'
+
+disable_totp:
+    path: /benutzer/deaktiviere-totp
+    controller: 'App\Controller\UserController::disableTotp'
+
+toggle_email_verification:
+    path: /benutzer/toggle-email-verification
+    controller: 'App\Controller\UserController::toggleEmailVerification'
+
+app_settings:
+    path: /einstellungen
+    controller: 'App\Controller\SettingsController::index'
+
 app_login:
     path: /login
     controller: App\Controller\SecurityController::login
@@ -33,7 +61,7 @@ customer_create:
     controller: 'App\Controller\CustomerController::create'
 
 customer_list:
-    path: /list
+    path: /api/kunden/suche
     controller: 'App\Controller\CustomerController::list'
 
 is_confirmed:

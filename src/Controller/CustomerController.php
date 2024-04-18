@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 
+use App\Repository\CustomerRepository;
 use App\Repository\LocationRepository;
 use App\Repository\CustomerDocumentationRepository;
 use App\Repository\UserRepository;
@@ -10,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Customer;
 use App\Entity\GeneralInfo;
 use App\Form\CustomerType;
+use Ramsey\Uuid\Nonstandard\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\CustomerDocumentation;
-use App\Entity\Location; // Add this line to import the Location entity
+use App\Entity\Location;
 use Doctrine\Persistence\ManagerRegistry;
 
 class CustomerController extends AbstractController
@@ -30,20 +32,26 @@ class CustomerController extends AbstractController
     }
 
     #[Route('/kundendoku', name: 'customer_index')]
-    public function index(Request $request, EntityManagerInterface $entityManager): Response
+    public function index(Request $request, EntityManagerInterface $entityManager, CustomerRepository $customerRepository): Response
     {
 
         $customer = new Customer();
 
         $createForm = $this->createForm(CustomerType::class, $customer);
 
-        $searchTerm = $request->query->get('search', '');
+        // Parameter für Paginierung
+        $currentPage = max(1, $request->query->getInt('page', 1));
+        $limit = 10;
 
-        $customers = $entityManager->getRepository(Customer::class)->findBySearchTerm($searchTerm);
+        $customersPaginator = $customerRepository->getPaginatedCustomers($limit, $currentPage);
+        $totalCustomers = $customersPaginator->count();
+        $totalPages = ceil($totalCustomers / $limit);
 
         return $this->render('customer/index.html.twig', [
-            'customers' => $customers,
-            'searchTerm' => $searchTerm,
+            'customers' => $customersPaginator,
+            'totalPages' => $totalPages,
+            'currentPage' => $currentPage,
+            //'searchTerm' => $searchTerm,
             'createForm' => $createForm->createView(),
         ]);
     }
@@ -107,119 +115,149 @@ public function create(Request $request, EntityManagerInterface $entityManager, 
 
     
 
-    #[Route('/customer/{id}', name: 'customer_detail')]
-    public function detail(int $id, EntityManagerInterface $entityManager, LocationRepository $locationRepo, CustomerDocumentationRepository $docRepo): Response {
+#[Route('/customer/{id}', name: 'customer_detail')]
+public function detail(int $id, EntityManagerInterface $entityManager, LocationRepository $locationRepo, CustomerDocumentationRepository $docRepo): Response {
     $customer = $entityManager->getRepository(Customer::class)->find($id);
-    if (!$customer) {
-        throw $this->createNotFoundException('Der Kunde wurde nicht gefunden.');
+    $sectionTypes = ['allgemein', 'netz', 'server', 'clients', 'userpwd', 'routerfirewall', 'provider', 'remotemaintenance', 'backup', 'ups', 'antivirus', 'applicationsoftware', 'otherinfo'];
+    $documentationData = [];
+
+    foreach ($sectionTypes as $sectionType) {
+        foreach(['default', 'table'] as $cardType) {
+            // Korrigieren Sie die Abfrageparameter hier
+            $doc = $docRepo->findOneBy(['customer' => $customer, 'sectionType' => $sectionType, 'cardType' => $cardType]);
+            
+            if(!$doc) {
+                // Wenn keine Dokumentation gefunden wurde, erstelle eine neue
+                $doc = new CustomerDocumentation();
+                $doc->setCustomer($customer);
+                $doc->setSectionType($sectionType);
+                $doc->setCardType($cardType); 
+                $doc->setCardId(Uuid::uuid4()->toString());
+                $doc->setContent('');
+                $doc->setCreatedAt(new \DateTime());
+                $doc->setUpdatedAt(new \DateTime());
+                $doc->setUpdatedBy($this->getUser());
+                $entityManager->persist($doc);
+            }
+
+            // Sammeln der Daten für die Ausgabe, strukturiert nach sectionType und cardType
+            $documentationData[$sectionType][$cardType] = [
+                'cardId' => $doc->getCardId(),
+                'content' => $doc->getContent() ? json_decode($doc->getContent(), true) : null,
+                'sectionType' => $doc->getSectionType(),
+            ];
+        }
     }
 
-    // Hier nutzen wir die Beziehung, um alle Standorte zu diesem Kunden zu finden
-    // Zugriff auf die Standorte eines Kunden
-    $locations = $customer->getLocations();
-
-
-    // Bereiten Sie eine Struktur vor, um die Dokumentationen organisiert nach Location-ID zu speichern
-    $documentationByLocation = [];
-    foreach ($locations as $location) {
-        $documentation = $docRepo->findBy(['location' => $location]);
-        $documentationByLocation[$location->getId()] = $documentation;
-    }
+    $entityManager->flush();
 
     return $this->render('customer/detail.html.twig', [
         'customer' => $customer,
-        'locations' => $locations,
-        'documentationByLocation' => $documentationByLocation,
+        'documentationData' => $documentationData,
         'currentPage' => 'customerDetail'
     ]);
-}  
+}
 
-#[Route('/list', name: 'customer_list')]
-public function list(Request $request, ManagerRegistry $doctrine): Response
+#[Route('/api/kunden/suche', name: 'customer_list', methods: ['GET'])]
+public function list(Request $request, ManagerRegistry $doctrine, CustomerRepository $customerRepository): JsonResponse
 {
+    $searchTerm = $request->query->get('search', '');
+
     try {
-        $searchTerm = $request->query->get('search', '');
-        $entityManager = $doctrine->getManager();
-        $customerRepository = $entityManager->getRepository(Customer::class);
-
-        if (!empty($searchTerm)) {
-            $customers = $customerRepository->findBySearchTerm($searchTerm);
-        } else {
-            $customers = $customerRepository->findAll();
-        }
-
-        $data = [];
-        foreach ($customers as $customer) {
-            $data[] = [
+        $customers = $customerRepository->findBySearchTerm($searchTerm);
+        $data = array_map(function ($customer) {
+            return [
                 'id' => $customer->getId(),
                 'name' => $customer->getName(),
                 'suchnummer' => $customer->getSuchnummer(),
+                'createdAt' => $customer->getCreatedAt()->format('d.m.Y'),
+                'updatedAt' => $customer->getUpdatedAt()->format('H:i'),
+                'updatedBy' => $customer->getUpdatedBy() ? $customer->getUpdatedBy()->getUsername() : 'N/A',
             ];
-        }
+        }, $customers);
 
         return $this->json($data);
     } catch (\Exception $e) {
-        // Log the exception message or handle it as needed
-        return $this->json(['error' => 'Ein interner Serverfehler ist aufgetreten.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        return $this->json(['error' => 'Bitte wende dich an den Ersteller.' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
 
-#[Route('/customer/{locationId}/add-documentation', name: 'add_customer_documentation', methods: ['POST'])]
-public function addDocumentation(Request $request, EntityManagerInterface $entityManager, $locationId): JsonResponse
+##[Route('/customer/{locationId}/add-documentation', name: 'add_customer_documentation', methods: ['POST'])]
+#public function addDocumentation(Request $request, EntityManagerInterface $entityManager, $locationId): JsonResponse
+#{
+#    $content = $request->request->get('content');
+#    $sectionType = $request->request->get('sectionType');
+#    $location = $entityManager->getRepository(Location::class)->find($locationId);
+#
+#    if (!$location) {
+#        return $this->json(['message' => 'Standort nicht gefunden!'], Response::HTTP_NOT_FOUND);
+#    }
+#
+#    $documentation = new CustomerDocumentation();
+#    $documentation->setContent($content);
+#    $documentation->setSectionType($sectionType);
+#    $documentation->setLocation($location);
+#    $documentation->setCreatedAt(new \DateTime());
+#    $documentation->setUpdatedBy($this->getUser()); 
+#
+#    $entityManager->persist($documentation);
+#    $entityManager->flush();
+#
+#    return $this->json(['message' => 'Dokumentation erfolgreich hinzugefügt', 'id' => $documentation->getId()]);
+# }
+
+#[Route('/save-card', name: 'save_customer_documentation', methods: ['POST'])]
+public function saveDocumentation(Request $request, EntityManagerInterface $entityManager, CustomerDocumentationRepository $docRepo, CustomerRepository $customerRepo): JsonResponse
 {
-    $content = $request->request->get('content');
-    $sectionType = $request->request->get('sectionType');
-    $location = $entityManager->getRepository(Location::class)->find($locationId);
-
-    if (!$location) {
-        return $this->json(['message' => 'Standort nicht gefunden!'], Response::HTTP_NOT_FOUND);
-    }
-
-    $documentation = new CustomerDocumentation();
-    $documentation->setContent($content);
-    $documentation->setSectionType($sectionType);
-    $documentation->setLocation($location);
-    $documentation->setCreatedAt(new \DateTime());
-    $documentation->setUpdatedBy($this->getUser()); 
-
-    $entityManager->persist($documentation);
-    $entityManager->flush();
-
-    return $this->json(['message' => 'Dokumentation erfolgreich hinzugefügt', 'id' => $documentation->getId()]);
-}
-
-#[Route('/save-documentation', name: 'save_customer_documentation', methods: ['POST'])]
-public function saveDocumentation(Request $request, EntityManagerInterface $entityManager, CustomerDocumentationRepository $docRepo): JsonResponse
-{
-    // Daten aus der Anfrage extrahieren
     $data = json_decode($request->getContent(), true);
     
-    // Sicherstellen, dass die erforderlichen Daten vorhanden sind
-    if (!isset($data['documentId'], $data['content'])) {
-        return $this->json(['message' => 'Fehlende Daten'], Response::HTTP_BAD_REQUEST);
+    // Prüfen, ob alle erforderlichen Daten vorhanden sind
+    if (!isset($data['customerId'], $data['cardId'], $data['sectionType'], $data['content'])) {
+        return $this->json(['message' => 'Fehlende Daten'], 400);
     }
 
-    $documentId = $data['documentId'];
-    $content = $data['content'];
+    $customer = $customerRepo->find($data['customerId']);
+    if (!$customer) {
+        return $this->json(['message' => 'Kunde nicht gefunden'], 404);
+    }
 
-    // Finden oder erstellen Sie ein Dokumentationsobjekt basierend auf der documentId
-    $documentation = $docRepo->find($documentId);
+    $documentation = $docRepo->findOneBy(['cardId' => $data['cardId'], 'customer' => $customer, 'sectionType' => $data['sectionType']]);
+
+    // Änderungsvalidierung
+    if ($documentation && json_encode($documentation->getContent()) === json_encode($data['content'])) {
+        return $this->json(['message' => 'Keine Änderungen vorhanden'], 200);
+    }
+
+    // Löschlogik, wenn leeren Inhalt erhalten
+    if ($documentation && empty($data['content'])) {
+        $entityManager->remove($documentation);
+        $entityManager->flush();
+        return $this->json(['message' => 'Dokumentation erfolgreich gelöscht']);
+    }
+
+    // Erstellung oder Aktualisierung der Dokumentation
     if (!$documentation) {
         $documentation = new CustomerDocumentation();
-        // Weitere erforderliche Eigenschaften für die neue Dokumentation setzen
+        $documentation->setCreatedAt(new \DateTime());
+        $documentation->setCustomer($customer);
+        $documentation->setCardId($data['cardId']);
+        $documentation->setSectionType($data['sectionType']);
     }
 
-    // Inhalt und andere Daten aktualisieren
-    $documentation->setContent(json_encode($content)); // Inhalt als JSON speichern
+    $documentation->setContent(json_encode($data['content']));
     $documentation->setUpdatedAt(new \DateTime());
-    // Weitere Eigenschaften aktualisieren, falls erforderlich
+    $documentation->setUpdatedBy($this->getUser());
+
+    // Kundenaktualisierungen
+    $customer->setUpdatedAt(new \DateTime());
+    $customer->setUpdatedBy($this->getUser());
 
     $entityManager->persist($documentation);
+    $entityManager->persist($customer);
     $entityManager->flush();
 
     return $this->json(['message' => 'Dokumentation erfolgreich gespeichert', 'id' => $documentation->getId()]);
 }
-
     #[Route('/api/customers', name: 'api_customers_list')]
     public function apiCustomersList(EntityManagerInterface $entityManager): Response
     {
@@ -236,5 +274,42 @@ public function saveDocumentation(Request $request, EntityManagerInterface $enti
         }, $customers);
         return $this->json(['customers' => $data]);
     }
+
+    #[Route('/user', name: 'user_list')]
+    public function userList(UserRepository $userRepository): JsonResponse {
+    $users = $userRepository->findAll();
+    $userData = array_map(function ($user) {
+        return ['id' => $user->getId(), 'username' => $user->getUsername()];
+    }, $users);
+    return $this->json($userData);
+    }
+
+
+    #[Route('/customer/{id}/print', name: 'customer_print')]
+public function printView(int $id, EntityManagerInterface $entityManager, CustomerRepository $customerRepo, CustomerDocumentationRepository $docRepo): Response {
+    $customer = $customerRepo->find($id);
+    if (!$customer) {
+        throw $this->createNotFoundException('Der angefragte Kunde wurde nicht gefunden.');
+    }
+
+    $documentationData = [];
+    $sectionTypes = ['allgemein', 'netz', 'server', 'clients', 'userpwd', 'routerfirewall', 'provider', 'remotemaintenance', 'backup', 'ups', 'antivirus', 'applicationsoftware', 'otherinfo'];
+
+    foreach ($sectionTypes as $sectionType) {
+        $docs = $docRepo->findBy(['customer' => $customer, 'sectionType' => $sectionType]);
+        foreach ($docs as $doc) {
+            $documentationData[$sectionType][] = [
+                'cardId' => $doc->getCardId(),
+                'content' => $doc->getContent() ? json_decode($doc->getContent(), true) : [],
+                'sectionType' => $doc->getSectionType(),
+            ];
+        }
+    }
+
+    return $this->render('customer/print_view.html.twig', [
+        'customer' => $customer,
+        'documentationData' => $documentationData,
+    ]);
+}
 
 }

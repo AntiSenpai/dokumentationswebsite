@@ -1,0 +1,33 @@
+{# templates/security/trigger_2fa.html.twig #}
+
+{% block body %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+<link rel="icon" type="image/jpg" href="{{ asset('images/favicon.png') }}" />
+<div class="login-background">
+    <div class="login-container">
+        <form style="display:flex; flex-direction: column;" id="totpForm" action="{{ path('verify_totp_code') }}" method="post">
+            <img src="{{ asset('images/detaillogo.png') }}" alt="NNC Logo" style="margin-top: 1vw; width: 200px; height: auto; margin-bottom: 1rem; display: block; margin-left: auto; margin-right: auto;">
+            <p><strong>Bitte gebe den 6-stelligen Code ein:</strong></p>
+            <input id="2faInput" type="text" name="totp_code" placeholder="2fa Code" maxlength="6" min="0" max="6" inputmode="numeric" pattern="\d{6}" required autofocus>
+        </form>
+    </div>
+</div>
+<style>
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 25vh; 
+    text-align: center;
+}
+</style>
+<script>
+   document.getElementById('totpForm').totp_code.onInput = function() {
+    if (this.value.length == 6) {
+        this.form.submit();
+    }
+   }
+</script>
+{% endblock %}

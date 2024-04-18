@@ -9,6 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/simple-image@latest"></script> <!-- Image Tool -->
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script> <!-- List Tool -->
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/table@latest"></script> <!-- Table Tool -->
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/attaches@latest"></script> <!-- Attaches Tool -->
 
 <body>
     <div id="wrapper">
@@ -92,19 +93,15 @@
             </div>
 
             <!-- Card für Ansprechpartner -->
-            
-            <div class="card editable-card-table">
-                <div class="card-header">
-                    Ansprechpartner
-                </div>
+            {% if documentationData.allgemein.table %}
+            <div class="card editable-card-table" data-section-type="allgemein" data-card-id="{{ documentationData.allgemein.table.cardId }}">
+                <div class="card-header">Ansprechpartner</div>
                 <div class="card-body">
-
+                    
                 </div>
             </div>
-
+            {% endif %}
         </div>
-        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
-        <button class="btn btn-success saveContentBtn fa-solid fa-file-circle-check"></button>
     </div>
 
 
@@ -112,15 +109,16 @@
         <div class="section netz">
             <h2>Netz</h2>
 
-
-            <div class="card editable-card">
+            {% if documentationData.netz.default %}
+            <div class="card editable-card" data-section-type="netz" data-card-id="{{ documentationData.netz.default.cardId }}">
                 <div class="card-header">Netzwerk Topologie</div>
                 <div class="card-body">
                 </div>
             </div>
+            {% endif %}
 
-            <!-- Card for IP-Adressen -->
-            <div class="card editable-card-table">
+            {% if documentationData.netz.table %}
+            <div class="card editable-card-table" data-section-type="netz" data-card-id="{{ documentationData.netz.table.cardId }}">
                 <div class="card-header">
                     IP-Adressen
                 </div>
@@ -128,142 +126,154 @@
                     
                 </div>
             </div>
+            {% endif %}
         </div>
-        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+      <!---      <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button> -->
     </div>
 
     <div id="serverContent" class="content-section" style="display: none;">
         <div class="section server">
             <h2>Server</h2>
 
-            <!-- Card for Server Topologie -->
-            <div class="card editable-card">
+            {% if documentationData.server.default %}
+            <div class="card editable-card" data-section-type="server" data-card-id="{{ documentationData.server.default.cardId }}">
                 <div class="card-header">Server Topologie</div>
                 <div class="card-body">
                 </div>
             </div>
+            {% endif %}
 
-            <!-- Card for IP-Adressen -->
-            <div class="card editable-card-table">
+            {% if documentationData.server.table %}
+            <div class="card editable-card-table" data-section-type="server" data-card-id="{{ documentationData.server.table.cardId }}">
                 <div class="card-header">IP-Adressen</div>
                 <div class="card-body">
                     
                 </div>
             </div>
+            {% endif %}
         </div>
-        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+       <!---      <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button> -->
     </div>
 
     <div id="clientsContent" class="content-section" style="display: none;">
         <div class="section clients">
             <h2>Clients (Allgemein)</h2>
 
-            <!-- Card for Netzwerk Topologie -->
-            <div class="card editable-card">
+            {% if documentationData.clients.default %}
+            <div class="card editable-card" data-section-type="clients" data-card-id="{{ documentationData.clients.default.cardId }}">
                 <div class="card-header">Informationen</div>
                 <div class="card-body">
                 </div>
             </div>
+            {% endif %}
 
-            <!-- Card for IP-Adressen -->
-            <div class="card editable-card-table">
+            {% if documentationData.clients.table %}
+            <div class="card editable-card-table" data-section-type="clients" data-card-id="{{ documentationData.clients.table.cardId }}">
                 <div class="card-header">Clients</div>
                 <div class="card-body">
                     
                 </div>
             </div>
+            {% endif %}
         </div>
-        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+      <!---      <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button> -->
     </div>
 
     <div id="userPwdContent" class="content-section" style="display: none;">
         <div class="section userpwd">
             <h2>User / Pwd´s</h2>
 
-            <!-- Card for Netzwerk Topologie -->
-            <div class="card editable-card">
+            {% if documentationData.userpwd.default %}
+            <div class="card editable-card" data-section-type="userpwd" data-card-id="{{ documentationData.userpwd.default.cardId }}">
                 <div class="card-header">Allgemein</div>
                 <div class="card-body">
                 </div>
             </div>
+            {% endif %}
 
-            <!-- Card for IP-Adressen -->
-            <div class="card editable-card-table">
+            {% if documentationData.userpwd.table %}
+            <div class="card editable-card-table" data-section-type="userpwd" data-card-id="{{ documentationData.userpwd.table.cardId }}">
                 <div class="card-header">User / Passwörter</div>
                 <div class="card-body">
                     
                 </div>
             </div>
+            {% endif %}
         </div>
-        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+       <!---      <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button> -->
     </div>
 
     <div id="routerFirewallContent" class="content-section" style="display: none;">
         <div class="section routerfirewall">
             <h2>Router Firewall</h2>
 
-
-            <div class="card editable-card">
+            {% if documentationData.routerfirewall.default %}
+            <div class="card editable-card" data-section-type="routerfirewall" data-card-id="{{ documentationData.routerfirewall.default.cardId }}">
                 <div class="card-header">Topologie</div>
                 <div class="card-body">
                 </div>
             </div>
+            {% endif %}
 
-
-            <div class="card editable-card-table">
+           {% if documentationData.routerfirewall.table %}
+            <div class="card editable-card-table" data-section-type="routerfirewall" data-card-id="{{ documentationData.routerfirewall.table.cardId }}">
                 <div class="card-header">Router oder Firewall</div>
                 <div class="card-body">
                     
                 </div>
             </div>
+            {% endif %}
         </div>
-        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+      <!---      <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button> -->
     </div>
 
     <div id="providerContent" class="content-section" style="display: none;">
         <div class="section provider">
             <h2>Provider</h2>
 
-            <!-- Card for Topologie -->
-            <div class="card editable-card">
+           {% if documentationData.provider.default %}
+            <div class="card editable-card" data-section-type="provider" data-card-id="{{ documentationData.provider.default.cardId }}">
                 <div class="card-header"> Topologie</div>
                 <div class="card-body">
 
                 </div>
             </div>
-
-            <!-- Card for IP-Adressen -->
-            <div class="card editable-card-table">
+            {% endif %}
+            {% if documentationData.provider.table %}
+            <div class="card editable-card-table" data-section-type="provider" data-card-id="{{ documentationData.provider.table.cardId }}">
                 <div class="card-header">Provider</div>
                 <div class="card-body">
                     
                 </div>
             </div>
+            {% endif %}
         </div>
-        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+    <!---      <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button> -->
     </div>
 
     <div id="remoteMaintenanceContent" class="content-section" style="display: none;">
         <div class="section remotemaintenance">
             <h2>Fernwartung</h2>
 
-            <!-- Card for Netzwerk Topologie -->
-            <div class="card editable-card">
+            {% if documentationData.remotemaintenance.default %}
+            <div class="card editable-card" data-section-type="remotemaintenance" data-card-id="{{ documentationData.remotemaintenance.default.cardId }}">
                 <div class="card-header">Topologie</div>
                 <div class="card-body">
 
                 </div>
             </div>
+            {% endif %}
 
-            <!-- Card for IP-Adressen -->
-            <div class="card editable-card-table">
+            {% if documentationData.remotemaintenance.table %}
+            <div class="card editable-card-table" data-section-type="remotemaintenance" data-card-id="{{ documentationData.remotemaintenance.table.cardId }}">
                 <div class="card-header">Fernwartung</div>
                 <div class="card-body">
                    
                 </div>
             </div>
+            {% endif %}
         </div>
-        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+     <!---      <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button> -->
     </div>
 
 
@@ -271,113 +281,116 @@
         <div class="section backup">
             <h2>Backup</h2>
 
-            <!-- Card for Netzwerk Topologie -->
-            <div class="card editable-card">
+            {% if documentationData.backup.default %}
+            <div class="card editable-card" data-section-type="backup" data-card-id="{{ documentationData.backup.default.cardId }}">
                 <div class="card-header">Topologie</div>
                 <div class="card-body">
 
                 </div>
             </div>
+            {% endif %}
 
-            <!-- Card for IP-Adressen -->
-            <div class="card editable-card-table">
+            {% if documentationData.backup.table %}
+            <div class="card editable-card-table" data-section-type="backup" data-card-id="{{ documentationData.backup.table.cardId }}">
                 <div class="card-header">Backup</div>
                 <div class="card-body">
                    
                 </div>
             </div>
+            {% endif %}
         </div>
-        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+       <!---      <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button> -->
     </div>
 
     <div id="upsContent" class="content-section" style="display: none;">
         <div class="section ups">
             <h2>USV</h2>
 
-            <!-- Card for Netzwerk Topologie -->
-            <div class="card editable-card">
+           {% if documentationData.ups.default %}
+            <div class="card editable-card" data-section-type="ups" data-card-id="{{ documentationData.ups.default.cardId }}">
                 <div class="card-header">Topologie</div>
                 <div class="card-body">
 
                 </div>
             </div>
-
-            <!-- Card for IP-Adressen -->
-            <div class="card editable-card-table">
+            {% endif %}
+            {% if documentationData.ups.table %}
+            <div class="card editable-card-table" data-section-type="ups" data-card-id="{{ documentationData.ups.table.cardId }}">
                 <div class="card-header">USV:</div>
                 <div class="card-body">
                     
                 </div>
             </div>
+            {% endif %}
         </div>
-        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+        <!---      <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button> -->
     </div>
 
     <div id="antivirusContent" class="content-section" style="display: none;">
         <div class="section antivirus">
             <h2>Antivirus / Software</h2>
 
-            <!-- Card for Netzwerk Topologie -->
-            <div class="card editable-card">
+            {% if documentationData.antivirus.default %}
+            <div class="card editable-card" data-section-type="antivirus" data-card-id="{{ documentationData.antivirus.default.cardId }}">
                 <div class="card-header">Topologie</div>
                 <div class="card-body">
 
                 </div>
             </div>
-
-            <!-- Card for IP-Adressen -->
-            <div class="card editable-card-table">
+            {% endif %}
+            {% if documentationData.antivirus.table %}
+            <div class="card editable-card-table" data-section-type="antivirus" data-card-id="{{ documentationData.antivirus.table.cardId }}">
                 <div class="card-header">Antivirus-Software</div>
                 <div class="card-body">
                    
                 </div>
             </div>
+            {% endif %}
         </div>
-        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+       <!---      <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button> -->
     </div>
 
     <div id="applicationSoftwareContent" class="content-section" style="display: none;">
         <div class="section applicationsoftware">
             <h2>Anwendersoftware</h2>
 
-            <!-- Card for Netzwerk Topologie -->
-            <div class="card editable-card">
+            {% if documentationData.applicationsoftware.default %}
+            <div class="card editable-card" data-section-type="applicationsoftware" data-card-id="{{ documentationData.applicationsoftware.default.cardId }}">
                 <div class="card-header">Topologie</div>
                 <div class="card-body">
                 </div>
             </div>
-
-            <!-- Card for IP-Adressen -->
-            <div class="card editable-card-table">
+            {% endif %}
+            {% if documentationData.applicationsoftware.table %}
+            <div class="card editable-card-table" data-section-type="applicationsoftware" data-card-id="{{ documentationData.applicationsoftware.table.cardId }}">
                 <div class="card-header">Anwendersoftware</div>
                 <div class="card-body">
                    
                 </div>
             </div>
+            {% endif %}
         </div>
-        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+        <!---      <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button> -->
     </div>
 
     <div id="otherInfoContent" class="content-section" style="display: none;">
         <div class="section otherinfo">
             <h2>Sonstige Informationen</h2>
-
-            <div class="card editable-card-table">
+            
+            {% if documentationData.otherinfo.table %}
+            <div class="card editable-card-table" data-section-type="otherinfo" data-card-id="{{ documentationData.otherinfo.table.cardId }}">
                 <div class="card-header">Sonstiges</div>
                 <div class="card-body">
                    
                 </div>
             </div>
+            {% endif %}
         </div>
-        <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button>
+  <!---      <button id="addCardBtn" class="btn btn-primary addCardBtn">Neue Karte</button> -->
     </div>
-
-
-
-
-
-    <!-- Weitere content-sections hier hinzufügen ... -->
-    <!-- Button zum Hinzufügen neuer Cards -->
+<div id="printSection" style="margin-top: 50px; border-top: 3px dashed #ccc;s padding-top: 20px; text-align: left; width: 100%;">
+    <button id="printButton" class="btn btn-primary fa fa-print" data-customer-id="{{ customer.id }}"></button>
+</div>
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -385,19 +398,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const contentSections = document.querySelectorAll('.content-section');
     const backButton = document.getElementById('backButton');
     const editButton = document.getElementById('editButton');
+    const customerId = '{{ customer.id }}';
+    const printButton = document.getElementById('printButton');
+    var documentationData = {{ documentationData|json_encode|raw }};
+    var editorInstances = {};
     let editMode = localStorage.getItem('editMode') === 'true';
+    let counter = 0;
 
-    function adjustTableHeight() {
-        document.querySelectorAll('.card-body .ce-table__content').forEach(table => {
-            let cardBodyHeight = table.closest('.card-body').clientHeight;
-            table.style.height = cardBodyHeight + 'px';
+    document.querySelectorAll('.section .card').forEach(card => {
+        const cardId = card.getAttribute('data-card-id');
+        const sectionType = card.getAttribute('data-section-type');
+        const cardType = card.classList.contains('editable-card-table') ? 'table' : 'default';
 
-            let tableHeight = table.scrollHeight;
-            if(tableHeight > cardBodyHeight) {
-                table.closest('.card').style.height = (table.closest('.card').clientHeight + (tableHeight - cardBodyHeight)) + 'px';
+
+
+        // Zugriff auf die spezifischen Daten basierend auf sectionType und cardType
+        let specificData;
+        if(documentationData[sectionType] && documentationData[sectionType][cardType]) {
+            specificData = documentationData[sectionType][cardType];
+        }
+
+        if (specificData) {
+            if (cardType === 'table') {
+                initializeEditorJSForTables(card, specificData.content);
+            } else {
+                initializeEditorJSForEditableCards(card, specificData.content);
             }
-        });
-    }
+        }
+
+        initializeDeleteButton(card);
+        initializeSaveButton(card);
+    });
+        
 
     const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
@@ -410,7 +442,20 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.card-body .ce-table__content').forEach(table => {
         observer.observe(table, { childList: true, subtree: true });
     });
-    
+
+    if (printButton) {
+        printButton.addEventListener('click', function() {
+            // Extrahieren der Kunden-ID aus dem data-customer-id Attribut des Buttons
+            const customerId = this.getAttribute('data-customer-id');
+            // Aufrufen der Funktion mit der Kunden-ID als Parameter
+            printCustomerDocumentation(customerId);
+        });
+    }
+
+    function printCustomerDocumentation(customerId) {
+    const printUrl = `/customer/${customerId}/print`;
+    window.open(printUrl, '_blank');
+}
     function adjustTableSize() {
         document.querySelectorAll('.card-body .ce-table').forEach(table => {
             table.style.width = '100%';
@@ -428,351 +473,510 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function updateEditModeUI() {
-        editButton.textContent = editMode ? 'Bearbeitungsmodus aktiv' : 'Bearbeitungsmodus inaktiv';
-        editButton.style.color = editMode ? 'lightgreen' : 'lightcoral';
-        document.querySelectorAll('.addCardBtn').forEach(btn => {
-            btn.style.display = editMode ? 'block' : 'none';
-        });
-        updateDeleteButtonsVisibility(editMode);
+    function resizeText() {
+        if(customerName.offsetWidth > maxWidth) {
+            const fontSize = parseFloat(getComputedStyle(customerName).fontSize);
+            customerName.style.fontSize = '${fontSize - 0.1}em';
+            resizeText();
+        }
     }
 
-    function toggleEditableCards() {
-        const editableCards = document.querySelectorAll('.editable-card, .editable-card-table');
-        editableCards.forEach(card => {
-            if (card.editorInstance && typeof card.editorInstance.readOnly !== 'undefined') {
-                card.editorInstance.readOnly.toggle(!editMode);
+        function adjustTableHeight() {
+        document.querySelectorAll('.card-body .ce-table__content').forEach(table => {
+            let cardBodyHeight = table.closest('.card-body').clientHeight;
+            table.style.height = cardBodyHeight + 'px';
+
+            let tableHeight = table.scrollHeight;
+            if(tableHeight > cardBodyHeight) {
+                table.closest('.card').style.height = (table.closest('.card').clientHeight + (tableHeight - cardBodyHeight)) + 'px';
             }
-            // Hier könnte man weitere Aktionen durchführen, die abhängig vom editMode sind
         });
     }
 
-    function updateDeleteButtonsVisibility(editMode) {
-        const deleteButtons = document.querySelectorAll('.delete-btn');
-        deleteButtons.forEach(btn => {
-            btn.style.display = editMode ? 'block' : 'none';
-        });
-    }
+    function updateEditModeUI() {
+    editButton.textContent = editMode ? 'Bearbeitungsmodus aktiv' : 'Bearbeitungsmodus inaktiv';
+    editButton.style.color = editMode ? 'lightgreen' : 'lightcoral';
+    document.querySelectorAll('.addCardBtn, .save-btn, .delete-btn').forEach(btn => {
+        btn.style.display = editMode ? 'block' : 'none';
+    });
 
-      function initializeDeleteButton(card) {
-        const cardHeader = card.querySelector('.card-header');
-        if (!cardHeader) {
-            console.error('Card-Header-Element nicht gefunden in', card);
-            return;
+       const editorTools = document.querySelectorAll('.ce-toolbar__actions, .ce-toolbar__actions--opened .tc-add-column .tc-add-row');
+    editorTools.forEach(tool => {
+        tool.style.display = editMode ? 'flex' : 'none';
+    });
+
+    document.querySelectorAll('.card').forEach(card => {
+        if(!editMode) {
+            if(!card.querySelector('.edit-overlay')) {
+                let overlay = document.createElement('div');
+                overlay.className = 'edit-overlay';
+                overlay.style.position = 'absolute';
+                overlay.style.top = 0;
+                overlay.style.left = 0;
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.zIndex = 10;
+                overlay.style.cursor = 'not-allowed';
+                card.style.position = 'relative';
+                card.appendChild(overlay);
+            }
+        } else {
+            let overlay = card.querySelector('.edit-overlay');
+            if(overlay) {
+                card.removeChild(overlay);
+            }
         }
-        let deleteIcon = cardHeader.querySelector('.delete-btn');
-        if (!deleteIcon) {
-            deleteIcon = document.createElement('button');
-            deleteIcon.className = ' fas fa-trash';
-            deleteIcon.title = 'Löschen';
-            deleteIcon.style.cssText = 'cursor: pointer; float: right; width: 20px; border: none; background-color: transparent; height: 20px;';
-            cardHeader.appendChild(deleteIcon);
+    })
 
-            deleteIcon.addEventListener('click', function(event) {
-                event.stopPropagation();
-                if (!confirm('Willst du dieses Element löschen?')) return;
-                card.remove();
-            });
-        }
-    }
-    
-    function initializeEditorJSForEditableCards(card) {
-        const cardBody = card.querySelector('.card-body');
-        if(!cardBody) { console.error('Karten Element nicht gefunden in', card); return; }
+    // SweetAlert2 Toast anzeigen
+    const message = editMode ? 'Bearbeitungsmodus aktiviert' : 'Bearbeitungsmodus deaktiviert';
+    const icon = editMode ? 'success' : 'info';
+    const duration = 1000; // Anzeigedauer in Millisekunden
 
-        card.editorInstance = new EditorJS({
-            holder: cardBody,
-            tools: {
-                header: Header,
-                list: List,
-                image: SimpleImage,
-                paragraph: {
-                    config: {
-                        placeholder: 'Hier Topologie zur Sektion ...'
-                    }
-                }
-            },
-            readOnly: !editMode,
-        
-        });
-    }
-
-    function initializeEditorJSForTables(card) {
-        const cardBody = card.querySelector('.card-body');
-        if (!cardBody) { console.error('Karten Element nicht gefunden in', card); return; }
-
-        const initialData = getInitialDataForCard(card);
-
-        card.editorInstance = new EditorJS({
-            holder: cardBody,
-            tools: { table: Table},
-            data: initialData,
-            readOnly: !editMode,
-            onReady: function() {
-
-                const addButton = cardBody.querySelector('.ce-toolbar--opened');
-                if(addButton) {
-                addButton.style.display = "none !important";
-                addButton.parentElement.style.display = "none !important";
-                addButton.style.opacity = "0";
-                addButton.style.position = "absolute";
-                }
-                const emptyBlock = cardBody.querySelector('.ce-block .ce-paragraph');
-                if (emptyBlock && emptyBlock.innerHTML.trim() === '') {
-                    emptyBlock.parentNode.parentNode.remove();
-                }
-            },
-        });
-    }
-
-    function handleSubLocationClick(locationId) {
-        console.log('Sublocation clicked', locationId);
-    }
-
-    function getInitialDataForCard(card) {
-    // Allgemein Sektion
-    if(card.closest('.section.allgemein')) {
-        return {
-            blocks: [{
-                type: "table",
-                data: {
-                    withHeadings: true,
-                    content: [
-                        ["Ansprechpartner", "Telefon", "Mobil", "E-Mail"],
-                        ["Technisch:", "", "", ""],
-                        ["Vor Ort:", "", "", ""]
-                    ]
-                }
-            }]
-        };
-    }
-    // Netz Sektion
-    else if(card.closest('.section.netz')) {
-        return {
-            blocks: [{
-                type: "table",
-                data: {
-                    withHeadings: true,
-                    content: [
-                        ["Netzwerk (IP)", "Domäne", "Gateway", "DNS"],
-                        ["", "", "", ""]
-                    ]
-                }
-            }]
-        };
-    }
-    // Server Tabelle
-    else if(card.closest('.section.server')) {
-        return {
-            blocks: [{
-                type: "table",
-                data: {
-                    withHeadings: true,
-                    content: [
-                        ["Server", "IP", "Admin-User/Passwort", "Zugriff"],
-                        ["", "", "", ""]
-                    ]
-                }
-            }]
-        };
-    }
-    // Clients Tabelle
-    else if(card.closest('.section.clients')) {
-        return {
-            blocks: [{
-                type: "table",
-                data: {
-                    withHeadings: true,
-                    content: [
-                        ["Hersteller", "IP-Range/DHCP", "Anzahl/Alter", "Sonstiges"],
-                        ["", "", "", ""]
-                    ]
-                }
-            }]
-        };
-    }
-    // User / Pwd´s Tabelle
-    else if(card.closest('.section.userpwd')) {
-        return {
-            blocks: [{
-                type: "table",
-                data: {
-                    withHeadings: true,
-                    content: [
-                        ["Domänenbenutzer", "Passwort", "Benutzer wenn bekannt", "Sonstiges"],
-                        ["", "", "", ""]
-                    ]
-                }
-            }]
-        };
-    }
-    // Router / Firewall Tabelle
-    else if(card.closest('.section.routerfirewall')) {
-        return {
-            blocks: [{
-                type: "table",
-                data: {
-                    withHeadings: true,
-                    content: [
-                        ["Typ", "IP", "Admin-User/Passwort", "Zugriff"],
-                        ["", "", "", ""]
-                    ]
-                }
-            }]
-        };
-    }
-    // Provider Tabelle
-    else if(card.closest('.section.provider')) {
-        return {
-            blocks: [{
-                type: "table",
-                data: {
-                    withHeadings: true,
-                    content: [
-                        ["Provider-DSL", "Benutzername", "Passwort", "Tarif/Sonstiges"],
-                        ["", "", "", ""],
-                        ["Provider-Mail", "Benutzername", "Passwort", "pop3/smtp-Server"],
-                        ["", "", "", ""],
-                        ["Provider-WWW", "Benutzername", "Passwort", "Admin-URL"],
-                        ["", "", "", ""]
-                    ]
-                }
-            }]
-        };
-    }
-    // Fernwartung Tabelle
-    else if(card.closest('.section.remotemaintenance')) {
-        return {
-            blocks: [{
-                type: "table",
-                data: {
-                    withHeadings: true,
-                    content: [
-                        ["VPN-Gateway (IP)", "VPN-Typ", "User / Passwort", "PSK"],
-                        ["", "", "", ""],
-                        ["Typ (RDP/VNC)", "IP / DNS-Name", "Admin-User / Passwort", "Zugriff (VPN/Direkt)"],
-                        ["", "", "", ""]
-                    ]
-                }
-            }]
-        };
-    }
-    // Backup Tabelle
-    else if(card.closest('.section.backup')) {
-        return {
-            blocks: [{
-                type: "table",
-                data: {
-                    withHeadings: true,
-                    content: [
-                        ["Software", "Server", "Hardware", "Anmerkungen"],
-                        ["", "", "", ""]
-                    ]
-                }
-            }]
-        };
-    }
-    // USV Tabelle
-    else if(card.closest('.section.ups')) {
-        return {
-            blocks: [{
-                type: "table",
-                data: {
-                    withHeadings: true,
-                    content: [
-                        ["Netzwerk (IP)", "Domäne", "Gateway", "DNS"],
-                        ["", "", "", ""]
-                    ]
-                }
-            }]
-        };
-    }
-    // Antivirus / Software Tabelle
-    else if(card.closest('.section.antivirus')) {
-        return {
-            blocks: [{
-                type: "table",
-                data: {
-                    withHeadings: true,
-                    content: [
-                        ["Software", "Server/Clients", "Admin-User/Passwort", "Version / Sonstiges"],
-                        ["", "", "", ""]
-                    ]
-                }
-            }]
-        };
-    }
-    // Anwendersoftware Tabelle
-    else if(card.closest('.section.applicationsoftware')) {
-        return {
-            blocks: [{
-                type: "table",
-                data: {
-                    withHeadings: true,
-                    content: [
-                        ["Software", "Server/Clients", "Admin-User/Passwort", "Version / Sonstiges"],
-                        ["", "", "", ""]
-                    ]
-                }
-            }]
-        };
-    }
-    // Sonstige Informationen Tabelle
-    else if(card.closest('.section.otherinfo')) {
-        return {
-            blocks: [{
-                type: "table",
-                data: {
-                    content: [
-                        ["Sonstige Anwendungen/Informationen"],
-                        [""]
-                    ]
-                }
-            }]
-        };
-    }
-    // Fallback
-    else {
-        return {
-            blocks: [{
-                type: "table",
-                data: {
-                    content: [
-                        ["", "", "", ""],
-                        ["", "", "", ""]
-                    ]
-                }
-            }]
-        };
-    }
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: icon,
+        title: message,
+        showConfirmButton: false,
+        timer: duration
+    });
 }
 
-    function saveContent(editorInstance, sectionId) {
-    editorInstance.save().then((outputData) => {
-        fetch('/save-documentation', {
+    function saveCardData(card) {
+    const cardId = card.getAttribute('data-card-id');
+    var customerId = '{{ customer.id }}';
+    const sectionType = card.getAttribute('data-section-type');
+    const cardType = card.classList.contains('editable-card-table') ? 'table' : 'default'; // Bestimmt den cardType basierend auf der Klassenzugehörigkeit
+
+    if (!cardId) {
+        console.error('Persistente ID fehlt für die Karte', card);
+        return;
+    }
+
+    const editor = editorInstances[cardId];
+    if (!editor) {
+        console.error('Editor-Instanz nicht gefunden für', cardId);
+        return;
+    }
+
+    editor.save().then((outputData) => {
+
+        fetch('/doku/save-card', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                documentId: sectionId, // Stellen Sie sicher, dass dies die eindeutige ID der Dokumentation oder des Abschnitts ist
+                customerId,
+                cardId,
+                sectionType,
+                cardType,
                 content: outputData,
             }),
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Success:', data);
-            alert('Inhalte erfolgreich gespeichert!');
+            if (data.message === 'Keine Änderungen') {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'info',
+                    iconColor: 'white',
+                    title: 'Info',
+                    text: 'Keine Änderungen gemacht!',
+                    timer: 2000,
+                    background: 'lightgrey',
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                });
+            } else if(data.message === 'Dokumentation erfolgreich gespeichert') {
+               Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    iconColor: 'white',
+                    title: 'Erfolg',
+                    text: 'Änderungen gespeichert!',
+                    timer: 2000,
+                    background: '#3CB371',
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                });
+            }
         })
         .catch((error) => {
-            console.error('Error:', error);
-            alert('Fehler beim Speichern der Inhalte.');
+            console.error('Fehler:', error);
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'error',
+                iconColor: 'white',
+                title: 'Fehler',
+                text: 'Unbekannter Fehler!',
+                timer: 2000,
+                background: '#CD5C5C',
+                customClass: {
+                    popup: 'colored-toast-error'
+                },
+                timerProgressBar: true,
+                showConfirmButton: false,
+            });
         });
-    }).catch((error) => {
-        console.error('Saving failed:', error);
     });
+}
+
+    function initializeDeleteButton(card) {
+    const cardHeader = card.querySelector('.card-header');
+    if (!cardHeader) {
+        console.error('Card-Header-Element nicht gefunden in', card);
+        return;
+    }
+    let deleteIcon = cardHeader.querySelector('.delete-btn');
+    if (!deleteIcon) {
+        deleteIcon = document.createElement('button');
+        deleteIcon.className = 'fas fa-trash delete-btn';
+        deleteIcon.title = 'Löschen';
+        deleteIcon.style.cssText = 'cursor: pointer; float: right; width: 20px; border: none; background-color: transparent; height: 20px; color: #8B0000; display: none;';
+        cardHeader.appendChild(deleteIcon);
+
+        deleteIcon.addEventListener('click', function(event) {
+            event.stopPropagation();
+            Swal.fire({
+                title: 'Sind Sie sicher?',
+                text: "Dies wird den Inhalt dauerhaft löschen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ja, löschen!',
+                cancelButtonText: 'Abbrechen'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const cardId = card.getAttribute('data-card-id');
+                    if (editorInstances[cardId]) {
+                        editorInstances[cardId].clear();
+                        saveCardData(card); // Übernimmt das Leeren des Inhalts und sendet den Speicherantrag
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            title: 'Gelöscht!',
+                            text: 'Der Inhalt wurde gelöscht.',
+                            icon: 'success',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            showConfirmButton: false
+                        
+                        });
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            title: 'Abgebrochen',
+                            text: 'Vorgang abgebrochen!',
+                            icon: 'info',
+                            timer: 2000,
+                            timerProgressBar: true,
+                            showConfirmButton: false
+                        
+                        })
+                    }
+                }
+            });
+        });
+    }
+}
+
+
+
+function initializeEditorJSForEditableCards(card, data = null) {
+
+    const cardBody = card.querySelector('.card-body');
+    const cardId = card.getAttribute('data-card-id');
+
+    if (!cardBody) {
+        console.error('CardBody Element nicht gefunden in', card);
+        return;
     }
 
+    if (!cardId) {
+        console.error('CardId nicht gefunden in', card);
+        return;
+    }
+
+    let editorData = {
+        blocks: data && data.blocks && data.blocks.length > 0 ? data.blocks : [{
+            type: "paragraph",
+            data: {
+                text: ""
+            }
+        }]
+    };
+
+    const editor = new EditorJS({
+        holder: cardBody,
+        tools: {
+            header: Header,
+            list: List,
+            image: SimpleImage,
+            table: Table
+        },
+        data: editorData,
+        readOnly: !editMode,
+    });
+
+    editorInstances[cardId] = editor;
+}
+
+function initializeEditorJSForTables(card, data) {
+        const cardBody = card.querySelector('.card-body');
+        const persistentId = card.getAttribute('data-card-id');
+
+        if (!cardBody || !persistentId) {
+            console.error('Karten Element nicht gefunden in', card);
+            return;
+        }
+
+        let editorData = data ? data : getInitialDataForCard(card);
+
+        const editor = new EditorJS({
+            holder: cardBody,
+            tools: {
+                table: Table,
+            },
+            data: editorData,
+        });
+        editorInstances[persistentId] = editor;
+    }
+
+
+                    function getInitialDataForCard(card, customerData = {}) {
+                    const sectionType = card.getAttribute('data-section-type');
+                    let blocks = [];
+
+                    if (customerData && customerData[sectionType]) {
+                        // Verwenden Sie die vorhandenen Kundendaten, um die Tabelle zu füllen
+                        blocks.push({
+                            type: "table",
+                            data: customerData[sectionType]
+                        });
+                    } else {
+                        // Standardvorlagen für verschiedene Sektionen
+                        switch (sectionType) {
+                            case 'allgemein':
+                                blocks.push({
+                                    type: "table",
+                                    data: {
+                                        withHeadings: true,
+                                        content: [
+                                            ["Ansprechpartner", "Telefon", "Mobil", "E-Mail"],
+                                            ["Technisch:", "", "", ""],
+                                            ["Vor Ort:", "", "", ""]
+                                        ]
+                                    }
+                                });
+                                break;
+                            case 'netz':
+                                blocks.push({
+                                    type: "table",
+                                    data: {
+                                        withHeadings: true,
+                                        content: [
+                                            ["Netzwerk (IP)", "Domäne", "Gateway", "DNS"],
+                                            ["", "", "", ""]
+                                        ]
+                                    }
+                                });
+                                break;
+                            case 'server':
+                                blocks.push({
+                                    type: "table",
+                                    data: {
+                                        withHeadings: true,
+                                        content: [
+                                            ["Server", "IP", "Admin-User/Passwort", "Zugriff"],
+                                            ["", "", "", ""]
+                                        ]
+                                    }
+                                });
+                                break;
+                            case 'clients':
+                                blocks.push({
+                                    type: "table",
+                                    data: {
+                                        withHeadings: true,
+                                        content: [
+                                            ["Hersteller", "IP-Range/DHCP", "Anzahl/Alter", "Sonstiges"],
+                                            ["", "", "", ""]
+                                        ]
+                                    }
+                                });
+                                break;
+                            case 'userpwd':
+                                blocks.push({
+                                    type: "table",
+                                    data: {
+                                        withHeadings: true,
+                                        content: [
+                                            ["Domänenbenutzer", "Passwort", "Benutzer (falls bekannt)", "Sonstiges"],
+                                            ["", "", "", ""]
+                                        ]
+                                    }
+                                });
+                                break;
+                            case 'routerfirewall':
+                                blocks.push({
+                                    type: "table",
+                                    data: {
+                                        withHeadings: true,
+                                        content: [
+                                            ["Gerät", "IP", "Passwörter", "Zugriff", "MAC", "USC/Pin"],
+                                            ["", "", "", "", "", ""]
+                                        ]
+                                    }
+                                });
+                                break;
+                            case 'provider':
+                                blocks.push({
+                                    type: "table",
+                                    data: {
+                                        withHeadings: true,
+                                        content: [
+                                        ["Provider-DSL", "Benutzername", "Passwort", "Tarif/Sonstiges"],
+                                        ["", "", "", ""],
+                                        ["Provider-Mail", "Benutzername", "Passwort", "pop3/smtp-Server"],
+                                        ["", "", "", ""],
+                                        ["Provider-WWW", "Benutzername", "Passwort", "Admin-URL"],
+                                        ["", "", "", ""]
+                                    ]
+                                    }
+                                });
+                                break;
+                            case 'remotemaintenance':
+                                blocks.push({
+                                    type: "table",
+                                    data: {
+                                        withHeadings: true,
+                                        content: [
+                                        ["VPN-Gateway (IP)", "VPN-Typ", "User / Passwort", "PSK"],
+                                        ["", "", "", ""],
+                                        ["Typ (RDP/VNC)", "IP / DNS-Name", "Admin-User / Passwort", "Zugriff (VPN/Direkt)"],
+                                        ["", "", "", ""]
+                                    ]
+                                    }
+                                });
+                                break;
+                            case 'backup':
+                                blocks.push({
+                                    type: "table",
+                                    data: {
+                                        withHeadings: true,
+                                        content: [
+                                        ["Software", "Server", "Hardware", "Anmerkungen"],
+                                        ["", "", "", ""]
+                                    ]
+                                    }
+                                });
+                                break;
+                            case 'ups':
+                                blocks.push({
+                                    type: "table",
+                                    data: {
+                                        withHeadings: true,
+                                        content: [
+                                        ["Netzwerk (IP)", "Domäne", "Gateway", "DNS"],
+                                        ["", "", "", ""]
+                                    ]
+                                    }
+                                });
+                                break;
+                            case 'antivirus':
+                                blocks.push({
+                                    type: "table",
+                                    data: {
+                                        withHeadings: true,
+                                        content: [
+                                        ["Software", "Server/Clients", "Admin-User/Passwort", "Version / Sonstiges"],
+                                        ["", "", "", ""]
+                                    ]
+                                    }
+                                });
+                                break;
+                            case 'applicationsoftware':
+                                blocks.push({
+                                    type: "table",
+                                    data: {
+                                        withHeadings: true,
+                                        content: [
+                                        ["Software", "Server/Clients", "Admin-User/Passwort", "Version / Sonstiges"],
+                                        ["", "", "", ""]
+                                    ]
+                                    }
+                                });
+                                break;
+                            case 'otherinfo':
+                                blocks.push({
+                                    type: "table",
+                                    data: {
+                                        withHeadings: true,
+                                        content: [
+                                        ["Sonstige Anwendungen/Informationen"],
+                                        [""]
+                                    ]
+                                    }
+                                });
+                                break;
+                            default:
+                                // Fallback für nicht spezifizierte Sektionen
+                                blocks.push({
+                                    type: "table",
+                                    data: {
+                                        content: [
+                                            ["Information nicht verfügbar"]
+                                        ]
+                                    }
+                                });
+                        }
+                    }
+
+                    return { blocks };
+                }
+
+
+    function isValidEmail(email) {
+        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
+
+    function isValidIP(ip) {
+        const re = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+        return re.test(ip);
+    }
+
+    function isValidPhoneNumber(phone) {
+        const re = /^(\+\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+        return re.test(phone);
+    }
+
+    function initializeSaveButton(card) {
+        const cardHeader = card.querySelector('.card-header');
+        if (!cardHeader) {
+            console.error('Card-Header-Element nicht gefunden in', card);
+            return;
+        }
+        let saveIcon = cardHeader.querySelector('.save-btn');
+        if(!saveIcon) {
+            saveIcon = document.createElement('button');
+            saveIcon.className = 'fas fa-save fa-2xl save-btn';
+            saveIcon.title = 'Speichern';
+            saveIcon.style.cssText = 'cursor: pointer; float: right; margin-left: 20px; border: none; background-color: transparent; height: 20px; display: none; color: #228B22;';
+            cardHeader.appendChild(saveIcon);
+
+            saveIcon.addEventListener('click', function() {
+                saveCardData(card);
+            });
+        }
+    }
     
     sidebarLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -792,46 +996,12 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleEditableCards();
     });
 
-    const deleteButtons = document.querySelectorAll('.editable-card-table .editable-card .delete-btn');
-        deleteButtons.forEach(btn => {
-            btn.style.display = editMode ? 'block' : 'none';
-            btn.addEventListener('click', function(event) {
-                event.stopPropagation();
-                if (!confirm('Confirm deletion')) return;
-                btn.closest('.card').remove();
-            });
-        });
 
     editButton.addEventListener('click', function() {
         editMode = !editMode;
         localStorage.setItem('editMode', editMode);
         updateEditModeUI();
-        toggleEditableCards();
     });
-
-    document.querySelectorAll('.editable-card-table, .editable-card').forEach(card => {
-        if(card.classList.contains('editable-card-table')) {
-            initializeEditorJSForTables(card);
-            console.log("Erfolgreich!");
-        } else if(card.classList.contains('editable-card')) {
-            initializeEditorJSForEditableCards(card); 
-            console.log("Erfolgreich! 2");
-        }
-        initializeDeleteButton(card);
-    });
-
-    document.querySelectorAll('.saveContentBtn').forEach(button => {
-        button.addEventListener('click', function() {
-            const sectionId = this.closest('.content-section').id;
-            const editorInstance = window['editorInstance_${sectionId}'];
-            if(editorInstance) {
-                saveContent(editorInstance, sectionId);
-            } else {
-                console.error('Editor-Instanz nicht gefunden für', sectionId);
-            }
-        });
-    });
-
 
     document.querySelectorAll('.addCardBtn').forEach(addCardBtn => {
         addCardBtn.addEventListener('click', function() {
@@ -845,6 +1015,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             this.closest('.content-section').querySelector('.section').appendChild(newCard);
             initializeDeleteButton(newCard);
+            initializeSaveButton(newCard);
 
             const editor = new EditorJS({
                 holder: newCard.querySelector('.card-body'),
@@ -863,7 +1034,6 @@ document.addEventListener('DOMContentLoaded', function() {
     updateEditModeUI();
     adjustTableSize();
     adjustTableHeight();
-    toggleEditableCards();
     showSection('allgemeinContent');
     document.querySelector('#sidebar .sidenav-link[href="#allgemeinContent"]').parentElement.classList.add('active');
 });

@@ -1,75 +1,65 @@
 {# templates/customer/index.html.twig #}
 {% extends 'base.html.twig' %}
 
+{% block title %}Kundenverzeichnis{% endblock %}
+
 {% block body %}
-<!DOCTYPE html>
-<html lang="de">
 <link rel="stylesheet" href="{{ asset('css/customer.css') }}">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script src="{{ asset('js/doku.js') }}"></script>
-  <div class="search-add-box">
-  <div class="search-box">
-  <form action="{{ path('customer_index') }}" method="get">
-    <input type="text" name="search" placeholder="Kunden suchen...">
-    <button class="search-btn" type="submit"><i class="fas fa-search"></i></button>
-  </form>
-  </div>
-  <button type="button" class="btn btn-primary" id="addDocumentation">
-<i class="fas fa-folder-plus"></i>
-  </button>
-  <button type="button" class="btn btn-primary" id="addCustomerButton">
-  <i class="fas fa-user-plus"></i>
-  Neu
-</button>
+
+<div class="search-add-box">
+    <div class="search-box">
+        <input type="text" id="customerSearch" placeholder="Kunden suchen...">
+        <button class="search-btn"><i class="fas fa-search"></i></button>
+    </div>
+    <button type="button" class="btn btn-primary" id="addCustomerButton">
+        <i class="fas fa-user-plus"></i> Neu
+    </button>
 </div>
 
 <div class="header-container">
     <h2>Kundenverzeichnis</h2>
-    <div>
-        <button id="refreshCustomerList" class="btn refreshbutton">
-            <i class="fas fa-sync-alt"></i>
-        </button>
-    </div>
+    <button id="refreshCustomerList" class=" btn refreshbutton" style="margin-top: 1vw">
+        <i class="fas fa-sync-alt"></i>
+    </button>
 </div>
+
 <div class="customer-list">
     <div class="customer-list-header">
         <span title="ID">ID:</span>
-        <select id="displayOption">
-            <option value="name">Name</option>
-            <option value="suchnummer">Suchnummer</option>
-        </select>
+        <span title="Name">Kunde:</span>
         <span class="clickable" title="Erstellt am">Erstellt am:</span>
-        <span title="Geändert">Geändert am:</span>
+        <span title="Geändert">Geändert um:</span>
         <span class="clickable" title="Geändert von">Geändert von:</span>
     </div>
     {% for customer in customers %}
-    <a href="{{ path('customer_detail', {'id': customer.id}) }}">
-        <div id="customerList" class="customer-entry {% if loop.index is odd %}customer-odd{% endif %}">
-            <div>{{ customer.id }}</div>
-            <div class="name-or-searchnum" data-name="{{ customer.name }}" data-searchnum="{{ customer.suchnummer }}">
-                {{ customer.name }} <!-- Standardmäßig Name anzeigen -->
+        <a href="{{ path('customer_detail', {'id': customer.id}) }}" class="customer-entry-link">
+            <div class="customer-entry {% if loop.index is odd %}customer-odd{% endif %}">
+                <div>{{ customer.id }}</div>
+                <div class="name-or-searchnum" data-name="{{ customer.name }}" data-searchnum="{{ customer.suchnummer }}">
+                    {{ customer.name }}
+                </div>
+                <div>{{ customer.createdAt|date('d.m.Y') }}</div>
+                <div>{{ customer.updatedAt|date('H:i') }}</div>
+                <div>{{ customer.updatedBy.username }}</div>
             </div>
-            <div>{{ customer.createdAt|date('d.m.Y') }}</div>
-            <div>{{ customer.updatedAt|date('d.m.Y H:i') }}</div>
-            <div>{{ customer.updatedBy.username }}</div>
-        </div>
-    </a>
+        </a>
+    {% else %}
+        <p>Keine Kunden gefunden.</p>
     {% endfor %}
 </div>
-<style>
-.swal2-modal {
-width: 600px;
-padding: 2rem;
-}
-#create-customer-form {
-display: flex;
-flex-wrap: wrap;
-justify-content: space-between;
-}
-.form-group {
-width: 48%;
-}
-</style>
-</html>
+<div class="pagination-container">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% for i in 1..totalPages %}
+                <li class="page-item{{ currentPage == i ? ' active' : '' }}">
+                    <a class="page-link" href="{{ path('customer_index', {'page': i}) }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+</div>
+
 {% endblock %}

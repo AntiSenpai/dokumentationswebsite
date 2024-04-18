@@ -1,5 +1,3 @@
-{# base.html.twig #}
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -15,50 +13,43 @@
     <link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
 </head>
 <body>
-{% if currentPage is defined and currentPage == 'customerDetail' %}
     <nav class="navbar-nav-top">
         <div class="navbar-nav-left">
-            <img src="{{ asset('images/detaillogo.png') }}" alt="NNC Logo">
+            <a href="{{ path('dokumentation') }}">
+            <img src="{{ asset('images/nnc-transparent-blau.png') }}" alt="NNC Logo">
+            </a>
         </div>
+        {% if currentPage is defined and currentPage == 'settings' %}
+            <div>
+            <h1 style="color:lightblack;">Einstellungen<h1>
+            </div>
+        {% endif %}
         <div class="navbar-nav-right">
-        <div class="user-menu">
-            <div class="user-info-box">
-                <span>Wilkommen, {{ app.user.username }}</span> |
-                 {% if is_granted('ROLE_ADMIN') %}
-                | <a href="{{ path('admin_area') }}">Admin-Bereich |</a>
-            {% endif %} 
-                <a href="{{ path('app_logout') }}">Abmelden</a>
+            <div class="user-menu">
+                <div class="user-info-box">
+                    <span>Moin, {{ app.user.username }}</span> |
+                    {% if currentPage is defined and currentPage == 'settings' %}
+                        <a href="{{ path('dokumentation') }}">Zurück</a> |
+                        <a href="{{ path('app_logout') }}">Abmelden</a>
+                    {% else %}
+                        {% if is_granted('ROLE_USER') %}
+                            <a href="{{ path('app_settings') }}">Einstellungen</a> |
+                        {% endif %} 
+                        <a href="{{ path('app_logout') }}">Abmelden</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
-        </div>
     </nav>
-{% else %}
-    <nav class="navbar-nav-top">
-        <div class="navbar-nav-left">
-            <img src="{{ asset('images/detaillogo.png') }}" alt="NNC Logo">
-        </div>
-        <div class="navbar-nav-right">
-        <div class="user-menu">
-            <div class="user-info-box">
-                <span>Wilkommen, {{ app.user.username }}</span> |
-                 {% if is_granted('ROLE_ADMIN') %}
-                | <a href="{{ path('admin_area') }}">Admin-Bereich |</a>
-            {% endif %} 
-                <a href="{{ path('app_logout') }}">Abmelden</a>
-            </div>
-        </div>
-        </div>
-    </nav>
+    {% if currentPage is not defined or currentPage != 'settings' %}
     <nav class="navbar-nav-main">
         <ul class="nav-nav">
-            <li><a href="{{ path('home') }}" class="nav-nav-link fas fa-home fa-lg"></a></li>
             <li><a href="{{ path('dokumentation') }}" class="nav-nav-link fas fa-solid fa-book-open fa-lg"></a></li>
             <li><a href="{{ path('zeiterfassung') }}" class="nav-nav-link fas fa-solid fa-stopwatch fa-lg"></a></li>
         </ul>
     </nav>
-{% endif %}
-    {% block body %}
+    {% endif %}
+    {% block body %} 
     {% endblock %}
-
 </body>
 </html>

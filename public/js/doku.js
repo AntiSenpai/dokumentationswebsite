@@ -2,45 +2,42 @@ function customernew() {
     Swal.fire({
         title: 'Neuen Kunden anlegen',
         html: `
-            <form id="create-customer-form">
-                <div class="form-group">
-                    <label for="name">Name/Rechtsform:</label>
-                    <input type="text" class="form-control" id="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="adresse">Hauptstandort Adresse:</label>
-                    <input type="text" class="form-control" id="adresse" required>
-                </div>
-                <div class="form-group">
-                    <label for="technischer-ansprechpartner">Ansprechpartner technisch:</label>
-                    <select class="form-control" id="technischer-ansprechpartner">
-                        <!-- Dynamisch geladene User-Optionen -->
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="vor-ort-ansprechpartner">Ansprechpartner vor Ort:</label>
-                    <input type="text" class="form-control" id="vor-ort-ansprechpartner" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" class="form-control" id="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="stundensatz">Stundensatz:</label>
-                    <input type="number" step="0.01" class="form-control" id="stundensatz" required>
-                </div>
-                <div id="unterstandorte-container">
-                <!-- Container für Unterstandorte -->
+            <div style="text-align: center;">
+                <form id="create-customer-form" style="margin: 0 auto; max-width: 500px;">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="name" placeholder="Name/Rechtsform" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="adresse" placeholder="Hauptstandort Adresse" required>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" id="technischer-ansprechpartner">
+                            <!-- Dynamisch geladene User-Optionen -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="vor-ort-ansprechpartner" placeholder="Ansprechpartner vor Ort" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="form-control" id="email" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="number" step="0.01" class="form-control" id="stundensatz" placeholder="Stundensatz" required>
+                    </div>
+                    <div id="unterstandorte-container">
+                        <!-- Container für Unterstandorte -->
+                    </div>
+                    <button type="button" id="add-unterstandort" class="btn btn-primary mt-2" style="width: 100%;">+ Unterstandort hinzufügen</button>
+                </form>
             </div>
-            </form>
-            <button type="button" id="add-unterstandort" class="btn btn-info mt-2">+ Unterstandort hinzufügen</button>
         `,
-        showCancelButton: true,
+        showCancelButton: false,
         confirmButtonText: 'Erstellen',
         confirmButtonColor: '#3085d6',
-        cancelButtonText: 'Abbrechen',
-        cancelButtonColor: '#d33',
         focusConfirm: false,
+        onBeforeOpen: () => {
+            document.getElementById('name').focus();
+        },
         preConfirm: () => {
             const name = document.getElementById('name').value;
             const adresse = document.getElementById('adresse').value;
@@ -139,67 +136,76 @@ function customernew() {
 }
 
 function updateCustomerList() {
-    fetch('/doku/api/customers')
-        .then(response => response.json())
-        .then(data => {
-            const listContainer = document.getElementById('customerList');
-            if (!listContainer) {
-                console.error('Element mit der ID "customer-list" wurde nicht gefunden.');
-                return;
-            }
-
-            // Leeren der aktuellen Liste vor dem Hinzufügen neuer Elemente
-            listContainer.innerHTML = '';
-
-            data.forEach((customer, index) => {
-                // Erstellen des Links
-                const customerLink = document.createElement('a');
-                customerLink.href = `/customer_detail/${customer.id}`; // Pfad anpassen, falls nötig
-
-                // Erstellen des Kunden-Divs
-                const customerDiv = document.createElement('div');
-                customerDiv.className = `customer-entry ${index % 2 !== 0 ? 'customer-odd' : ''}`;
-
-                // Formatieren des Datums
-                const createdAt = new Date(customer.createdAt).toLocaleDateString('de-DE');
-                const updatedAt = new Date(customer.updatedAt).toLocaleString('de-DE');
-
-                // Setzen des inneren HTMLs des Kunden-Divs
-                customerDiv.innerHTML = `
-                    <div>${customer.id}</div>
-                    <div class="name-or-searchnum" data-name="${customer.name}" data-searchnum="${customer.suchnummer}">
-                        ${customer.name}
-                    </div>
-                    <div>${createdAt}</div>
-                    <div>${updatedAt}</div>
-                    <div>${customer.updatedBy.username}</div>
-                `;
-
-                // Hinzufügen des Kunden-Divs zum Link und dann zum Container
-                customerLink.appendChild(customerDiv);
-                listContainer.appendChild(customerLink);
-            });
-        })
-        .catch(error => console.error('Fehler beim Aktualisieren der Kundenliste', error));
+    history.go(0);
 }
-
-      
-
 
     document.addEventListener('DOMContentLoaded', function () {
         const refreshButton = document.getElementById('refreshCustomerList');
         refreshButton.addEventListener('click', function () {
-            updateCustomerList();
             Swal.fire({
                 toast: true,
-                title: 'Kundenliste aktualisiert',
+                title: 'Aktualisierung wird ausgeführt...',
                 icon: 'success',
                 position: 'top-end',
                 showConfirmButton: false,
-                timer: 1500
-            })
+                timer: 1500,
+                timerProgressBar: true,
+            }).then(() => {
+                updateCustomerList();
+            });
         });
     });
+
+    function searchCustomers(searchTerm) {
+        const url = new URL(window.location.origin + '/doku/api/kunden/suche');
+        url.searchParams.append('search', searchTerm);
+    
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const customerList = document.querySelector('.customer-list');
+            // Löscht nur die Kunden-Einträge und behält den Header
+            const entries = customerList.querySelectorAll('.customer-entry-link');
+            entries.forEach(entry => entry.remove());
+    
+            if (data.length === 0) {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Kunde nicht gefunden',
+                    showConfirmButton: false,
+                    timer: 800,
+                })
+            } else {
+                data.forEach((customer, index) => {
+                    const customerEntryLink = document.createElement('a');
+                    customerEntryLink.href = `/doku/customer/${customer.id}`;
+                    customerEntryLink.className = 'customer-entry-link';
+    
+                    const customerEntry = document.createElement('div');
+                    customerEntry.className = `customer-entry ${index % 2 === 0 ? '' : 'customer-odd'}`;
+    
+                    customerEntry.innerHTML = `
+                        <div>${customer.id}</div>
+                        <div class="name-or-searchnum" data-name="${customer.name}" data-searchnum="${customer.suchnummer}">
+                            ${customer.name}
+                        </div>
+                        <div>${customer.createdAt}</div>
+                        <div>${customer.updatedAt}</div>
+                        <div>${customer.updatedBy}</div>
+                    `;
+    
+                    customerEntryLink.appendChild(customerEntry);
+                    customerList.appendChild(customerEntryLink);
+                });
+            }
+        })
+        .catch(error => console.error('Fehler beim Laden der Kunden:', error));
+    }
+    
+    
+    
 
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('addCustomerButton').addEventListener('click', customernew);
@@ -217,19 +223,17 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Attach an event listener to the select dropdown
-    displayOptionSelect.addEventListener('change', function() {
-        updateDisplay();
-    }); 
-
     // Initial display update
     updateDisplay();
-    });
+});
 
-    document.getElementById('customerSearch').addEventListener('input', function(e) {
-        var searchValue = e.target.value.toLowerCase();
-        document.querySelectorAll('.customer-entry').forEach(function(customer) {
-            var name = customer.querySelector('.customer-name').textContent.toLowerCase();
-            customer.style.display = name.includes(searchValue) ? 'block' : 'none';
-        });
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('customerSearch');
+
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value;
+        searchCustomers(searchTerm);
     });
+})
+
+    

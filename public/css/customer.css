@@ -107,6 +107,48 @@
   cursor: pointer;
   overflow: hidden;
   outline: none;
+  transition: transform 0.3s ease;
+  transform: rotate(0deg);
 }
 
-  
+.refreshButton.rotated {
+  transform: rotate(360deg);
+}
+
+.swal2-modal {
+  width: 600px;
+  padding: 2rem;
+}
+  #create-customer-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+  .form-group {
+  width: 48%;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.page-item {
+  margin: 0 5px;
+  list-style-type: none; /* Entfernt den List-Punkt */
+}
+
+.page-item.active .page-link {
+  font-weight: bold;
+  text-decoration: underline;
+  color: #243668; /* Blau */
+  background-color: transparent;
+}
+
+.page-link {
+  color: #000; /* Schwarz */
+  text-decoration: none;
+  padding: 5px 10px;
+  border: none;
+}

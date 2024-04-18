@@ -1,0 +1,282 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Einstellungen ⚙️{% endblock %}
+
+{% block body %}
+<link rel="stylesheet" href="{{ asset('css/settings.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+<input type="hidden" id="csrfToken" value="{{ csrf_token('NNC') }}">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    {% if app.flashes %}
+        {% for flash_message_type, flash_messages in app.flashes %}
+            flash_messages.forEach(function(message) {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: '{{ flash_message_type }}',
+                    title: message,
+                    showConfirmButton: false,
+                    timer: 3000,
+                    toast: true
+                });
+            });
+        {% endfor %}
+    {% endif %}
+
+    // Clientseitige Validierung für E-Mail
+    const emailForm = document.querySelector('.email-form');
+    const emailInput = emailForm.querySelector('input[type="email"]'); // Assuming the email field is of type email
+    emailForm.addEventListener('submit', function(event) {
+        if (emailInput.value === '{{ app.user.email }}') {
+            event.preventDefault();
+            Swal.fire({
+                position: 'top-end',
+                icon: 'info',
+                title: 'Das ist bereits deine E-Mail.',
+                showConfirmButton: false,
+                timer: 3000,
+                toast: true
+            });
+        }
+    });
+
+    const passwordForm = document.querySelector('.password-form');
+    if (passwordForm) {
+    const newPasswordInput = passwordForm.querySelector('input[name="password_change[new_password]"]');
+    passwordForm.addEventListener('submit', function(event) {
+    if (newPasswordInput.value === '') {
+      event.preventDefault();
+      Swal.fire({
+        position: 'top-end',
+        icon: 'info',
+        title: 'Das neue Passwort darf nicht leer sein.',
+        showConfirmButton: false,
+        timer: 3000,
+        toast: true
+      });
+    }
+  });
+} 
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var emailVerificationToggle = document.getElementById('emailVerificationToggle');
+    var totpVerificationToggle = document.getElementById('totpVerificationToggle');
+
+    function enforceAtLeastOne() {
+        if (!emailVerificationToggle.checked && !totpVerificationToggle.checked) {
+            totpVerificationToggle.checked = true;
+            toggleTotpActivation(true); 
+        }
+    }
+
+    emailVerificationToggle.addEventListener('change', function() {
+        var isEnabled = this.checked;
+        if (isEnabled) {
+            totpVerificationToggle.checked = false; 
+        } else if (!totpVerificationToggle.checked) {
+            totpVerificationToggle.checked = true;
+            toggleTotpActivation(true);
+        }
+        toggleEmailVerification(isEnabled);
+    });
+
+    totpVerificationToggle.addEventListener('change', function() {
+        var isEnabled = this.checked;
+        if (isEnabled) {
+            emailVerificationToggle.checked = false; 
+        } else if (!emailVerificationToggle.checked) {
+            emailVerificationToggle.checked = true;
+            toggleEmailVerification(true);
+        }
+        toggleTotpActivation(isEnabled);
+    });
+
+    function toggleEmailVerification(enabled) {
+        fetch('/doku/benutzer/toggle-email-verification', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ enable: enabled })
+        })
+        .then(response => response.json())
+        .then(data => {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'info',
+                title: 'Email-Verifizierung wurde ' + (enabled ? 'aktiviert' : 'deaktiviert') + '.',
+                showConfirmButton: false,
+                timer: 1500,
+                toast: true,
+                timerProgressBar: true,
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            emailVerificationToggle.checked = !enabled; // Setze Schalter zurück, falls ein Fehler auftritt
+        });
+    }
+
+    function toggleTotpActivation(enabled) {
+        fetch('/doku/benutzer/totp-generator', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ enable: enabled })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.isNewSecret && data.qrCodeUri) {
+                showQrCodeModal(data.qrCodeUri);
+            } else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'info',
+                    title: 'TOTP-Verifizierung wurde ' + (enabled ? 'aktiviert' : 'deaktiviert') + '.',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    toast: true,
+                    timerProgressBar: true,
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            totpVerificationToggle.checked = !enabled; // Setze Schalter zurück, falls ein Fehler auftritt
+        });
+    }
+
+    function showQrCodeModal(qrCodeUri) {
+        Swal.fire({
+            title: 'Scanne den QR-Code',
+            html: '<div id="qrCodeContainer" style="display: flex; justify-content: center; align-items: center;"></div><br><input id="totpCode" type="text" placeholder="Code eingeben..." style="margin-top: 10px; width: 100%; box-sizing: border-box;">',
+            confirmButtonText: 'Verifizieren',
+            focusConfirm: false,
+            didOpen: () => {
+                new QRCode(document.getElementById('qrCodeContainer'), {
+                    text: qrCodeUri,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff"
+                });
+            },
+            preConfirm: () => {
+                const totpCode = Swal.getPopup().querySelector('#totpCode').value;
+                if (!totpCode) {
+                    Swal.showValidationMessage('Bitte geben Sie den TOTP-Code ein.');
+                }
+                return { totpCode: totpCode };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                verifyTotpCode(result.value.totpCode);
+            } else {
+                totpVerificationToggle.checked = true; // Sicherstellen, dass immer mindestens eine Methode aktiv ist
+            }
+        });
+    }
+
+    function verifyTotpCode(code) {
+        const csrfToken = document.getElementById('csrfToken').value; // Lese den Token
+        fetch('/doku/benutzer/totp-verify', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json', 
+                'Accept': 'application/json', 
+                'X-CSRF-Token': csrfToken // Verwende den Token hier
+            },
+            body: JSON.stringify({ totpCode: code })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Server-Fehler oder ungültige Antwort');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                Swal.fire('Verifizierung erfolgreich', '', 'success');
+            } else {
+                Swal.fire('Verifizierung fehlgeschlagen: ' + data.message, '', 'error');
+                totpVerificationToggle.checked = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Verifizierung fehlgeschlagen: ' + error.message, '', 'error');
+            totpVerificationToggle.checked = false;
+        });
+    }
+});
+</script>
+<div class="container">
+
+    <!-- User Informationen -->
+   <section>
+        <h2>Benutzer-Informationen</h2>
+        <p class="uppercase">Benutzername: <strong>{{ app.user.username }}</strong></p>
+        <p class="uppercase">Aktuelle Email: <strong>{{ app.user.email }}</strong></p>
+        <hr>
+        <!-- Bereich zum Ändern des Benutzerprofils -->
+<!-- Email ändern Bereich -->
+<div class="section-container">
+    <h2>Email ändern</h2>
+    {{ form_start(emailForm, {'attr': {'class': 'form-group email-form'}}) }}
+        {{ form_widget(emailForm.email, {'attr': {'placeholder': 'Neue Email-Adresse', 'class': 'form-control', 'type': 'email'}}) }}
+        <button type="submit" class="btn btn--primary"><i class="fa fa-check" aria-hidden="true"></i></button>
+    {{ form_end(emailForm) }}
+</div>
+
+<!-- Passwort ändern Bereich -->
+<div class="section-container password-fields">
+    <h2>Passwort ändern</h2>
+    {{ form_start(passwordForm) }}
+
+    <div class="form-group input-group">
+        {{ form_widget(passwordForm.current_password, {'attr': {'placeholder': 'Aktuelles Passwort', 'class': 'form-control input-with-button'}}) }}
+    </div>
+
+    <div class="form-group input-group">
+        {{ form_widget(passwordForm.new_password, {'attr': {'placeholder': 'Neues Passwort', 'class': 'form-control input-with-button'}}) }}
+        <button type="submit" class="btn btn--primary input-button" style="z-index:1000;"><i class="fa fa-check" aria-hidden="true"></i></button>
+    </div>
+
+    {{ form_end(passwordForm) }}
+    </div>
+    </section>
+
+    <!-- Generelle Einstellungen -->
+    <section>
+    <h2>Generelle Einstellungen</h2>
+    <hr>
+    <div class="toggle-switch">
+        <label>Email Verifizierung: </label>
+        <label class="switch">
+            <input type="checkbox" id="emailVerificationToggle" {% if isEmailVerificationEnabled %}checked{% endif %}>
+            <span class="slider round"></span>
+        </label>
+    </div>
+    <div class="toggle-switch" style="margin-top:3vw;">
+        <label>TOTP Verifizierung: </label>
+        <label class="switch">
+            <input type="checkbox" id="totpVerificationToggle" {{ user.isTotpEnabled ? 'checked' : '' }}>
+            <span class="slider round"></span>
+        </label>
+    </div>
+     <hr>
+    </section>
+
+    <!-- Admin Einstellungen -->
+    {% if is_granted('ROLE_ADMIN') %}
+    <section class="admin-settings">
+        <h2>Admin Einstellungen</h2>
+        <form>
+            <!-- Admin Spezifische Einstellungen -->
+        </form>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}
+

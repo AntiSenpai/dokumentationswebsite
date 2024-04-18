@@ -13,15 +13,21 @@ class CustomerDocumentation
     #[ORM\Column(type: 'integer')]
     private $id;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    private $cardId;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private $cardType;
+
     #[ORM\Column(type: 'text')]
     private $content;
 
     #[ORM\Column(type: 'string', length: 255)]
     private $sectionType;
 
-    #[ORM\ManyToOne(targetEntity: Location::class, inversedBy: 'customerDocumentations')]
+    #[ORM\ManyToOne(targetEntity: Customer::class, inversedBy: 'customerDocumentations')]
     #[ORM\JoinColumn(nullable: false)]
-    private $location;
+    private $customer;
 
     #[ORM\Column(type: 'datetime')]
     private $createdAt;
@@ -33,11 +39,32 @@ class CustomerDocumentation
     #[ORM\JoinColumn(nullable: false)]
     private $updatedBy;
 
-    // ... Getter und Setter Methoden ...
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getCardType(): ?string
+    {
+        return $this->cardType;
+    }
+
+    public function setCardType(string $cardType): self
+    {
+        $this->cardType = $cardType;
+        return $this;
+    }
+
+    public function getCardId(): ?string
+    {
+        return $this->cardId;
+    }
+
+    public function setCardId(string $cardId): self
+    {
+        $this->cardId = $cardId;
+        return $this;
     }
 
     public function getContent(): ?string
@@ -62,14 +89,14 @@ class CustomerDocumentation
         return $this;
     }
 
-    public function getLocation(): ?Location
+    public function getCustomer(): ?Customer
     {
-        return $this->location;
+        return $this->customer;
     }
 
-    public function setLocation(?Location $location): self
+    public function setCustomer(?Customer $customer): self
     {
-        $this->location = $location;
+        $this->customer = $customer;
         return $this;
     }
 

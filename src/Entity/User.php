@@ -49,6 +49,51 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $totpSecret;
+
+    #[ORM\Column(type: 'boolean')]
+    private $isTotpEnabled = false;
+
+    #[ORM\Column(type: 'boolean')]
+    private $IsEmailVerificationEnabled = true;
+
+    public function isEmailVerificationEnabled(): bool
+    {
+        return $this->IsEmailVerificationEnabled;
+    }
+
+    public function setIsEmailVerificationEnabled(bool $IsEmailVerificationEnabled): static
+    {
+        $this->IsEmailVerificationEnabled = $IsEmailVerificationEnabled;
+
+        return $this;
+    }
+
+    public function isTotpEnabled(): bool
+    {
+        return $this->isTotpEnabled;
+    }
+
+    public function setIsTotpEnabled(bool $isTotpEnabled): static
+    {
+        $this->isTotpEnabled = $isTotpEnabled;
+
+        return $this;
+    }
+
+    public function getTotpSecret(): ?string
+    {
+        return $this->totpSecret;
+    }
+
+    public function setTotpSecret(?string $totpSecret): static
+    {
+        $this->totpSecret = $totpSecret;
+
+        return $this;
+    }
+
     public function getConfirmationToken(): ?string
     {
         return $this->confirmationToken;

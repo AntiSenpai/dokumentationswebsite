@@ -1,0 +1,225 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+.container {
+    max-width: 95%;
+    height: 95%;
+    margin: 2.5% auto;
+    background-color: #f7f7f7;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 20px; /* Adds space between flex items */
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    margin-bottom: 15px; /* Adjust the margin as needed */
+}
+
+.input-with-button {
+    flex-grow: 1;
+    padding-right: 2.5rem; /* Adjust padding to make room for the button */
+    border-radius: 4px 0 0 4px;
+    border-right: none; /* Remove border to merge input and button */
+}
+
+.input-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%; /* Set the height to match the input field */
+    border: 2px solid #ccc; /* Match the border of the input field */
+    border-left: none; /* Remove the left border where the button meets the input */
+    background-color: #243668; /* NNC Blue */
+    color: white;
+    border-radius: 0 4px 4px 0; /* Rounded corners on the right */
+    padding: 10px; /* Adjust padding as needed */
+    cursor: pointer;
+}
+
+section {
+    flex: 1 1 300px; /* Grow to fill space, don't shrink, base width of 300px */
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.section-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    padding: 20px;
+    margin-bottom: 20px; /* Abstand zwischen den Sektionen */
+}
+
+.form-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px; /* Abstand zwischen den Formular-Elementen */
+}
+
+.form-container .form__field {
+    flex-grow: 1;
+    margin: 0; /* Entfernt den Margin, da Flexbox Gap verwendet wird */
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+  
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: red;
+    transition: .4s;
+    border-radius: 34px;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  
+  input:checked + .slider {
+    background-color: #243668;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #243668;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+  
+
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+
+.form-group {
+        display: flex; 
+        margin-bottom: 1rem;
+    }
+    
+    .form-group input {
+        flex-grow: 1; 
+        border-radius: 4px 0 0 4px;
+    }
+    
+    .form-group button {
+        border-radius: 0 4px 4px 0;
+        margin: 0;
+        padding: 10px 15px; 
+        flex-grow: 0; 
+    }
+
+    hr {
+        border: 0;
+        height: 1px;
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0), #243668, rgba(0, 0, 0, 0)); /* Gradient-Linie */
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    
+    .form-group:not(:last-child) {
+        margin-bottom: 1rem;
+    }
+
+/* Responsive Anpassungen */
+@media (max-width: 768px) {
+    .form-group .btn {
+        padding: 6px 12px;
+    }
+
+    .form-group .form-control {
+        padding-right: 2.5rem; /* Für kleinere Bildschirme den Button kleiner machen */
+    }
+}
+
+.form__field input {
+    width: 100%;
+    border-radius: 4px 0 0 4px; /* Rundet die linke Seite der Inputs ab */
+    border-right: none; /* Entfernt die rechte Border, um mit dem Button zu verschmelzen */
+}
+.admin-settings {
+    background-color: #ffeeee; /* Light red background for admin settings */
+    border-left: 5px solid #ffcccc; /* Highlight admin section */
+}
+.form-control, .btn {
+    padding: 10px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+.form-control {
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background: none;
+}
+.form-control:focus {
+    border-color: #243668; /* NNC Blue */
+    box-shadow: 0 0 8px rgba(36,54,104,0.2);
+    outline: none;
+}
+.btn {
+    color: white;
+    background-color: #243668; /* NNC Blue */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 0 4px 4px 0;
+}
+.btn:hover {
+    background-color: #1a2a4a;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    color: greenyellow;
+}
+h1, h2 {
+    color: #243668; /* NNC Blue for headings */
+}
+
+@media (max-width: 768px) {
+    .form-group input {
+        padding-right: 50px; /* Kleinere Buttons für schmalere Ansichten */
+    }
+    
+    .form-group .btn {
+        padding: 12px 16px;
+    }
+}

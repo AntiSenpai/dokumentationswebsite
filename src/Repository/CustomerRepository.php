@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Customer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,22 +22,35 @@ class CustomerRepository extends ServiceEntityRepository
         parent::__construct($registry, Customer::class);
     }
 
-    public function findBySearchTerm($searchTerm = null, $limit = 10)
+    public function findBySearchTerm($searchTerm = null, $limit = 10, $page = 1)
 {
     $queryBuilder = $this->createQueryBuilder('c');
 
     if (!empty($searchTerm)) {
         $queryBuilder
-            ->where('c.name LIKE :searchTerm')
-            ->orWhere('c.suchnummer LIKE :searchTerm')
+            ->where('c.name LIKE :searchTerm OR c.suchnummer LIKE :searchTerm')
             ->setParameter('searchTerm', '%' . $searchTerm . '%');
     }
+
+    $queryBuilder->orderBy('c.CreatedAt', 'DESC');
     
-    return $queryBuilder
-        ->setMaxResults($limit) // Beschränken Sie die Ergebnisse auf $limit
-        ->getQuery()
-        ->getResult();
+    return $queryBuilder->getQuery()->getResult();
 }
+
+    public function getPaginatedCustomers($limit = 10, $page = 1) {
+    $queryBuilder = $this->createQueryBuilder('c')
+        ->orderBy('c.CreatedAt', 'DESC');
+
+    $query = $queryBuilder->getQuery();
+
+    $paginator = new Paginator($query);
+
+    $paginator->getQuery()
+        ->setFirstResult($limit * ($page - 1))
+        ->setMaxResults($limit);
+
+    return $paginator;
+    }
 
 //    /**
 //     * @return Customer[] Returns an array of Customer objects
