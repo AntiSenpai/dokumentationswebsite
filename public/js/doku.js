@@ -46,10 +46,12 @@ function customernew() {
             const email = document.getElementById('email').value;
             const stundensatz = document.getElementById('stundensatz').value;
             const unterstandorteContainer = document.getElementById('unterstandorte-container');
+            const nameElement = document.querySelectorAll('.unterstandort-name');
             
             const unterstandorte = [];
             document.querySelectorAll('.unterstandort-stadt').forEach(element => {
                 unterstandorte.push({ adresse: element.value});
+                unterstandorte.push({ name: nameElement.value });
             });
 
             
@@ -73,16 +75,16 @@ function customernew() {
                 const container = document.getElementById('unterstandorte-container');
                 const unterstandortHTML = `
                     <div class="form-group mt-2">
-                        <input type="text" class="form-control unterstandort-stadt" placeholder="Unterstandort Stadt" required>
+                    <input type="text" class="form-control unterstandort-name" placeholder="Name des Unterstandorts" required>
+                    <input type="text" class="form-control unterstandort-stadt mt-1" placeholder="Unterstandort Stadt" required>
                     </div>
                 `;
                 container.insertAdjacentHTML('beforeend', unterstandortHTML);
             });
-            fetch('/doku/user') // Pfad zur neuen Backend-Route
+            fetch('/doku/user') 
             .then(response => response.json())
             .then(data => {
                 const select = document.getElementById('technischer-ansprechpartner');
-                // Optionen basierend auf den User-Daten erstellen
                 data.forEach(user => {
                     const option = new Option(user.username, user.id);
                     select.appendChild(option);

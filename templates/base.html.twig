@@ -19,11 +19,11 @@
             <img src="{{ asset('images/nnc-transparent-blau.png') }}" alt="NNC Logo">
             </a>
         </div>
-        {% if currentPage is defined and currentPage == 'settings' %}
+        {% block topNav %}
             <div>
             <h1 style="color:lightblack;">Einstellungen<h1>
             </div>
-        {% endif %}
+        {% endblock %}
         <div class="navbar-nav-right">
             <div class="user-menu">
                 <div class="user-info-box">
@@ -41,14 +41,14 @@
             </div>
         </div>
     </nav>
-    {% if currentPage is not defined or currentPage != 'settings' %}
+    {% block nav %}
     <nav class="navbar-nav-main">
         <ul class="nav-nav">
             <li><a href="{{ path('dokumentation') }}" class="nav-nav-link fas fa-solid fa-book-open fa-lg"></a></li>
             <li><a href="{{ path('zeiterfassung') }}" class="nav-nav-link fas fa-solid fa-stopwatch fa-lg"></a></li>
         </ul>
     </nav>
-    {% endif %}
+    {% endblock %}
     {% block body %} 
     {% endblock %}
 </body>
