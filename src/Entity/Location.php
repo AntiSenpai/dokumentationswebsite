@@ -30,19 +30,7 @@ class Location
     #[ORM\ManyToOne(targetEntity: Location::class)]
     #[ORM\JoinColumn(nullable: true)]
     private ?Location $unterstandort = null;
-
-    #[ORM\Column(type: 'string', length: 255)]
-    private $unterstandortname;
-
-    public function getUnterstandortname(): ?string {
-        return $this->unterstandortname;
-    }
-
-    public function setUnterstandortname(string $unterstandortname): self {
-        $this->unterstandortname = $unterstandortname;
-        return $this;
-    }
-
+    
     public function getId(): ?int {
         return $this->id;
     }

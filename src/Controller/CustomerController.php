@@ -73,7 +73,7 @@ public function create(Request $request, EntityManagerInterface $entityManager, 
     $customer->setUpdatedBy($this->getUser());
 
     // Generierung der Suchnummer
-    $customer->setSuchnummer('K' . rand(10000, 99999));
+    $customer->setSuchnummer('K' . rand(10000, 999999));
 
     // Zuweisung des technischen Ansprechpartners
     $techAnsprechpartner = $userRepository->find($data['technischerAnsprechpartner']);
