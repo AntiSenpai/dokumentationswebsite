@@ -42,5 +42,22 @@ class CustomerDocumentationController extends AbstractController
 
         return new Response(json_encode(['status' => 'success', 'message' => 'Daten erfolgreich gespeichert!']), 200, ['Content-Type' => 'application/json']);
     }
+
+    #[Route('upload/{cardId}', name: 'file_upload')]
+    public function upload(Request $request, $cardName): Response {
+        $files = $request->files->get('files');
+        $uploadDirectory = $this->getParameter('kernel.project_dir') . "/public/customerFiles/$cardName";
+
+        if(!file_exists($uploadDirectory)) {
+            mkdir($uploadDirectory, 0777, true);
+        }
+
+        foreach($files as $file) {
+            $fileName = $file->getClientOriginalName();
+            $file->move($uploadDirectory, $fileName);
+        }
+
+        return $this->json(['success' => true, 'files' => array_map(fn($file) => ['name' => $file->getClientOriginalName(), 'url' => "/customerFiles/$cardName/" . $file->getClientOriginalName()], $files)]);
+    }
    
 }

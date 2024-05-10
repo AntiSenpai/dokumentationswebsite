@@ -123,7 +123,8 @@
             {% if documentationData.netz.default %}
             <div class="card editable-card" data-section-type="netz" data-card-id="{{ documentationData.netz.default.cardId }}">
                 <div class="card-header">Netzwerk Topologie</div>
-                <div class="card-body">
+                <div class="card-body" onclick="document.getElementById('file-input-{{ documentationData.netz.default.cardId }}').click();">
+                    <input type="file" multiple class="file-input" id="file-input-{{ documentationData.netz.default.cardId }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0, cursor: pointer; display: none;" />
                 </div>
             </div>
             {% endif %}
@@ -501,6 +502,40 @@ document.addEventListener('DOMContentLoaded', function() {
             if(tableHeight > cardBodyHeight) {
                 table.closest('.card').style.height = (table.closest('.card').clientHeight + (tableHeight - cardBodyHeight)) + 'px';
             }
+        });
+        }
+
+    function displayFiles(cardId, files) {
+        const formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files[]', files[i]);
+        }
+    }
+
+    function uploadFiles(cardId, files) {
+        const formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files[]', files[i]);
+        }
+
+        fetch('/doku/upload/${cardId}', {
+            method: 'POST',
+            body: formData
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayFiles(cardId, data.files);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Fehler',
+                    text: 'Datei konnte nicht hochgeladen werden!',
+                    toast: true,
+                    position: 'top-end',
+                    timer: 2000,
+                    timerProgressBar: true,
+            });
+        }
         });
     }
 
@@ -1046,6 +1081,14 @@ function initializeEditorJSForTables(card, data) {
             newCard.editorInstance = editor;
         });
     });
+
+    document.querySelectorAll('file-input').forEach(input => {
+        input.addEventListener('change', function() {
+            const files = this.files;
+            const cardId = this.closest('.card').getAttribute('data-card-id');
+            uploadFiles(cardId, files);
+        })
+    })
 
     hideAllSections();
     updateEditModeUI();

@@ -73,7 +73,7 @@ public function create(Request $request, EntityManagerInterface $entityManager, 
     $customer->setUpdatedBy($this->getUser());
 
     // Generierung der Suchnummer
-    $customer->setSuchnummer('K' . rand(10000, 999999));
+    $customer->setSuchnummer($data['suchnummer']);
 
     // Zuweisung des technischen Ansprechpartners
     $techAnsprechpartner = $userRepository->find($data['technischerAnsprechpartner']);
@@ -108,6 +108,12 @@ public function create(Request $request, EntityManagerInterface $entityManager, 
 
     try {
         $entityManager->flush();
+
+        $customerFolder = $this->getParameter('kernel.project_dir') . '/public/customerFiles/' . $customer->getName();
+        if(!file_exists($customerFolder)) {
+            mkdir($customerFolder, 0777, true);
+        }
+
         return $this->json(['success' => true, 'message' => 'Kunde mit Standorten erfolgreich erstellt.']);
     } catch (\Exception $e) {
         return $this->json(['success' => false, 'message' => 'Ein Fehler ist aufgetreten: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
