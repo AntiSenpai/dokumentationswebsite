@@ -527,7 +527,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 overlay.style.width = '100%';
                 overlay.style.height = '100%';
                 overlay.style.zIndex = 10;
-                overlay.style.cursor = 'not-allowed';
                 card.style.position = 'relative';
                 card.appendChild(overlay);
             }
@@ -701,7 +700,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 function initializeEditorJSForEditableCards(card, data = null) {
-
     const cardBody = card.querySelector('.card-body');
     const cardId = card.getAttribute('data-card-id');
 
@@ -988,6 +986,13 @@ function initializeEditorJSForTables(card, data) {
             });
         }
     }
+
+    function toggleReadOnlyMode(editMode) {
+        Object.keys(editorInstances).forEach(key => {
+            let editor = editorInstances[key];
+            editor.readOnly.toggle(!editMode);
+        });
+    }
     
     sidebarLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -1012,6 +1017,7 @@ function initializeEditorJSForTables(card, data) {
         editMode = !editMode;
         localStorage.setItem('editMode', editMode);
         updateEditModeUI();
+        toggleReadOnlyMode(editMode);
     });
 
     document.querySelectorAll('.addCardBtn').forEach(addCardBtn => {

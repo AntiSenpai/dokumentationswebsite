@@ -5,6 +5,9 @@ function customernew() {
             <div style="text-align: center;">
                 <form id="create-customer-form" style="margin: 0 auto; max-width: 500px;">
                     <div class="form-group">
+                        <input type="text" class="form-control" id="suchnummer" placeholder="Suchnummer" required>
+                    </div>
+                    <div class="form-group">
                         <input type="text" class="form-control" id="name" placeholder="Name/Rechtsform" required>
                     </div>
                     <div class="form-group">
@@ -40,7 +43,7 @@ function customernew() {
         },
         preConfirm: () => {
             const name = document.getElementById('name').value;
-            const adresse = document.getElementById('adresse').value;
+            const suchnummer = document.getElementById('suchnummer').value;
             const technischerAnsprechpartner = document.getElementById('technischer-ansprechpartner').value;
             const vorOrtAnsprechpartner = document.getElementById('vor-ort-ansprechpartner').value;
             const email = document.getElementById('email').value;
@@ -53,14 +56,9 @@ function customernew() {
                 unterstandorte.push({ adresse: element.value});
                 unterstandorte.push({ name: nameElement.value });
             });
-
-            
-            if (!name || !technischerAnsprechpartner || !vorOrtAnsprechpartner || !email || !stundensatz) {
-                Swal.showValidationMessage("Bitte fülle alle Pflichtfelder aus!");
-                return false;
-            }
             
             return { 
+                suchnummer,
                 name: document.getElementById('name').value,
                 adresse: document.getElementById('adresse').value,
                 technischerAnsprechpartner: document.getElementById('technischer-ansprechpartner').value,
