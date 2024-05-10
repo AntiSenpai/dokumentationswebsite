@@ -58,8 +58,9 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
   });
-} 
+}
 });
+
 </script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -72,6 +73,23 @@ document.addEventListener('DOMContentLoaded', function() {
             toggleTotpActivation(true); 
         }
     }
+
+    
+    document.getElementById('showExistingQrCodeBtn').addEventListener('click', function() {
+    fetch('/doku/benutzer/qr-code')
+        .then(response => response.json())
+        .then(data => {
+            if (data.qrCodeUri) {
+                showExistingQrCodeModal(data.qrCodeUri);
+            } else {
+                Swal.fire('Fehler', 'QR-Code konnte nicht geladen werden', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Fehler beim Laden des QR-Codes', error);
+            Swal.fire('Fehler', 'Es gab ein Problem beim Abrufen des QR-Codes', 'error');
+        });
+    });
 
     emailVerificationToggle.addEventListener('change', function() {
         var isEnabled = this.checked;
@@ -158,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     text: qrCodeUri,
                     width: 200,
                     height: 200,
-                    colorDark: "#000000",
+                    colorDark: "#243668",
                     colorLight: "#ffffff"
                 });
             },
@@ -209,6 +227,67 @@ document.addEventListener('DOMContentLoaded', function() {
             totpVerificationToggle.checked = false;
         });
     }
+
+    function showExistingQrCodeModal(qrCodeUri) {
+    Swal.fire({
+        title: 'Dein QR-Code',
+        html: '<div id="existingQrCodeContainer" style="display: flex; justify-content: center; align-items: center;"></div>',
+        showConfirmButton: false,
+        didOpen: () => {
+            new QRCode(document.getElementById('existingQrCodeContainer'), {
+                text: qrCodeUri,
+                width: 200,
+                height: 200,
+                colorDark: "#243668",
+                colorLight: "#ffffff"
+            });
+        }
+    });
+    }
+
+
+   document.getElementById('newUserForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const roles = [];
+    formData.getAll('roles').forEach(role => roles.push(role));
+
+    const data = {
+        username: formData.get('username'),
+        email: formData.get('email'),
+        password: formData.get('password'),
+        roles: roles.length > 0 ? roles : ['ROLE_USER']
+    };
+
+    fetch('/doku/benutzer/erstellen', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        Swal.fire({
+            icon: 'success',
+            title: 'Erfolg',
+            text: 'Benutzer wurde erfolgreich erstellt.',
+            timer: 1500,
+            toast: true
+        });
+    })
+    .catch(error => {
+        console.error('Fehler beim Erstellen des Benutzers:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Fehler',
+            text: 'Benutzer konnte nicht erstellt werden.',
+            timer: 1500,
+            toast: true
+        });
+    });
+});
+
 });
 </script>
 <div class="container">
@@ -218,6 +297,13 @@ document.addEventListener('DOMContentLoaded', function() {
         <h2>Benutzer-Informationen</h2>
         <p class="uppercase">Benutzername: <strong>{{ app.user.username }}</strong></p>
         <p class="uppercase">Aktuelle Email: <strong>{{ app.user.email }}</strong></p>
+        <!-- Profilbild-Bereich -->
+        <div class="profile-picture-container">
+            <label for="profile_picture_upload">
+               <img src="{{ app.user.profilePicture ? '/doku/images/' ~ app.user.profilePicture : asset('images/profile-circle.svg') }}" alt="Profilbild" class="profile-picture" id="profilePicture">
+            </label>
+            <input type="file" id="profile_picture_upload" name="profile_picture" accept="image/*" style="display: none;" onchange="onFileSelected(event)">
+        </div>
         <hr>
         <!-- Bereich zum Ändern des Benutzerprofils -->
 <!-- Email ändern Bereich -->
@@ -240,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     <div class="form-group input-group">
         {{ form_widget(passwordForm.new_password, {'attr': {'placeholder': 'Neues Passwort', 'class': 'form-control input-with-button'}}) }}
-        <button type="submit" class="btn btn--primary input-button" style="z-index:1000;"><i class="fa fa-check" aria-hidden="true"></i></button>
+        <button type="submit" class="btn btn--primary input-button"><i class="fa fa-check" aria-hidden="true"></i></button>
     </div>
 
     {{ form_end(passwordForm) }}
@@ -265,18 +351,97 @@ document.addEventListener('DOMContentLoaded', function() {
             <span class="slider round"></span>
         </label>
     </div>
+    {% if app.user.totpSecret %}
+   <button id="showExistingQrCodeBtn" style="background-color: #243668; color: white;">QR-Code anzeigen</button>
+    {% endif %} 
      <hr>
     </section>
 
     <!-- Admin Einstellungen -->
     {% if is_granted('ROLE_ADMIN') %}
     <section class="admin-settings">
-        <h2>Admin Einstellungen</h2>
-        <form>
-            <!-- Admin Spezifische Einstellungen -->
-        </form>
+        <h2>Passwörter anzeigen:</h2>
+        <div class="user-list">
+            {% for user in users %}
+            <div class="user-box">
+                <div class="user-info">
+                    <img src="{{ user.profilePicture ? '/doku/images/' ~ user.profilePicture : asset('images/profile-circle.svg') }}" alt="Profilbild" class="profile-picture-small">
+                    <span>{{ user.username }}</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="togglePasswordVisibility">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+    <hr>
+    <form id="newUserForm" class="new-user-form">
+    <h3>Neuen Benutzer anlegen:</h3>
+        <label for="username"><strong>Benutzername:</strong></label>
+        <div class="form-group">
+            <input type="text" id="username" name="username" required class="form-control">
+        </div>
+        <label for="email"><strong>Email:</strong></label>
+        <div class="form-group">
+            <input type="email" id="email" name="email" required class="form-control">
+        </div>
+        <label for="password"><strong>Passwort:</strong</label>
+        <div class="form-group">
+            <input type="password" id="password" name="password" required class="form-control">
+        </div>
+        <label><strong>Rollen:</strong</label>
+        <div class="form-group">
+            <div class="checkbox-group">
+                <input type="checkbox" id="role_user" name="roles" value="ROLE_USER">
+                <label for="role_user"><strong>Benutzer</strong></label>
+                <input type="checkbox" id="role_admin" name="roles" value="ROLE_ADMIN">
+                <label for="role_admin"><strong>Administrator</strong></label>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Erstellen</button>
+    </form>
     </section>
     {% endif %}
 </div>
+<script>
+function onFileSelected(event) {
+    var file = event.target.files[0];
+    var reader = new FileReader();
+
+    reader.onload = function(e) {
+        document.getElementById('profilePicture').src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+
+    var formData = new FormData();
+    formData.append('imageFile', file);
+
+    fetch('/doku/profile/upload', { 
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.filename) {
+            var newImageUrl = '/doku/images/' + data.filename + '?t=' + new Date().getTime();
+            document.getElementById('profilePicture').src = newImageUrl;
+        } else {
+            console.error('Fehler beim Hochladen des Bildes', data);
+            Swal.fire('Fehler', 'Bild konnte nicht hochgeladen werden', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Fehler beim Hochladen des Bildes', error);
+        Swal.fire('Fehler', 'Bild konnte nicht hochgeladen werden', 'error');
+    });
+}
+
+document.getElementById('profilePicture').addEventListener('click', function() {
+    document.getElementById('profile_picture_upload').click();
+});
+
+</script
 {% endblock %}
 

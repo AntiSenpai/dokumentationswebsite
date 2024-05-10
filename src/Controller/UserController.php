@@ -9,6 +9,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,6 +35,32 @@ class UserController extends AbstractController
         return $this->json(['error' => 'Ein interner Serverfehler ist aufgetreten.'], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
+#[Route('/benutzer/erstellen', name: 'create_user', methods: ['POST'])]
+public function createUser(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager) {
+    $data = json_decode($request->getContent(), true);
+
+    $user = new User();
+    $user->setUsername($data['username']);
+    $user->setEmail($data['email']);
+    $user->setRoles($data['roles'] ?? ['ROLE_USER']); 
+    $user->setIsActive(true);
+    $user->setIsVerified(false);
+
+    $now = new \DateTime();
+    $user->setTimer($now->format('Y-m-d'));
+
+    $confirmationToken = bin2hex(random_bytes(32));
+    $user->setConfirmationToken($confirmationToken);
+
+   
+    $encodedPassword = $passwordHasher->hashPassword($user, $data['password']);
+    $user->setPassword($encodedPassword);
+
+    $entityManager->persist($user);
+    $entityManager->flush();
+
+    return new JsonResponse(['message' => 'Benutzer wurde erfolgreich erstellt.']);
+}
 
     #[Route('/benutzer/totp-generator', name: 'generate_totp')]
     public function generateTotp(Security $security, EntityManagerInterface $entityManager): JsonResponse {
@@ -57,18 +84,34 @@ class UserController extends AbstractController
     } else {
         // Wenn ein Secret existiert, setze das existierende Secret und generiere die URI
         $totp = TOTP::create($user->getTotpSecret());
-        $totp->setLabel('NNC-IT ' . $user->getUsername());
+        $totp->setLabel('Kundendoku');
         $qrCodeUri = $totp->getProvisioningUri();
         $user->setIsTotpEnabled(true);
         $entityManager->persist($user);
         $entityManager->flush();
         return new JsonResponse(['qrCodeUri' => $qrCodeUri, 'isNewSecret' => false]);
     }
-}
+    }
 
+    #[Route('/benutzer/qr-code', name: 'retrieve_qr_code')]
+    public function retrieveQrCode(EntityManagerInterface $entityManager): JsonResponse
+    {
+    $user = $this->getUser();
+    if (!$user) {
+        return $this->json(['error' => 'Nicht authentifiziert'], Response::HTTP_UNAUTHORIZED);
+    }
 
+    $secret = $user->getTotpSecret();
+    if (!$secret) {
+        return $this->json(['error' => 'Kein TOTP-Secret vorhanden'], Response::HTTP_BAD_REQUEST);
+    }
 
+    $totp = TOTP::create($secret);
+    $totp->setLabel('NNC-IT ' . $user->getUsername());
+    $qrCodeUri = $totp->getProvisioningUri();
 
+    return $this->json(['qrCodeUri' => $qrCodeUri]);
+    }
 
     #[Route('/benutzer/totp-setup', name: 'user_totp_setup')]
     public function totpSetup(Security $security): Response {

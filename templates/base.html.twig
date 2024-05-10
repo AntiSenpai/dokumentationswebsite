@@ -18,6 +18,7 @@
             <a href="{{ path('dokumentation') }}">
             <img src="{{ asset('images/nnc-transparent-blau.png') }}" alt="NNC Logo">
             </a>
+            <button id="feedbackButton" class="btn-info" style="background-color: #243668; border: none;">Feedback</button>
         </div>
         {% block topNav %}
             <div>
@@ -52,4 +53,62 @@
     {% block body %} 
     {% endblock %}
 </body>
+<script>
+document.getElementById('feedbackButton').addEventListener('click', function() {
+    const currentPageUrl = window.location.href; 
+
+    Swal.fire({
+        title: 'Feedback an Kjeld',
+        input: 'textarea',
+        inputLabel: 'Feedback / Verbesserungsvorschlag / Fehler-Fehlermeldung',
+        inputPlaceholder: 'Schreibe hier...',
+        showCancelButton: false,
+        confirmButtonText: 'Senden',
+        confirmButtonColor: '#243668',
+        cancelButtonText: 'Abbrechen',
+        inputValidator: (value) => {
+            if (!value) {
+                return 'Bitte gebe ein Feedback ein!';
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            sendFeedback(result.value, currentPageUrl);
+        }
+    });
+});
+
+function sendFeedback(feedback, url) {
+    fetch('/doku/send-feedback', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ feedback: feedback, url: url })
+    })
+    .then(response => response.json())
+    .then(data => {
+        Swal.fire({
+            icon: 'success',
+            title: 'Feedback gesendet',
+            toast: true,
+            position: 'top-end',
+            timer: 1500,
+            timerProgressBar: true,
+            showConfirmButton: false,
+        });
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Fehler',
+            toast: true,
+            position: 'top-end',
+            timer: 1500,
+            timerProgressBar: true,
+        });
+    });
+}
+
+</script>
 </html>

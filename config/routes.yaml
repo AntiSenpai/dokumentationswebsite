@@ -12,6 +12,10 @@ app_user:
     path: /benutzer
     controller: 'App\Controller\UserController::index'
 
+create_user:
+    path: /benutzer/erstellen
+    controller: 'App\Controller\UserController::createUser'
+
 user_totp:
     path: /benutzer/totp-generator
     controller: 'App\Controller\UserController::generateTotpSecret'

@@ -4,12 +4,18 @@ namespace App\Controller;
 
 use App\Form\EmailUpdateType;
 use App\Form\PasswordChangeType;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class SettingsController extends AbstractController
 {
@@ -24,6 +30,7 @@ class SettingsController extends AbstractController
     public function index(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = $this->getUser();
+        $users = $entityManager->getRepository(User::class)->findAll();
         $emailForm = $this->createForm(EmailUpdateType::class, $user);
         $passwordForm = $this->createForm(PasswordChangeType::class, $user);
 
@@ -63,6 +70,7 @@ class SettingsController extends AbstractController
 
         return $this->render('settings/index.html.twig', [
             'controller_name' => 'SettingsController',
+            'users' => $users,
             'currentPage' => 'settings',
             'emailForm' => $emailForm->createView(),
             'passwordForm' => $passwordForm->createView(),
@@ -70,4 +78,59 @@ class SettingsController extends AbstractController
             'user' => $this->getUser(),
         ]);
     }
+
+    #[Route('/profile/upload', name: 'profile_upload', methods: ['POST'])]
+    public function uploadProfilePicture(Request $request, SluggerInterface $slugger, EntityManagerInterface $entityManager): Response
+    {
+    $user = $this->getUser();
+    if (!$user) {
+        return $this->json(['error' => 'User not found'], Response::HTTP_UNAUTHORIZED);
+    }
+
+    $imageFile = $request->files->get('imageFile'); 
+    if ($imageFile) {
+        $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeFilename = $slugger->slug($originalFilename);
+        $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+
+        try {
+            $imageFile->move(
+                $this->getParameter('profile_image_directory'),
+                $newFilename
+            );
+            $user->setProfilePicture($newFilename);
+            $entityManager->persist($user);
+            $entityManager->flush();
+        
+            return $this->json(['message' => 'File uploaded successfully', 'filename' => $newFilename]);
+        } catch (FileException $e) {
+            return $this->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    return $this->json(['error' => 'No file uploaded'], Response::HTTP_BAD_REQUEST);
+    }
+
+    #[Route('/send-feedback', name: 'send_feedback', methods: ['POST'])]
+public function sendFeedback(Request $request, MailerInterface $mailer): Response {
+    $data = json_decode($request->getContent(), true);
+    $feedback = $data['feedback'];
+    $url = $data['url'];
+
+    $email = (new Email())
+        ->from('bot@nnc-it.com')
+        ->to('kh@nnc-it.com')
+        ->subject('Feedback von: ' . $this->getUser()->getUsername())
+        ->text($feedback . "\n\nSeite: " . $url);
+
+    try {
+        $mailer->send($email);
+        return new JsonResponse(['message' => 'Feedback gesendet'], Response::HTTP_OK);
+    } catch (\Exception $e) {
+        return new JsonResponse(['error' => 'Mail send error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+    }
+
+
+
 }
