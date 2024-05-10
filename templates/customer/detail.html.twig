@@ -551,6 +551,16 @@ document.addEventListener('DOMContentLoaded', function() {
         tool.style.display = editMode ? 'flex' : 'none';
     });
 
+    document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.file-input').forEach(input => {
+        input.addEventListener('change', function() {
+            const files = this.files;
+            const cardId = this.closest('.card').getAttribute('data-card-id');
+            uploadFiles(cardId, files);
+            });
+        });
+    });
+
     document.querySelectorAll('.card').forEach(card => {
         if(!editMode) {
             if(!card.querySelector('.edit-overlay')) {
