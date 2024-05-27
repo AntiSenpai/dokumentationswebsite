@@ -20,9 +20,14 @@
         <input type="text" id="customerSearch" placeholder="Kunden suchen...">
         <button class="search-btn"><i class="fas fa-search"></i></button>
     </div>
+    <div class="buttons">
+    <button type="button" class="btn btn-primary" id="archiveButton">
+        <i class="fas fa-archive"></i> Archiv
+    </button>
     <button type="button" class="btn btn-primary" id="addCustomerButton">
         <i class="fas fa-user-plus"></i> Neu
     </button>
+    </div>
 </div>
 
 <div class="header-container">
@@ -30,28 +35,31 @@
     <button id="refreshCustomerList" class=" btn refreshbutton" style="margin-top: 1vw">
         <i class="fas fa-sync-alt"></i>
     </button>
+    <button type="button" class="btn btn-primary" id="archiveSelectedButton" disabled>
+        <i class="fas fa-archive"></i> Auswahl Archivieren
+    </button>
 </div>
 
 <div class="customer-list">
     <div class="customer-list-header">
-        <span title="ID">ID:</span>
-        <span title="Name">Kunde:</span>
-        <span class="clickable" title="Erstellt am">Erstellt am:</span>
-        <span title="Geändert">Geändert um:</span>
-        <span class="clickable" title="Geändert von">Geändert von:</span>
+        <div class="header-checkbox"><input type="checkbox" id="selectAll"></div>
+        <div class="header-id" title="ID">ID:</div>
+        <div class="header-name" title="Name">Kunde:</div>
+        <div class="header-created" title="Erstellt am">Erstellt am:</div>
+        <div class="header-updated" title="Geändert">Geändert um:</div>
+        <div class="header-updatedby" title="Geändert von">Geändert von:</div>
     </div>
     {% for customer in customers %}
-        <a href="{{ path('customer_detail', {'id': customer.id}) }}" class="customer-entry-link">
-            <div class="customer-entry {% if loop.index is odd %}customer-odd{% endif %}">
-                <div>{{ customer.suchnummer }}</div>
-                <div class="name-or-searchnum" data-name="{{ customer.name }}" data-searchnum="{{ customer.suchnummer }}">
-                    {{ customer.name }}
-                </div>
-                <div>{{ customer.createdAt|date('d.m.Y') }}</div>
-                <div>{{ customer.updatedAt|date('H:i') }}</div>
-                <div>{{ customer.updatedBy.username }}</div>
-            </div>
-        </a>
+        <div class="customer-entry {% if loop.index is odd %}customer-odd{% endif %}">
+            <div class="entry-checkbox"><input type="checkbox" class="customer-checkbox" data-id="{{ customer.id }}"></div>
+            <a href="{{ path('customer_detail', {'id': customer.id}) }}" class="customer-entry-link">
+                <div class="entry-id">{{ customer.suchnummer }}</div>
+                <div class="entry-name">{{ customer.name }}</div>
+                <div class="entry-created">{{ customer.createdAt|date('d.m.Y') }}</div>
+                <div class="entry-updated">{{ customer.updatedAt|date('H:i') }}</div>
+                <div class="entry-updatedby">{{ customer.updatedBy.username }}</div>
+            </a>
+        </div>
     {% else %}
         <p>Keine Kunden gefunden.</p>
     {% endfor %}
@@ -68,4 +76,98 @@
     </nav>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const archiveButton = document.getElementById('archiveButton');
+    const archiveSelectedButton = document.getElementById('archiveSelectedButton');
+    const selectAllCheckbox = document.getElementById('selectAll');
+    const customerCheckboxes = document.querySelectorAll('.customer-checkbox');
+
+    archiveButton.addEventListener('click', function() {
+        Swal.fire({
+            title: 'Archivierte Kunden',
+            html: '<div id="archivedCustomersList"></div>',
+            showCloseButton: true,
+            showCancelButton: false,
+            showConfirmButton: false,
+            didOpen: function() {
+                fetch('{{ path('customer_archived') }}')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('archivedCustomersList').innerHTML = html;
+                    document.querySelectorAll('.activate-button').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const customerId = this.dataset.id;
+                            fetch('/doku/customer/activate/' + customerId, {
+                                method: 'POST'
+                            }).then(() => {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Kunde reaktiviert',
+                                    timer: 1500,
+                                    timerProgressBar: true,
+                                    toast: true,
+                                    position: 'top-end',
+                                    showConfirmButton: false
+                                }).then(() => location.reload());
+                            });
+                        });
+                    });
+                });
+            }
+        });
+    });
+
+    selectAllCheckbox.addEventListener('change', function() {
+        const isChecked = selectAllCheckbox.checked;
+        customerCheckboxes.forEach(checkbox => {
+            checkbox.checked = isChecked;
+        });
+        toggleArchiveSelectedButton();
+    });
+
+    customerCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', toggleArchiveSelectedButton);
+    });
+
+    function toggleArchiveSelectedButton() {
+        const anyChecked = Array.from(customerCheckboxes).some(checkbox => checkbox.checked);
+        archiveSelectedButton.disabled = !anyChecked;
+    }
+
+    archiveSelectedButton.addEventListener('click', function() {
+        const selectedCustomerIds = Array.from(customerCheckboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.dataset.id);
+
+        if (selectedCustomerIds.length > 0) {
+            Swal.fire({
+                title: 'Möchten Sie die ausgewählten Kunden wirklich archivieren?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ja, archivieren!',
+                cancelButtonText: 'Abbrechen'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    selectedCustomerIds.forEach(customerId => {
+                        fetch('/doku/customer/archive/' + customerId, {
+                            method: 'POST'
+                        }).then(() => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Kunde archiviert',
+                                timer: 1500,
+                                timerProgressBar: true,
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false
+                            }).then(() => location.reload());
+                        });
+                    });
+                }
+            });
+        }
+    });
+});
+</script>
 {% endblock %}

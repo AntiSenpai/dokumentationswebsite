@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class LocationController extends AbstractController
 {
@@ -22,6 +23,7 @@ class LocationController extends AbstractController
 
 
     #[Route('/location/{id}', name: 'location_detail')]
+    #[IsGranted('ROLE_PRAKTIKANT')]
     public function detail(int $id, LocationRepository $locationRepo): Response {
     $location = $locationRepo->find($id);
     

@@ -15,6 +15,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class SettingsController extends AbstractController
@@ -27,6 +28,7 @@ class SettingsController extends AbstractController
     }
 
     #[Route('/einstellungen', name: 'app_settings')]
+    #[IsGranted('ROLE_PRAKTIKANT')]
     public function index(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = $this->getUser();
@@ -80,6 +82,7 @@ class SettingsController extends AbstractController
     }
 
     #[Route('/profile/upload', name: 'profile_upload', methods: ['POST'])]
+    #[IsGranted('ROLE_PRAKTIKANT')]
     public function uploadProfilePicture(Request $request, SluggerInterface $slugger, EntityManagerInterface $entityManager): Response
     {
     $user = $this->getUser();
@@ -112,7 +115,7 @@ class SettingsController extends AbstractController
     }
 
     #[Route('/send-feedback', name: 'send_feedback', methods: ['POST'])]
-public function sendFeedback(Request $request, MailerInterface $mailer): Response {
+    public function sendFeedback(Request $request, MailerInterface $mailer): Response {
     $data = json_decode($request->getContent(), true);
     $feedback = $data['feedback'];
     $url = $data['url'];

@@ -1,0 +1,14 @@
+{% if customers is not empty %}
+    {% for customer in customers %}
+        <div class="customer-entry">
+            <div>{{ customer.suchnummer }}</div>
+            <div>{{ customer.name }}</div>
+            <div>{{ customer.createdAt|date('d.m.Y') }}</div>
+            <div>{{ customer.updatedAt|date('H:i') }}</div>
+            <div>{{ customer.updatedBy.username }}</div>
+            <button class="btn btn-success activate-button" data-id="{{ customer.id }}">Reaktivieren</button>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>Keine archivierten Kunden gefunden.</p>
+{% endif %}

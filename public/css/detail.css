@@ -75,6 +75,15 @@ z-index: 1050 !important;
   height: 100%;
 }
 
+.edit-overlay {
+  position: static;
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  pointer-events: none;
+}
+
 /* Adjustments for smaller screens */
 @media (max-width: 768px) {
   .section {

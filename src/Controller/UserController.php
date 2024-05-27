@@ -13,6 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserController extends AbstractController
 {
@@ -36,6 +37,7 @@ class UserController extends AbstractController
     }
 }
 #[Route('/benutzer/erstellen', name: 'create_user', methods: ['POST'])]
+#[IsGranted('ROLE_ADMIN')]
 public function createUser(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager) {
     $data = json_decode($request->getContent(), true);
 

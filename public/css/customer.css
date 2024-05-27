@@ -1,7 +1,3 @@
-/* customer.css */
-@import '~sweetalert2/dist/sweetalert2.min.css';
-
-
 .search-add-box {
     background-color: #f0f0f0; /* leichtes Hellgrau */
     border-radius: 0px 0px 10px 10px; /* abgerundete Ecken oben */
@@ -50,7 +46,7 @@
   .customer-list {
     width: 95%;
     margin: 10px auto 0; /* Fügt oben einen Abstand hinzu */
-    border-radius: 10px 10px 10px 10px; /* abgerundete Ecken unten */
+    border-radius: 10px; /* abgerundete Ecken unten */
     border: 1px solid #ccc;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Fügt Schatten hinzu für den Effekt des Ineinanderfließens */
   }
@@ -119,12 +115,14 @@
   width: 600px;
   padding: 2rem;
 }
-  #create-customer-form {
+
+#create-customer-form {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
 }
-  .form-group {
+
+.form-group {
   width: 48%;
 }
 

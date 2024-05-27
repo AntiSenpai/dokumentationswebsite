@@ -1,4 +1,9 @@
 security:
+
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER, ROLE_MITARBEITER, ROLE_PRAKTIKANT]
+        ROLE_MITARBEITER: [ROLE_USER]
+        ROLE_PRAKTIKANT: [ROLE_USER]
     
     password_hashers:
         App\Entity\User:

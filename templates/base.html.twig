@@ -21,9 +21,7 @@
             <button id="feedbackButton" class="btn-info" style="background-color: #243668; border: none;">Feedback</button>
         </div>
         {% block topNav %}
-            <div>
-            <h1 style="color:lightblack;">Einstellungen<h1>
-            </div>
+            <h1 style="color: #243668;">{% if customerName is defined %}{{ customerName}}{% else %}Einstellungen{% endif %}</h1>
         {% endblock %}
         <div class="navbar-nav-right">
             <div class="user-menu">

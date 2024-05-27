@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Entity\CustomerDocumentation;
 use App\Entity\Location;
 use Doctrine\Persistence\ManagerRegistry;
@@ -32,6 +33,7 @@ class CustomerController extends AbstractController
     }
 
     #[Route('/kundendoku', name: 'customer_index')]
+    #[IsGranted('ROLE_PRAKTIKANT')]
     public function index(Request $request, EntityManagerInterface $entityManager, CustomerRepository $customerRepository): Response
     {
 
@@ -57,7 +59,8 @@ class CustomerController extends AbstractController
     }
 
     #[Route('/create', name: 'customer_create')]
-public function create(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response {
+    #[IsGranted('ROLE_MITARBEITER')]
+    public function create(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response {
     $data = json_decode($request->getContent(), true);
 
     if (!isset($data['name'], $data['adresse'], $data['technischerAnsprechpartner'], $data['vorOrtAnsprechpartner'], $data['email'], $data['stundensatz'])) {
@@ -123,6 +126,7 @@ public function create(Request $request, EntityManagerInterface $entityManager, 
     
 
 #[Route('/customer/{id}', name: 'customer_detail')]
+#[IsGranted('ROLE_PRATIKANT')]
 public function detail(int $id, EntityManagerInterface $entityManager, LocationRepository $locationRepo, CustomerDocumentationRepository $docRepo): Response {
     $customer = $entityManager->getRepository(Customer::class)->find($id);
     $sectionTypes = ['allgemein', 'netz', 'server', 'clients', 'userpwd', 'routerfirewall', 'provider', 'remotemaintenance', 'backup', 'ups', 'antivirus', 'applicationsoftware', 'otherinfo'];
@@ -175,6 +179,7 @@ public function detail(int $id, EntityManagerInterface $entityManager, LocationR
 }
 
 #[Route('/api/kunden/suche', name: 'customer_list', methods: ['GET'])]
+#[IsGranted('ROLE_PRAKTIKANT')]
 public function list(Request $request, ManagerRegistry $doctrine, CustomerRepository $customerRepository): JsonResponse
 {
     $searchTerm = $request->query->get('search', '');
@@ -223,6 +228,7 @@ public function list(Request $request, ManagerRegistry $doctrine, CustomerReposi
 # }
 
 #[Route('/save-card', name: 'save_customer_documentation', methods: ['POST'])]
+#[IsGranted('ROLE_MITARBEITER')]
 public function saveDocumentation(Request $request, EntityManagerInterface $entityManager, CustomerDocumentationRepository $docRepo, CustomerRepository $customerRepo): JsonResponse
 {
     $data = json_decode($request->getContent(), true);
@@ -274,7 +280,9 @@ public function saveDocumentation(Request $request, EntityManagerInterface $enti
 
     return $this->json(['message' => 'Dokumentation erfolgreich gespeichert', 'id' => $documentation->getId()]);
 }
+
     #[Route('/api/customers', name: 'api_customers_list')]
+    #[IsGranted('ROLE_PRAKTIKANT')]
     public function apiCustomersList(EntityManagerInterface $entityManager): Response
     {
         $customers = $entityManager->getRepository(Customer::class)->findAll();
@@ -292,6 +300,7 @@ public function saveDocumentation(Request $request, EntityManagerInterface $enti
     }
 
     #[Route('/user', name: 'user_list')]
+    #[IsGranted('ROLE_PRAKTIKANT')]
     public function userList(UserRepository $userRepository): JsonResponse {
     $users = $userRepository->findAll();
     $userData = array_map(function ($user) {
@@ -302,6 +311,7 @@ public function saveDocumentation(Request $request, EntityManagerInterface $enti
 
 
     #[Route('/customer/{id}/print', name: 'customer_print')]
+    #[IsGranted('ROLE_MITARBEITER')]
 public function printView(int $id, EntityManagerInterface $entityManager, CustomerRepository $customerRepo, CustomerDocumentationRepository $docRepo): Response {
     $customer = $customerRepo->find($id);
     if (!$customer) {
@@ -327,5 +337,35 @@ public function printView(int $id, EntityManagerInterface $entityManager, Custom
         'documentationData' => $documentationData,
     ]);
 }
+
+#[Route('/customer/archive/{id}', name: 'customer_archive', methods: ['POST'])]
+    #[IsGranted('ROLE_MITARBEITER')]
+    public function archive(Customer $customer): Response
+    {
+        $customer->setIsArchived(true);
+        $this->entityManager->flush();
+
+        return new Response('Customer archived', 200);
+    }
+
+    #[Route('/customer/activate/{id}', name: 'customer_activate', methods: ['POST'])]
+    #[IsGranted('ROLE_MITARBEITER')]
+    public function activate(Customer $customer): Response
+    {
+        $customer->setIsArchived(false);
+        $this->entityManager->flush();
+
+        return new Response('Customer activated', 200);
+    }
+
+    #[Route('/customer/archived', name: 'customer_archived')]
+    #[IsGranted('ROLE_PRAKTIKANT')]
+    public function archived(CustomerRepository $customerRepository): Response
+    {
+        $archivedCustomers = $customerRepository->findAllArchivedCustomers();
+        return $this->render('customer/archived.html.twig', [
+            'customers' => $archivedCustomers,
+        ]);
+    }
 
 }

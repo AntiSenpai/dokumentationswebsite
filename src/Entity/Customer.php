@@ -49,6 +49,21 @@ class Customer
 
     private ?float $stundensatz = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private $isArchived = false;
+
+    public function getIsArchived(): bool
+    {
+        return $this->isArchived;
+    }
+
+    public function setIsArchived(bool $isArchived): self
+    {
+        $this->isArchived = $isArchived;
+
+        return $this;
+    }
+
     public function __construct()
     {
        $this->locations = new ArrayCollection();

@@ -1,6 +1,8 @@
 {# templates/customer/detail.html.twig #}
 {% extends 'base.html.twig' %}
 
+{% set customerName = customer.name %}
+
 {% block nav %}
 {% endblock %}
 
@@ -18,10 +20,6 @@
     <div id="wrapper">
         <!-- Sidebar -->
         <nav id="sidebar">
-            <div class="sidebar-header">
-                <h3 class="customer-name">{{ customer.name }}</h3>
-            </div>
-
             <ul class="list-unstyled components">
 <li class="active">
 <a href="#allgemeinContent" class="sidenav-link"><i class="fas fa-info-circle icon"></i> Allgemein</a>
@@ -493,7 +491,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-        function adjustTableHeight() {
+    function adjustTableHeight() {
         document.querySelectorAll('.card-body .ce-table__content').forEach(table => {
             let cardBodyHeight = table.closest('.card-body').clientHeight;
             table.style.height = cardBodyHeight + 'px';
@@ -503,7 +501,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 table.closest('.card').style.height = (table.closest('.card').clientHeight + (tableHeight - cardBodyHeight)) + 'px';
             }
         });
-        }
+    }
 
     function displayFiles(cardId, files) {
         const formData = new FormData();
@@ -777,31 +775,51 @@ function initializeEditorJSForEditableCards(card, data = null) {
         },
         data: editorData,
         readOnly: !editMode,
+        onReady: () => {
+            if (!editMode) {
+                const editorOverlay = cardBody.querySelector('.edit-overlay');
+                if (editorOverlay) {
+                    editorOverlay.remove();
+                }
+            }
+        }
     });
 
     editorInstances[cardId] = editor;
 }
 
+
+
 function initializeEditorJSForTables(card, data) {
-        const cardBody = card.querySelector('.card-body');
-        const persistentId = card.getAttribute('data-card-id');
+    const cardBody = card.querySelector('.card-body');
+    const persistentId = card.getAttribute('data-card-id');
 
-        if (!cardBody || !persistentId) {
-            console.error('Karten Element nicht gefunden in', card);
-            return;
-        }
-
-        let editorData = data ? data : getInitialDataForCard(card);
-
-        const editor = new EditorJS({
-            holder: cardBody,
-            tools: {
-                table: Table,
-            },
-            data: editorData,
-        });
-        editorInstances[persistentId] = editor;
+    if (!cardBody || !persistentId) {
+        console.error('Karten Element nicht gefunden in', card);
+        return;
     }
+
+    let editorData = data ? data : getInitialDataForCard(card);
+
+    const editor = new EditorJS({
+        holder: cardBody,
+        tools: {
+            table: Table,
+        },
+        data: editorData,
+        readOnly: !editMode,
+        onReady: () => {
+            if (!editMode) {
+                const editorOverlay = cardBody.querySelector('.edit-overlay');
+                if (editorOverlay) {
+                    editorOverlay.remove();
+                }
+            }
+        }
+    });
+
+    editorInstances[persistentId] = editor;
+}
 
 
                     function getInitialDataForCard(card, customerData = {}) {
@@ -1066,31 +1084,41 @@ function initializeEditorJSForTables(card, data) {
     });
 
     document.querySelectorAll('.addCardBtn').forEach(addCardBtn => {
-        addCardBtn.addEventListener('click', function() {
-            if (!editMode) return;
+    addCardBtn.addEventListener('click', function() {
+        if (!editMode) return;
 
-            let cardTitle = prompt("Geben Sie den Titel der neuen Karte ein", "Neue Karte");
-            let newCard = document.createElement('div');
-            newCard.className = 'card editable-card';
-            newCard.innerHTML = `<div class="card-header">${cardTitle}<button class="delete-btn" style="display: none;"><i class="fa-solid fa-circle-xmark"></i></button></div>` +
-                                `<div class="card-body"></div>`;
+        let cardTitle = prompt("Geben Sie den Titel der neuen Karte ein", "Neue Karte");
+        let newCard = document.createElement('div');
+        newCard.className = 'card editable-card';
+        newCard.innerHTML = `<div class="card-header">${cardTitle}<button class="delete-btn" style="display: none;"><i class="fa-solid fa-circle-xmark"></i></button></div>` +
+                            `<div class="card-body"></div>`;
 
-            this.closest('.content-section').querySelector('.section').appendChild(newCard);
-            initializeDeleteButton(newCard);
-            initializeSaveButton(newCard);
+        this.closest('.content-section').querySelector('.section').appendChild(newCard);
+        initializeDeleteButton(newCard);
+        initializeSaveButton(newCard);
 
-            const editor = new EditorJS({
-                holder: newCard.querySelector('.card-body'),
-                tools: {
-                    header: Header,
-                    list: List,
-                    image: SimpleImage,
-                    table: Table
+        const editor = new EditorJS({
+            holder: newCard.querySelector('.card-body'),
+            tools: {
+                header: Header,
+                list: List,
+                image: SimpleImage,
+                table: Table
+            },
+            readOnly: !editMode,
+            onReady: () => {
+                if (!editMode) {
+                    const editorOverlay = newCard.querySelector('.edit-overlay');
+                    if (editorOverlay) {
+                        editorOverlay.remove();
+                    }
                 }
-            });
-            newCard.editorInstance = editor;
+            }
         });
+        newCard.editorInstance = editor;
     });
+});
+
 
     document.querySelectorAll('file-input').forEach(input => {
         input.addEventListener('change', function() {
