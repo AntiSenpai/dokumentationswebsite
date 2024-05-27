@@ -35,57 +35,88 @@
   }
   
   .customer-list-header {
-    background-color: #d0d0d0; /* ein noch dunkleres Grau */
-    border-radius: 10px 10px 0 0; /* abgerundete Ecken oben */
+    background-color: #d0d0d0;
+    border-radius: 10px 10px 0 0;
     display: flex;
-    justify-content: space-around;
-    padding: 10px 0;
+    justify-content: space-between;
+    padding: 10px;
     font-weight: bold;
-  }
-  
-  .customer-list {
-    width: 95%;
-    margin: 10px auto 0; /* Fügt oben einen Abstand hinzu */
-    border-radius: 10px; /* abgerundete Ecken unten */
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Fügt Schatten hinzu für den Effekt des Ineinanderfließens */
-  }
+    text-align: left; /* Links ausrichten */
+}
 
-  .customer-list a {
+.customer-list {
+    width: 95%;
+    margin: 10px auto 0;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.customer-list a {
     color: #243668;
     text-decoration: none;
     cursor: pointer;
+}
 
-  }
-  
-  .customer-entry {
+.customer-entry {
     display: flex;
-    justify-content: space-around;
-    padding: 10px 0;
+    justify-content: space-between;
+    padding: 10px;
     border-bottom: 1px solid #ccc;
-    transition: background-color 0.3s; /* Animation für den Hover-Effekt */
-  }
-  
-  .customer-entry:hover {
-    background-color: #e6e6e6; /* Farbe beim Hover */
-    cursor:pointer;
-  }
-  
-  .customer-odd {
-    background-color: #f0f0f0; /* leichtes Hellgrau für jeden zweiten Eintrag */
-  }
-  
-  /* Stellt sicher, dass alle Spalten der Liste untereinander ausgerichtet sind */
-  .customer-entry > div {
-    text-align: left;
+    transition: background-color 0.3s;
+    text-align: left; /* Links ausrichten */
+}
+
+.customer-entry:hover {
+    background-color: #e6e6e6;
+    cursor: pointer;
+}
+
+.customer-odd {
+    background-color: #f0f0f0;
+}
+
+.header-checkbox, .entry-checkbox {
+    flex: 0 0 50px; /* Feste Breite für die Checkbox */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 20px; /* Abstand vom Rand */
+    margin-right: 50px; /* Abstand rechts hinzufügen */
+}
+
+.header-id, .entry-id {
+    flex: 0 0 80px; /* Feste Breite für die ID */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-name, .entry-name {
+    flex: 2; /* Etwas größere Breite für den Namen */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-created, .entry-created,
+.header-updated, .entry-updated,
+.header-updatedby, .entry-updatedby {
     flex: 1;
-    padding: 0 5px; /* Fügt horizontalen Abstand hinzu */
-  }
-  
-  /* Reduziert die Größe der Einträge, um Platz zu sparen */
-  .customer-entry {
-    padding: 5px 0;
-  }
+    padding: 0 5px; /* Horizontaler Abstand */
+    display: flex;
+    justify-content: center; /* Zentriert den Text horizontal */
+    align-items: center; /* Zentriert den Text vertikal */
+}
+
+.customer-entry > div {
+    padding: 0 5px;
+}
+
+.customer-entry a {
+    color: #243668;
+    text-decoration: none;
+}
 
   .header-container {
     display: flex;
@@ -149,4 +180,59 @@
   text-decoration: none;
   padding: 5px 10px;
   border: none;
+}
+
+.modal-archived-customer-list {
+  width: 100%;
+  margin: 20px 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.modal-archived-customer-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #e0e0e0;
+  font-weight: bold;
+}
+
+.modal-archived-customer-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  transition: background-color 0.3s;
+}
+
+.modal-archived-customer-entry:hover {
+  background-color: #e9e9e9;
+}
+
+.modal-entry-id, .modal-entry-name {
+  flex: 1;
+  padding: 0 10px;
+  text-align: left;
+}
+
+.modal-entry-id {
+  font-weight: bold;
+}
+
+.modal-activate-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.modal-activate-button:hover {
+  background-color: #45a049;
 }

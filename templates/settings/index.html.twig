@@ -7,9 +7,130 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
 <input type="hidden" id="csrfToken" value="{{ csrf_token('NNC') }}">
+
+<div class="container">
+    <!-- Benutzer-Informationen -->
+    <section>
+        <h2>Benutzer-Informationen</h2>
+        <p class="uppercase">Benutzername: <strong>{{ app.user.username }}</strong></p>
+        <p class="uppercase">Aktuelle Email: <strong>{{ app.user.email }}</strong></p>
+        
+        <!-- Profilbild-Bereich -->
+        <div class="profile-picture-container">
+            <label for="profile_picture_upload">
+                <img src="{{ app.user.profilePicture ? '/doku/images/' ~ app.user.profilePicture : asset('images/profile-circle.svg') }}" alt="Profilbild" class="profile-picture" id="profilePicture">
+            </label>
+            <input type="file" id="profile_picture_upload" name="profile_picture" accept="image/*" style="display: none;" onchange="onFileSelected(event)">
+        </div>
+        <hr>
+        
+        <!-- Bereich zum Ändern des Benutzerprofils -->
+        <div class="section-container">
+            <h2>Email ändern</h2>
+            {{ form_start(emailForm, {'attr': {'class': 'form-group email-form'}}) }}
+                {{ form_widget(emailForm.email, {'attr': {'placeholder': 'Neue Email-Adresse', 'class': 'form-control', 'type': 'email'}}) }}
+                <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i></button>
+            {{ form_end(emailForm) }}
+        </div>
+
+        <div class="section-container">
+            <h2>Passwort ändern</h2>
+            {{ form_start(passwordForm) }}
+                <div class="form-group">
+                    {{ form_widget(passwordForm.current_password, {'attr': {'placeholder': 'Aktuelles Passwort', 'class': 'form-control'}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_widget(passwordForm.new_password, {'attr': {'placeholder': 'Neues Passwort', 'class': 'form-control'}}) }}
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i></button>
+                </div>
+            {{ form_end(passwordForm) }}
+        </div>
+    </section>
+
+    <!-- Generelle Einstellungen -->
+    <section>
+        <h2>Generelle Einstellungen</h2>
+        <hr>
+        <div class="toggle-switch">
+            <label>Email Verifizierung: </label>
+            <label class="switch">
+                <input type="checkbox" id="emailVerificationToggle" {% if isEmailVerificationEnabled %}checked{% endif %}>
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <div class="toggle-switch" style="margin-top:3vw;">
+            <label>TOTP Verifizierung: </label>
+            <label class="switch">
+                <input type="checkbox" id="totpVerificationToggle" {{ user.isTotpEnabled ? 'checked' : '' }}>
+                <span class="slider round"></span>
+            </label>
+        </div>
+        {% if app.user.totpSecret %}
+        <button id="showExistingQrCodeBtn" class="btn btn-primary">QR-Code anzeigen</button>
+        {% endif %}
+        <hr>
+    </section>
+</div>
+{% if is_granted('ROLE_ADMIN') %}
+<div class="container">
+       <!-- Admin Einstellungen -->
+    <section class="admin-settings">
+        <h2>Admin Einstellungen</h2>
+        <hr>
+        <h3>Passwörter anzeigen:</h3>
+        <div class="user-list">
+            {% for user in users %}
+            <div class="user-box">
+                <div class="user-info">
+                    <img src="{{ user.profilePicture ? '/doku/images/' ~ user.profilePicture : asset('images/profile-circle.svg') }}" alt="Profilbild" class="profile-picture-small">
+                    <span>{{ user.username }}</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="togglePasswordVisibility">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        <hr>
+    <form id="newUserForm" class="new-user-form">
+        <h3>Neuen Benutzer anlegen:</h3>
+        <div class="form-group">
+            <label for="username"><strong>Benutzername:</strong></label>
+            <input type="text" id="username" name="username" required class="form-control" placeholder="Gewünschten Benutzernamen eingeben...">
+        </div>
+        <div class="form-group">
+            <label for="email"><strong>Email:</strong></label>
+            <input type="email" id="email" name="email" required class="form-control" placeholder="Die Mail Adresse der zu anlegenden Person...">
+        </div>
+        <div class="form-group">
+            <label for="password"><strong>Passwort:</strong></label>
+            <input type="password" id="password" name="password" required class="form-control" placeholder="Vergib ein temporäres Passwort...">
+        </div>
+        <div class="form-group">
+            <label><strong>Rollen:</strong></label>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="role_admin" name="roles" value="ROLE_ADMIN">
+                    <label for="role_admin"><strong>Administrator</strong></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="role_mitarbeiter" name="roles" value="ROLE_MITARBEITER">
+                    <label for="role_mitarbeiter"><strong>Mitarbeiter</strong></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="role_praktikant" name="roles" value="ROLE_PRAKTIKANT">
+                    <label for="role_praktikant"><strong>Praktikant</strong></label>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Erstellen</button>
+    </form>
+    </section>
+</div>
+{% endif %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-
     {% if app.flashes %}
         {% for flash_message_type, flash_messages in app.flashes %}
             flash_messages.forEach(function(message) {
@@ -25,9 +146,8 @@ document.addEventListener('DOMContentLoaded', function() {
         {% endfor %}
     {% endif %}
 
-    // Clientseitige Validierung für E-Mail
     const emailForm = document.querySelector('.email-form');
-    const emailInput = emailForm.querySelector('input[type="email"]'); // Assuming the email field is of type email
+    const emailInput = emailForm.querySelector('input[type="email"]');
     emailForm.addEventListener('submit', function(event) {
         if (emailInput.value === '{{ app.user.email }}') {
             event.preventDefault();
@@ -44,24 +164,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const passwordForm = document.querySelector('.password-form');
     if (passwordForm) {
-    const newPasswordInput = passwordForm.querySelector('input[name="password_change[new_password]"]');
-    passwordForm.addEventListener('submit', function(event) {
-    if (newPasswordInput.value === '') {
-      event.preventDefault();
-      Swal.fire({
-        position: 'top-end',
-        icon: 'info',
-        title: 'Das neue Passwort darf nicht leer sein.',
-        showConfirmButton: false,
-        timer: 3000,
-        toast: true
-      });
+        const newPasswordInput = passwordForm.querySelector('input[name="password_change[new_password]"]');
+        passwordForm.addEventListener('submit', function(event) {
+            if (newPasswordInput.value === '') {
+                event.preventDefault();
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'info',
+                    title: 'Das neue Passwort darf nicht leer sein.',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    toast: true
+                });
+            }
+        });
     }
-  });
-}
 });
-
 </script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var emailVerificationToggle = document.getElementById('emailVerificationToggle');
@@ -74,21 +194,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    
     document.getElementById('showExistingQrCodeBtn').addEventListener('click', function() {
-    fetch('/doku/benutzer/qr-code')
-        .then(response => response.json())
-        .then(data => {
-            if (data.qrCodeUri) {
-                showExistingQrCodeModal(data.qrCodeUri);
-            } else {
-                Swal.fire('Fehler', 'QR-Code konnte nicht geladen werden', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Fehler beim Laden des QR-Codes', error);
-            Swal.fire('Fehler', 'Es gab ein Problem beim Abrufen des QR-Codes', 'error');
-        });
+        fetch('/doku/benutzer/qr-code')
+            .then(response => response.json())
+            .then(data => {
+                if (data.qrCodeUri) {
+                    showExistingQrCodeModal(data.qrCodeUri);
+                } else {
+                    Swal.fire('Fehler', 'QR-Code konnte nicht geladen werden', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Fehler beim Laden des QR-Codes', error);
+                Swal.fire('Fehler', 'Es gab ein Problem beim Abrufen des QR-Codes', 'error');
+            });
     });
 
     emailVerificationToggle.addEventListener('change', function() {
@@ -229,223 +348,65 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showExistingQrCodeModal(qrCodeUri) {
-    Swal.fire({
-        title: 'Dein QR-Code',
-        html: '<div id="existingQrCodeContainer" style="display: flex; justify-content: center; align-items: center;"></div>',
-        showConfirmButton: false,
-        didOpen: () => {
-            new QRCode(document.getElementById('existingQrCodeContainer'), {
-                text: qrCodeUri,
-                width: 200,
-                height: 200,
-                colorDark: "#243668",
-                colorLight: "#ffffff"
-            });
-        }
-    });
+        Swal.fire({
+            title: 'Dein QR-Code',
+            html: '<div id="existingQrCodeContainer" style="display: flex; justify-content: center; align-items: center;"></div>',
+            showConfirmButton: false,
+            didOpen: () => {
+                new QRCode(document.getElementById('existingQrCodeContainer'), {
+                    text: qrCodeUri,
+                    width: 200,
+                    height: 200,
+                    colorDark: "#243668",
+                    colorLight: "#ffffff"
+                });
+            }
+        });
     }
 
+    document.getElementById('newUserForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const roles = [];
+        formData.getAll('roles').forEach(role => roles.push(role));
 
-   document.getElementById('newUserForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const roles = [];
-    formData.getAll('roles').forEach(role => roles.push(role));
+        const data = {
+            username: formData.get('username'),
+            email: formData.get('email'),
+            password: formData.get('password'),
+            roles: roles.length > 0 ? roles : ['ROLE_USER']
+        };
 
-    const data = {
-        username: formData.get('username'),
-        email: formData.get('email'),
-        password: formData.get('password'),
-        roles: roles.length > 0 ? roles : ['ROLE_USER']
-    };
-
-    fetch('/doku/benutzer/erstellen', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-        Swal.fire({
-            icon: 'success',
-            title: 'Erfolg',
-            text: 'Benutzer wurde erfolgreich erstellt.',
-            timer: 1500,
-            toast: true
-        });
-    })
-    .catch(error => {
-        console.error('Fehler beim Erstellen des Benutzers:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Fehler',
-            text: 'Benutzer konnte nicht erstellt werden.',
-            timer: 1500,
-            toast: true
+        fetch('/doku/benutzer/erstellen', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Erfolg',
+                text: 'Benutzer wurde erfolgreich erstellt.',
+                timer: 1500,
+                toast: true
+            });
+        })
+        .catch(error => {
+            console.error('Fehler beim Erstellen des Benutzers:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Fehler',
+                text: 'Benutzer konnte nicht erstellt werden.',
+                timer: 1500,
+                toast: true
+            });
         });
     });
-});
 
 });
 </script>
-<div class="container">
-
-    <!-- User Informationen -->
-   <section>
-        <h2>Benutzer-Informationen</h2>
-        <p class="uppercase">Benutzername: <strong>{{ app.user.username }}</strong></p>
-        <p class="uppercase">Aktuelle Email: <strong>{{ app.user.email }}</strong></p>
-        <!-- Profilbild-Bereich -->
-        <div class="profile-picture-container">
-            <label for="profile_picture_upload">
-               <img src="{{ app.user.profilePicture ? '/doku/images/' ~ app.user.profilePicture : asset('images/profile-circle.svg') }}" alt="Profilbild" class="profile-picture" id="profilePicture">
-            </label>
-            <input type="file" id="profile_picture_upload" name="profile_picture" accept="image/*" style="display: none;" onchange="onFileSelected(event)">
-        </div>
-        <hr>
-        <!-- Bereich zum Ändern des Benutzerprofils -->
-<!-- Email ändern Bereich -->
-<div class="section-container">
-    <h2>Email ändern</h2>
-    {{ form_start(emailForm, {'attr': {'class': 'form-group email-form'}}) }}
-        {{ form_widget(emailForm.email, {'attr': {'placeholder': 'Neue Email-Adresse', 'class': 'form-control', 'type': 'email'}}) }}
-        <button type="submit" class="btn btn--primary"><i class="fa fa-check" aria-hidden="true"></i></button>
-    {{ form_end(emailForm) }}
 </div>
-
-<!-- Passwort ändern Bereich -->
-<div class="section-container password-fields">
-    <h2>Passwort ändern</h2>
-    {{ form_start(passwordForm) }}
-
-    <div class="form-group input-group">
-        {{ form_widget(passwordForm.current_password, {'attr': {'placeholder': 'Aktuelles Passwort', 'class': 'form-control input-with-button'}}) }}
-    </div>
-
-    <div class="form-group input-group">
-        {{ form_widget(passwordForm.new_password, {'attr': {'placeholder': 'Neues Passwort', 'class': 'form-control input-with-button'}}) }}
-        <button type="submit" class="btn btn--primary input-button"><i class="fa fa-check" aria-hidden="true"></i></button>
-    </div>
-
-    {{ form_end(passwordForm) }}
-    </div>
-    </section>
-
-    <!-- Generelle Einstellungen -->
-    <section>
-    <h2>Generelle Einstellungen</h2>
-    <hr>
-    <div class="toggle-switch">
-        <label>Email Verifizierung: </label>
-        <label class="switch">
-            <input type="checkbox" id="emailVerificationToggle" {% if isEmailVerificationEnabled %}checked{% endif %}>
-            <span class="slider round"></span>
-        </label>
-    </div>
-    <div class="toggle-switch" style="margin-top:3vw;">
-        <label>TOTP Verifizierung: </label>
-        <label class="switch">
-            <input type="checkbox" id="totpVerificationToggle" {{ user.isTotpEnabled ? 'checked' : '' }}>
-            <span class="slider round"></span>
-        </label>
-    </div>
-    {% if app.user.totpSecret %}
-   <button id="showExistingQrCodeBtn" style="background-color: #243668; color: white;">QR-Code anzeigen</button>
-    {% endif %} 
-     <hr>
-    </section>
-
-    <!-- Admin Einstellungen -->
-    {% if is_granted('ROLE_ADMIN') %}
-    <section class="admin-settings">
-        <h2>Passwörter anzeigen:</h2>
-        <div class="user-list">
-            {% for user in users %}
-            <div class="user-box">
-                <div class="user-info">
-                    <img src="{{ user.profilePicture ? '/doku/images/' ~ user.profilePicture : asset('images/profile-circle.svg') }}" alt="Profilbild" class="profile-picture-small">
-                    <span>{{ user.username }}</span>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="togglePasswordVisibility">
-                    <span class="slider round"></span>
-                </label>
-            </div>
-            {% endfor %}
-        </div>
-    <hr>
-    <form id="newUserForm" class="new-user-form">
-    <h3>Neuen Benutzer anlegen:</h3>
-        <label for="username"><strong>Benutzername:</strong></label>
-        <div class="form-group">
-            <input type="text" id="username" name="username" required class="form-control">
-        </div>
-        <label for="email"><strong>Email:</strong></label>
-        <div class="form-group">
-            <input type="email" id="email" name="email" required class="form-control">
-        </div>
-        <label for="password"><strong>Passwort:</strong</label>
-        <div class="form-group">
-            <input type="password" id="password" name="password" required class="form-control">
-        </div>
-        <label><strong>Rollen:</strong</label>
-        <div class="form-group">
-            <div class="checkbox-group">
-                <input type="checkbox" id="role_user" name="roles" value="ROLE_USER">
-                    <label for="role_user"><strong>Benutzer</strong></label>
-                    <input type="checkbox" id="role_admin" name="roles" value="ROLE_ADMIN">
-                    <label for="role_admin"><strong>Administrator</strong></label>
-                    <input type="checkbox" id="role_mitarbeiter" name="roles" value="ROLE_MITARBEITER">
-                    <label for="role_mitarbeiter"><strong>Mitarbeiter</strong></label>
-                    <input type="checkbox" id="role_praktikant" name="roles" value="ROLE_PRAKTIKANT">
-                    <label for="role_praktikant"><strong>Praktikant</strong></label>
-            </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Erstellen</button>
-    </form>
-    </section>
-    {% endif %}
-</div>
-<script>
-function onFileSelected(event) {
-    var file = event.target.files[0];
-    var reader = new FileReader();
-
-    reader.onload = function(e) {
-        document.getElementById('profilePicture').src = e.target.result;
-    };
-
-    reader.readAsDataURL(file);
-
-    var formData = new FormData();
-    formData.append('imageFile', file);
-
-    fetch('/doku/profile/upload', { 
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.filename) {
-            var newImageUrl = '/doku/images/' + data.filename + '?t=' + new Date().getTime();
-            document.getElementById('profilePicture').src = newImageUrl;
-        } else {
-            console.error('Fehler beim Hochladen des Bildes', data);
-            Swal.fire('Fehler', 'Bild konnte nicht hochgeladen werden', 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Fehler beim Hochladen des Bildes', error);
-        Swal.fire('Fehler', 'Bild konnte nicht hochgeladen werden', 'error');
-    });
-}
-
-document.getElementById('profilePicture').addEventListener('click', function() {
-    document.getElementById('profile_picture_upload').click();
-});
-
-</script
 {% endblock %}
-

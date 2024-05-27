@@ -1,11 +1,10 @@
-{# templates/customer/index.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Kundenverzeichnis{% endblock %}
 
 {% block topNav %}
     <div>
-        <h1 style="color:#243668;">Schnelldokumentation<h1>
+        <h1 style="color:#243668;">Schnelldokumentation</h1>
     </div>
 {% endblock %}
 
@@ -21,18 +20,18 @@
         <button class="search-btn"><i class="fas fa-search"></i></button>
     </div>
     <div class="buttons">
-    <button type="button" class="btn btn-primary" id="archiveButton">
-        <i class="fas fa-archive"></i> Archiv
-    </button>
-    <button type="button" class="btn btn-primary" id="addCustomerButton">
-        <i class="fas fa-user-plus"></i> Neu
-    </button>
+        <button type="button" class="btn btn-primary" id="archiveButton">
+            <i class="fas fa-archive"></i> Archiv
+        </button>
+        <button type="button" class="btn btn-primary" id="addCustomerButton">
+            <i class="fas fa-user-plus"></i> Neu
+        </button>
     </div>
 </div>
 
 <div class="header-container">
     <h2>Kundenverzeichnis</h2>
-    <button id="refreshCustomerList" class=" btn refreshbutton" style="margin-top: 1vw">
+    <button id="refreshCustomerList" class="btn refreshbutton" style="margin-top: 1vw">
         <i class="fas fa-sync-alt"></i>
     </button>
     <button type="button" class="btn btn-primary" id="archiveSelectedButton" disabled>
@@ -42,7 +41,7 @@
 
 <div class="customer-list">
     <div class="customer-list-header">
-        <div class="header-checkbox"><input type="checkbox" id="selectAll"></div>
+        <div class="header-checkbox">Alle: <input type="checkbox" id="selectAll"></div>
         <div class="header-id" title="ID">ID:</div>
         <div class="header-name" title="Name">Kunde:</div>
         <div class="header-created" title="Erstellt am">Erstellt am:</div>
@@ -50,16 +49,14 @@
         <div class="header-updatedby" title="Geändert von">Geändert von:</div>
     </div>
     {% for customer in customers %}
-        <div class="customer-entry {% if loop.index is odd %}customer-odd{% endif %}">
-            <div class="entry-checkbox"><input type="checkbox" class="customer-checkbox" data-id="{{ customer.id }}"></div>
-            <a href="{{ path('customer_detail', {'id': customer.id}) }}" class="customer-entry-link">
-                <div class="entry-id">{{ customer.suchnummer }}</div>
-                <div class="entry-name">{{ customer.name }}</div>
-                <div class="entry-created">{{ customer.createdAt|date('d.m.Y') }}</div>
-                <div class="entry-updated">{{ customer.updatedAt|date('H:i') }}</div>
-                <div class="entry-updatedby">{{ customer.updatedBy.username }}</div>
-            </a>
-        </div>
+    <div class="customer-entry {% if loop.index is odd %}customer-odd{% endif %}">
+        <div class="entry-checkbox"><input type="checkbox" class="customer-checkbox" data-id="{{ customer.id }}"></div>
+        <div class="entry-id"><a href="{{ path('customer_detail', {'id': customer.id}) }}">{{ customer.suchnummer }}</a></div>
+        <div class="entry-name"><a href="{{ path('customer_detail', {'id': customer.id}) }}">{{ customer.name }}</a></div>
+        <div class="entry-created"><a href="{{ path('customer_detail', {'id': customer.id}) }}">{{ customer.createdAt|date('d.m.Y') }}</a></div>
+        <div class="entry-updated"><a href="{{ path('customer_detail', {'id': customer.id}) }}">{{ customer.updatedAt|date('H:i') }}</a></div>
+        <div class="entry-updatedby"><a href="{{ path('customer_detail', {'id': customer.id}) }}">{{ customer.updatedBy.username }}</a></div>
+    </div>
     {% else %}
         <p>Keine Kunden gefunden.</p>
     {% endfor %}
@@ -95,29 +92,56 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(response => response.text())
                 .then(html => {
                     document.getElementById('archivedCustomersList').innerHTML = html;
-                    document.querySelectorAll('.activate-button').forEach(button => {
-                        button.addEventListener('click', function() {
-                            const customerId = this.dataset.id;
-                            fetch('/doku/customer/activate/' + customerId, {
-                                method: 'POST'
-                            }).then(() => {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Kunde reaktiviert',
-                                    timer: 1500,
-                                    timerProgressBar: true,
-                                    toast: true,
-                                    position: 'top-end',
-                                    showConfirmButton: false
-                                }).then(() => location.reload());
-                            });
-                        });
-                    });
+                    initializeActivateButtons();
                 });
             }
         });
     });
 
+    function initializeActivateButtons() {
+        document.querySelectorAll('.modal-activate-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const customerId = this.dataset.id;
+                fetch('/doku/customers/activate/' + customerId, {
+                    method: 'POST'
+                }).then(response => {
+                    if (response.ok) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Kunde reaktiviert',
+                            timer: 1500,
+                            timerProgressBar: true,
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false
+                        }).then(() => location.reload());
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Fehler beim Reaktivieren des Kunden',
+                            timer: 1500,
+                            timerProgressBar: true,
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false
+                        });
+                    }
+                }).catch(() => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Fehler beim Reaktivieren des Kunden',
+                        timer: 1500,
+                        timerProgressBar: true,
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false
+                    });
+                });
+            });
+        });
+    }
+
+    // Event Listener für "Alle auswählen"-Checkbox
     selectAllCheckbox.addEventListener('change', function() {
         const isChecked = selectAllCheckbox.checked;
         customerCheckboxes.forEach(checkbox => {
@@ -126,15 +150,18 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleArchiveSelectedButton();
     });
 
+    // Event Listener für jede Kunden-Checkbox
     customerCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', toggleArchiveSelectedButton);
     });
 
+    // Funktion zum Aktivieren/Deaktivieren des "Auswahl Archivieren"-Buttons
     function toggleArchiveSelectedButton() {
         const anyChecked = Array.from(customerCheckboxes).some(checkbox => checkbox.checked);
         archiveSelectedButton.disabled = !anyChecked;
     }
 
+    // Event Listener für "Auswahl Archivieren"-Button
     archiveSelectedButton.addEventListener('click', function() {
         const selectedCustomerIds = Array.from(customerCheckboxes)
             .filter(checkbox => checkbox.checked)
@@ -169,5 +196,131 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function searchCustomers(searchTerm) {
+            const url = new URL(window.location.origin + '/doku/api/kunden/suche');
+            url.searchParams.append('search', searchTerm);
+    
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const customerList = document.querySelector('.customer-list');
+                // Löscht nur die Kunden-Einträge und behält den Header
+                const entries = customerList.querySelectorAll('.customer-entry');
+                entries.forEach(entry => entry.remove());
+    
+                if (data.length === 0) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'Kunde nicht gefunden',
+                        showConfirmButton: false,
+                        timer: 800,
+                    });
+                } else {
+                    data.forEach((customer, index) => {
+                        const customerEntry = document.createElement('div');
+                        customerEntry.className = `customer-entry ${index % 2 === 0 ? '' : 'customer-odd'}`;
+                        customerEntry.innerHTML = `
+                            <div class="entry-checkbox"><input type="checkbox" class="customer-checkbox" data-id="${customer.id}"></div>
+                            <div class="entry-id"><a href="/doku/customer/${customer.id}">${customer.suchnummer}</a></div>
+                            <div class="entry-name"><a href="/doku/customer/${customer.id}">${customer.name}</a></div>
+                            <div class="entry-created"><a href="/doku/customer/${customer.id}">${customer.createdAt}</a></div>
+                            <div class="entry-updated"><a href="/doku/customer/${customer.id}">${customer.updatedAt}</a></div>
+                            <div class="entry-updatedby"><a href="/doku/customer/${customer.id}">${customer.updatedBy}</a></div>
+                        `;
+                        customerList.appendChild(customerEntry);
+                    });
+    
+                    // Reinitialisieren der Checkbox-Event-Listener
+                    initializeCheckboxListeners();
+                }
+            })
+            .catch(error => console.error('Fehler beim Laden der Kunden:', error));
+        }
+    
+        function initializeCheckboxListeners() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const customerCheckboxes = document.querySelectorAll('.customer-checkbox');
+            const archiveSelectedButton = document.getElementById('archiveSelectedButton');
+    
+            selectAllCheckbox.addEventListener('change', function() {
+                const isChecked = selectAllCheckbox.checked;
+                customerCheckboxes.forEach(checkbox => {
+                    checkbox.checked = isChecked;
+                });
+                toggleArchiveSelectedButton();
+            });
+    
+            customerCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', toggleArchiveSelectedButton);
+            });
+    
+            function toggleArchiveSelectedButton() {
+                const anyChecked = Array.from(customerCheckboxes).some(checkbox => checkbox.checked);
+                archiveSelectedButton.disabled = !anyChecked;
+            }
+    
+            archiveSelectedButton.addEventListener('click', function() {
+                const selectedCustomerIds = Array.from(customerCheckboxes)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.dataset.id);
+    
+                if (selectedCustomerIds.length > 0) {
+                    Swal.fire({
+                        title: 'Bist du dir Sicher?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ja, archivieren!',
+                        confirmButtonColor: '#243668',
+                        cancelButtonText: 'Abbrechen'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            selectedCustomerIds.forEach(customerId => {
+                                fetch('/doku/customer/archive/' + customerId, {
+                                    method: 'POST'
+                                }).then(() => {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Kunde archiviert',
+                                        timer: 1500,
+                                        timerProgressBar: true,
+                                        toast: true,
+                                        position: 'top-end',
+                                        showConfirmButton: false
+                                    }).then(() => location.reload());
+                                });
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    
+        // Event-Listener für die Suche initialisieren
+        const searchBtn = document.querySelector('.search-btn');
+        const customerSearchInput = document.getElementById('customerSearch');
+    
+        if (searchBtn && customerSearchInput) {
+            searchBtn.addEventListener('click', function() {
+                const searchTerm = customerSearchInput.value;
+                searchCustomers(searchTerm);
+            });
+    
+            customerSearchInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    const searchTerm = customerSearchInput.value;
+                    searchCustomers(searchTerm);
+                }
+            });
+        }
+    
+        // Event-Listener für die initialen Checkboxen
+        initializeCheckboxListeners();
+    });   
 </script>
 {% endblock %}

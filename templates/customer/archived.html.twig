@@ -1,14 +1,23 @@
-{% if customers is not empty %}
+
+{% block body %}
+<h1>Archivierte Kunden</h1>
+<div class="modal-archived-customer-list">
+    <div class="modal-archived-customer-header">
+        <span>ID</span>
+        <span>Name</span>
+        <span>Aktion</span>
+    </div>
     {% for customer in customers %}
-        <div class="customer-entry">
-            <div>{{ customer.suchnummer }}</div>
-            <div>{{ customer.name }}</div>
-            <div>{{ customer.createdAt|date('d.m.Y') }}</div>
-            <div>{{ customer.updatedAt|date('H:i') }}</div>
-            <div>{{ customer.updatedBy.username }}</div>
-            <button class="btn btn-success activate-button" data-id="{{ customer.id }}">Reaktivieren</button>
+        <div class="modal-archived-customer-entry">
+            <div class="modal-entry-id">{{ customer.suchnummer }}</div>
+            <div class="modal-entry-name">{{ customer.name }}</div>
+            <button class="btn modal-activate-button" data-id="{{ customer.id }}">Aktivieren</button>
         </div>
+    {% else %}
+        <p>Keine archivierten Kunden gefunden.</p>
     {% endfor %}
-{% else %}
-    <p>Keine archivierten Kunden gefunden.</p>
-{% endif %}
+</div>
+{% endblock %}
+<script>
+</script>
+

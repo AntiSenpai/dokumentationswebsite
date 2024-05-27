@@ -45,15 +45,14 @@ class CustomerController extends AbstractController
         $currentPage = max(1, $request->query->getInt('page', 1));
         $limit = 10;
 
-        $customersPaginator = $customerRepository->getPaginatedCustomers($limit, $currentPage);
-        $totalCustomers = $customersPaginator->count();
+        $customersPaginator = $customerRepository->findAllNonArchivedCustomers();
+        $totalCustomers = count($customersPaginator);
         $totalPages = ceil($totalCustomers / $limit);
 
         return $this->render('customer/index.html.twig', [
-            'customers' => $customersPaginator,
+            'customers' => array_slice($customersPaginator, ($currentPage - 1) * $limit, $limit),
             'totalPages' => $totalPages,
             'currentPage' => $currentPage,
-            //'searchTerm' => $searchTerm,
             'createForm' => $createForm->createView(),
         ]);
     }
@@ -126,7 +125,7 @@ class CustomerController extends AbstractController
     
 
 #[Route('/customer/{id}', name: 'customer_detail')]
-#[IsGranted('ROLE_PRATIKANT')]
+#[IsGranted('ROLE_PRAKTIKANT')]
 public function detail(int $id, EntityManagerInterface $entityManager, LocationRepository $locationRepo, CustomerDocumentationRepository $docRepo): Response {
     $customer = $entityManager->getRepository(Customer::class)->find($id);
     $sectionTypes = ['allgemein', 'netz', 'server', 'clients', 'userpwd', 'routerfirewall', 'provider', 'remotemaintenance', 'backup', 'ups', 'antivirus', 'applicationsoftware', 'otherinfo'];
@@ -338,7 +337,7 @@ public function printView(int $id, EntityManagerInterface $entityManager, Custom
     ]);
 }
 
-#[Route('/customer/archive/{id}', name: 'customer_archive', methods: ['POST'])]
+    #[Route('/customer/archive/{id}', name: 'customer_archive', methods: ['POST'])]
     #[IsGranted('ROLE_MITARBEITER')]
     public function archive(Customer $customer): Response
     {
@@ -348,24 +347,32 @@ public function printView(int $id, EntityManagerInterface $entityManager, Custom
         return new Response('Customer archived', 200);
     }
 
-    #[Route('/customer/activate/{id}', name: 'customer_activate', methods: ['POST'])]
-    #[IsGranted('ROLE_MITARBEITER')]
-    public function activate(Customer $customer): Response
-    {
-        $customer->setIsArchived(false);
-        $this->entityManager->flush();
-
-        return new Response('Customer activated', 200);
-    }
-
-    #[Route('/customer/archived', name: 'customer_archived')]
+    #[Route('/customers/archived', name: 'customer_archived')]
     #[IsGranted('ROLE_PRAKTIKANT')]
     public function archived(CustomerRepository $customerRepository): Response
     {
-        $archivedCustomers = $customerRepository->findAllArchivedCustomers();
-        return $this->render('customer/archived.html.twig', [
-            'customers' => $archivedCustomers,
-        ]);
+    $archivedCustomers = $customerRepository->findAllArchivedCustomers();
+    return $this->render('customer/archived.html.twig', [
+        'customers' => $archivedCustomers,
+    ]);
     }
+
+
+
+    #[Route('/customers/activate/{id}', name: 'customer_activate', methods: ['POST'])]
+    #[IsGranted('ROLE_MITARBEITER')]
+    public function activate(int $id, EntityManagerInterface $entityManager): Response
+    {
+    $customer = $entityManager->getRepository(Customer::class)->find($id);
+    if (!$customer) {
+        return new Response('Kunde nicht gefunden', 404);
+    }
+    
+    $customer->setIsArchived(false);
+    $entityManager->flush();
+
+    return new Response('Kunde reaktiviert!', 200);
+    }
+
 
 }

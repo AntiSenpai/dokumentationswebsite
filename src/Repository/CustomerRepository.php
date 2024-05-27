@@ -52,4 +52,22 @@ class CustomerRepository extends ServiceEntityRepository
     return $paginator;
     }
 
+    public function findAllNonArchivedCustomers(): array
+    {
+    return $this->createQueryBuilder('c')
+        ->andWhere('c.isArchived = :isArchived')
+        ->setParameter('isArchived', false)
+        ->getQuery()
+        ->getResult();
+    }
+
+    public function findAllArchivedCustomers()
+    {
+    return $this->createQueryBuilder('c')
+        ->where('c.isArchived = :archived')
+        ->setParameter('archived', true)
+        ->getQuery()
+        ->getResult();
+    }
+
 }

@@ -177,12 +177,12 @@ section {
     padding: 20px;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #ddd;
     font-family: 'Arial', sans-serif;
 }
 
-.new-user-form h2 {
+.new-user-form h3 {
     text-align: center;
     margin-bottom: 20px;
     color: #333;
@@ -190,10 +190,11 @@ section {
 
 .new-user-form .form-group {
     margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
 .new-user-form label {
-    display: block;
     margin-bottom: .5rem;
     color: #555;
 }
@@ -209,13 +210,41 @@ section {
 
 .checkbox-group {
     display: flex;
-    justify-content: start;
-    gap: 20px;
-    margin-top: 5px;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.checkbox-group label {
-    margin-bottom: 0;
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    height: auto;
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px; /* Abstand zwischen Checkbox und Label */
+}
+
+.checkbox-group input[type="checkbox"]:checked {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.checkbox-group input[type="checkbox"]:checked:after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
 }
 
 .btn-primary {
@@ -236,34 +265,15 @@ section {
     background-color: #004085;
 }
 
-/* Hier beginnt das neue CSS für Checkbox-Design */
-.checkbox-group input[type="checkbox"] {
-    -webkit-appearance: none;
-    appearance: none;
-    min-width: 20px;
-    min-height: 20px;
-    background-color: #fff;
-    border: 2px solid #ddd;
-    border-radius: 4px;
-    position: relative;
-    cursor: pointer;
-}
+/* Responsive Anpassungen */
+@media (max-width: 768px) {
+    .checkbox-group {
+        flex-direction: column;
+    }
 
-.checkbox-group input[type="checkbox"]:checked {
-    background-color: #0056b3;
-    border-color: #0056b3;
-}
-
-.checkbox-group input[type="checkbox"]:checked:after {
-    content: "";
-    position: absolute;
-    left: 5px;
-    top: 9px;
-    width: 6px;
-    height: 12px;
-    border: solid white;
-    border-width: 0 3px 3px 0;
-    transform: rotate(45deg);
+    .checkbox-item {
+        flex: 1 1 100%;
+    }
 }
 
 .profile-picture-container {
@@ -348,7 +358,6 @@ section {
     }
     
     .form-group input {
-        flex-grow: 1; 
         border-radius: 4px 0 0 4px;
     }
     

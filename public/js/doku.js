@@ -154,58 +154,7 @@ function updateCustomerList() {
                 updateCustomerList();
             });
         });
-    });
-
-    function searchCustomers(searchTerm) {
-        const url = new URL(window.location.origin + '/doku/api/kunden/suche');
-        url.searchParams.append('search', searchTerm);
-    
-        fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            const customerList = document.querySelector('.customer-list');
-            // Löscht nur die Kunden-Einträge und behält den Header
-            const entries = customerList.querySelectorAll('.customer-entry-link');
-            entries.forEach(entry => entry.remove());
-    
-            if (data.length === 0) {
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'error',
-                    title: 'Kunde nicht gefunden',
-                    showConfirmButton: false,
-                    timer: 800,
-                })
-            } else {
-                data.forEach((customer, index) => {
-                    const customerEntryLink = document.createElement('a');
-                    customerEntryLink.href = `/doku/customer/${customer.id}`;
-                    customerEntryLink.className = 'customer-entry-link';
-    
-                    const customerEntry = document.createElement('div');
-                    customerEntry.className = `customer-entry ${index % 2 === 0 ? '' : 'customer-odd'}`;
-    
-                    customerEntry.innerHTML = `
-                        <div>${customer.suchnummer}</div>
-                        <div class="name-or-searchnum" data-name="${customer.name}" data-searchnum="${customer.suchnummer}">
-                            ${customer.name}
-                        </div>
-                        <div>${customer.createdAt}</div>
-                        <div>${customer.updatedAt}</div>
-                        <div>${customer.updatedBy}</div>
-                    `;
-    
-                    customerEntryLink.appendChild(customerEntry);
-                    customerList.appendChild(customerEntryLink);
-                });
-            }
-        })
-        .catch(error => console.error('Fehler beim Laden der Kunden:', error));
-    }
-    
-    
-    
+    }); 
 
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('addCustomerButton').addEventListener('click', customernew);
@@ -226,14 +175,5 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initial display update
     updateDisplay();
 });
-
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('customerSearch');
-
-    searchInput.addEventListener('input', function() {
-        const searchTerm = this.value;
-        searchCustomers(searchTerm);
-    });
-})
 
     
